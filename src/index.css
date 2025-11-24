@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: #e2e8f0;
+  background-color: #0b1220;
+}
+
+body {
+  @apply bg-ink-950 text-slate-100 min-h-screen;
+}
+
+#root {
+  min-height: 100vh;
+}
