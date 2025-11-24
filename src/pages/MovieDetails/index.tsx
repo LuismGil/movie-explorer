@@ -6,7 +6,7 @@ import { InfoChip } from '../../components/InfoChip';
 
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w780';
 
-export default function MovieDetails() {
+export function MovieDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const { data, isLoading, error } = useMovieDetails(id);
 
@@ -96,3 +96,5 @@ export default function MovieDetails() {
     </article>
   );
 }
+
+export default MovieDetailsPage;

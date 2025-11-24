@@ -1,29 +1,24 @@
-export type Genre = {
+export type MovieGenre = {
   id: number;
   name: string;
 };
 
-export type Movie = {
+export type MovieDetails = {
   id: number;
   title: string;
+  tagline: string | null;
   overview: string;
-  poster_path: string | null;
-  backdrop_path?: string | null;
-  release_date: string;
   vote_average: number;
-  vote_count?: number;
-  genre_ids?: number[];
-};
-
-export type MovieDetails = Movie & {
-  genres: Genre[];
+  vote_count: number;
   runtime: number;
-  tagline?: string | null;
-  homepage?: string | null;
-  imdb_id?: string | null;
+  release_date: string;
+  backdrop_path: string | null;
+  poster_path: string | null;
+  homepage: string | null;
+  genres: MovieGenre[];
 };
 
-export type PaginatedResponse<T> = {
+export type TmdbPaginatedResponse<T> = {
   page: number;
   results: T[];
   total_pages: number;
