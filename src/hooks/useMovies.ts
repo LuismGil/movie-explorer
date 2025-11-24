@@ -1,42 +1,44 @@
-import { useEffect, useMemo, useState } from 'react';
-import { movieService } from '../services/movieService';
-import type { Movie, PaginatedResponse } from '../types';
-
-type UseMoviesParams = {
-  query?: string;
-  page?: number;
-};
+import { useEffect, useState } from 'react';
+import type { MovieListItem } from '../types/movie';
+import { fetchPopularMovies, searchMovies } from '../services/tmdb';
 
 type UseMoviesResult = {
-  data: PaginatedResponse<Movie> | null;
+  data: MovieListItem[];
   isLoading: boolean;
   error: string | null;
+  page: number;
+  totalPages: number;
+  setPage: (page: number) => void;
 };
 
-export function useMovies({ query = '', page = 1 }: UseMoviesParams): UseMoviesResult {
-  const [data, setData] = useState<PaginatedResponse<Movie> | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+export function useMovies(query: string): UseMoviesResult {
+  const [data, setData] = useState<MovieListItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const trimmedQuery = useMemo(() => query.trim(), [query]);
+  useEffect(() => {
+    setPage(1);
+  }, [query]);
 
   useEffect(() => {
     let isMounted = true;
-    async function fetchMovies() {
+    async function load() {
       setIsLoading(true);
       setError(null);
       try {
-        const response = trimmedQuery
-          ? await movieService.searchMovies(trimmedQuery, page)
-          : await movieService.getPopularMovies(page);
-
-        if (isMounted) {
-          setData(response);
-        }
+        const trimmed = query.trim();
+        const response = trimmed
+          ? await searchMovies(trimmed, page)
+          : await fetchPopularMovies(page);
+        if (!isMounted) return;
+        setData(response.results);
+        setTotalPages(response.total_pages);
       } catch (err) {
-        if (isMounted) {
-          setError('Não foi possível carregar os filmes. Tente novamente.');
-        }
+        if (!isMounted) return;
+        setError('Não foi possível carregar os filmes.');
+        setData([]);
       } finally {
         if (isMounted) {
           setIsLoading(false);
@@ -44,11 +46,11 @@ export function useMovies({ query = '', page = 1 }: UseMoviesParams): UseMoviesR
       }
     }
 
-    fetchMovies();
+    load();
     return () => {
       isMounted = false;
     };
-  }, [page, trimmedQuery]);
+  }, [query, page]);
 
-  return { data, isLoading, error };
+  return { data, isLoading, error, page, totalPages, setPage };
 }
