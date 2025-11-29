@@ -1,5 +1,11 @@
 import axios from 'axios';
-import type { MovieDetails, MovieListItem, TmdbPaginatedResponse } from '../types/movie';
+import type {
+  MovieCredits,
+  MovieDetails,
+  MovieListItem,
+  MovieVideoResponse,
+  TmdbPaginatedResponse,
+} from '../types/movie';
 
 const apiKey = import.meta.env.VITE_TMDB_API_KEY;
 
@@ -32,5 +38,22 @@ export async function searchMovies(
 
 export async function fetchMovieDetails(id: string): Promise<MovieDetails> {
   const { data } = await tmdb.get<MovieDetails>(`/movie/${id}`);
+  return data;
+}
+
+export async function fetchMovieVideos(id: string): Promise<MovieVideoResponse> {
+  const { data } = await tmdb.get<MovieVideoResponse>(`/movie/${id}/videos`);
+  return data;
+}
+
+export async function fetchMovieCredits(id: string): Promise<MovieCredits> {
+  const { data } = await tmdb.get<MovieCredits>(`/movie/${id}/credits`);
+  return data;
+}
+
+export async function fetchSimilarMovies(
+  id: string,
+): Promise<TmdbPaginatedResponse<MovieListItem>> {
+  const { data } = await tmdb.get<TmdbPaginatedResponse<MovieListItem>>(`/movie/${id}/similar`);
   return data;
 }

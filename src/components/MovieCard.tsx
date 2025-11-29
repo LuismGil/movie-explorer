@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { MovieListItem } from '../types/movie';
+import { useWatchlist } from '../context/WatchlistContext';
 
 type MovieCardProps = {
   movie: MovieListItem;
@@ -10,18 +11,30 @@ const TMDB_POSTER_BASE = 'https://image.tmdb.org/t/p/w342';
 export function MovieCard({ movie }: MovieCardProps) {
   const year = movie.release_date ? movie.release_date.split('-')[0] : '—';
   const posterUrl = movie.poster_path ? `${TMDB_POSTER_BASE}${movie.poster_path}` : null;
+  const { isInWatchlist, toggleWatchlist } = useWatchlist();
+  const inWatchlist = isInWatchlist(movie.id);
 
   return (
     <Link
       to={`/movie/${movie.id}`}
-      className="group block overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-md transition duration-200 hover:-translate-y-1 hover:shadow-lg"
+      className="group relative block overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-md transition duration-200 hover:-translate-y-1 hover:shadow-lg"
     >
       <div className="relative aspect-[2/3] w-full overflow-hidden bg-slate-800">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            toggleWatchlist(movie);
+          }}
+          className="absolute right-3 top-3 z-10 rounded-full bg-slate-900/80 px-2 py-1 text-sm text-slate-100 hover:bg-slate-800"
+        >
+          {inWatchlist ? '♥' : '♡'}
+        </button>
         {posterUrl ? (
           <img
             src={posterUrl}
             alt={movie.title}
-            className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+            className="relative z-0 h-full w-full object-cover transition duration-300 group-hover:scale-105"
             loading="lazy"
           />
         ) : (
