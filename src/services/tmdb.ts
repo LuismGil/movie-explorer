@@ -57,3 +57,16 @@ export async function fetchSimilarMovies(
   const { data } = await tmdb.get<TmdbPaginatedResponse<MovieListItem>>(`/movie/${id}/similar`);
   return data;
 }
+
+export async function fetchTrendingMovies(
+  timeWindow: 'day' | 'week',
+  page = 1,
+): Promise<TmdbPaginatedResponse<MovieListItem>> {
+  const { data } = await tmdb.get<TmdbPaginatedResponse<MovieListItem>>(
+    `/trending/movie/${timeWindow}`,
+    {
+      params: { page },
+    },
+  );
+  return data;
+}
