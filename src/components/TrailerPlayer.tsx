@@ -6,6 +6,7 @@ export function TrailerPlayer({ videoKey }: TrailerPlayerProps) {
   return (
     <iframe
       src={`https://www.youtube.com/embed/${videoKey}`}
+      title="Trailer do filme"
       className="w-full aspect-video rounded-2xl border border-slate-700"
       allowFullScreen
     />

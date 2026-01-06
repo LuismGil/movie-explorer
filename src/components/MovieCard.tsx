@@ -22,6 +22,8 @@ export function MovieCard({ movie }: MovieCardProps) {
       <div className="relative aspect-[2/3] w-full overflow-hidden bg-slate-800">
         <button
           type="button"
+          aria-label={inWatchlist ? 'Remover da watchlist' : 'Adicionar à watchlist'}
+          title={inWatchlist ? 'Remover da watchlist' : 'Adicionar à watchlist'}
           onClick={(e) => {
             e.preventDefault();
             toggleWatchlist(movie);
