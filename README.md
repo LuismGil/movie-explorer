@@ -1,73 +1,61 @@
-# React + TypeScript + Vite
+# Movie Explorer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Projeto de portfólio construído com React + TypeScript + Vite + Tailwind CSS consumindo a TMDB API. Permite explorar filmes populares, buscar com debounce e paginação, e manter uma watchlist local.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Home: busca com debounce e paginação
+- Details: trailer, elenco principal e filmes similares
+- Watchlist: persistida em `localStorage`
+- Header com rotas para Home e Watchlist
 
-## React Compiler
+## Como rodar
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1) Instale dependências
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm i
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2) Configure a variável de ambiente
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- Copie `.env.example` para `.env`
+- Preencha `VITE_TMDB_API_KEY`
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+3) Rode o projeto
+
+```bash
+npm run dev
 ```
+
+## Screenshots
+
+- Home: `docs/screenshot-home.png`
+- Details: `docs/screenshot-details.png`
+- Watchlist: `docs/screenshot-watchlist.png`
+
+## Tech stack
+
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- React Router DOM
+- TMDB API
+
+## Arquitetura
+
+- Pages: `src/pages`
+- Components: `src/components`
+- Hooks: `src/hooks`
+- Services: `src/services`
+- Types: `src/types`
+- Context: `src/context`
+
+## Roadmap
+
+- Trending e Top Rated na Home
+- Filtros por gênero, ano e ordenação
+- Skeleton loading nos cards
+- Melhorias de acessibilidade (a11y)
+- Testes basicos de hooks e services
