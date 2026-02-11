@@ -1,6 +1,11 @@
 # Movie Explorer
 
-Projeto de portfólio construído com React + TypeScript + Vite + Tailwind CSS consumindo a TMDB API. Permite explorar filmes populares, buscar com debounce e paginação, e manter uma watchlist local.
+Aplicação de portfólio desenvolvida com **React + TypeScript + Vite + Tailwind CSS**, consumindo a **TMDB API**.  
+Permite explorar filmes, realizar buscas com debounce e paginação, visualizar detalhes e manter uma watchlist local.
+
+🌐 **Live Demo:** [Movie Explorer app](https://movie-explorer-luis.vercel.app/)
+
+---
 
 ## Features
 
