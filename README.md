@@ -238,7 +238,7 @@ Current test suites cover:
 
 Once migrated to Next.js App Router and integrated with the AI-native layers, the target system architecture will flow securely as follows:
 
-```
+```mermaid
 flowchart TD
   User["User"]
   UI["Next.js App Router UI<br/>React Server Components + Client Islands"]
