@@ -1,0 +1,70 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "Cyber-Social Cinema — Elevation & Depth Tokens",
+  "elevation": {
+    "layer-0": {
+      "$description": "Base — deepest background, behind content",
+      "background": {
+        "$value": "#0E0E0E",
+        "$type": "color"
+      },
+      "border": {
+        "$value": "rgba(255, 255, 255, 0.06)",
+        "$type": "color"
+      }
+    },
+    "layer-1": {
+      "$description": "Cards — primary content containers",
+      "background": {
+        "$value": "#1C1B1B",
+        "$type": "color"
+      },
+      "border": {
+        "$value": "rgba(255, 255, 255, 0.10)",
+        "$type": "color"
+      }
+    },
+    "layer-2": {
+      "$description": "Active / Hover — interactive state elevation",
+      "background": {
+        "$value": "#2A2A2A",
+        "$type": "color"
+      },
+      "border": {
+        "$value": "rgba(218, 185, 255, 0.4)",
+        "$type": "color"
+      },
+      "glow": {
+        "$description": "Purple/yellow glow bloom — 20px blur, 15% opacity. No shadow lift.",
+        "color": {
+          "$value": "rgba(218, 185, 255, 0.15)",
+          "$type": "color"
+        },
+        "blur": {
+          "$value": "20px",
+          "$type": "dimension"
+        },
+        "boxShadow": {
+          "$value": "0 0 12px rgba(218, 185, 255, 0.15)",
+          "$type": "shadow"
+        }
+      }
+    },
+    "layer-3": {
+      "$description": "Glass Overlay — navbars, modals, vibes selector",
+      "background": {
+        "$value": "rgba(19, 19, 19, 0.8)",
+        "$type": "color"
+      },
+      "border": {
+        "$value": "rgba(255, 255, 255, 0.08)",
+        "$type": "color"
+      },
+      "backdropFilter": {
+        "$value": "blur(12px)",
+        "$type": "other",
+        "$description": "Glassmorphism blur applied to overlay surfaces"
+      }
+    }
+  }
+}

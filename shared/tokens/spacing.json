@@ -1,0 +1,48 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "Cyber-Social Cinema — Spacing Tokens",
+  "spacing": {
+    "xs": {
+      "$value": "4px",
+      "$type": "dimension",
+      "rem": "0.25rem",
+      "$description": "Icon gaps, tight inline spacing"
+    },
+    "base": {
+      "$value": "8px",
+      "$type": "dimension",
+      "rem": "0.5rem",
+      "$description": "Component internals"
+    },
+    "sm": {
+      "$value": "12px",
+      "$type": "dimension",
+      "rem": "0.75rem",
+      "$description": "Button padding, chip gap"
+    },
+    "gutter": {
+      "$value": "16px",
+      "$type": "dimension",
+      "rem": "1rem",
+      "$description": "Grid gutters"
+    },
+    "md": {
+      "$value": "24px",
+      "$type": "dimension",
+      "rem": "1.5rem",
+      "$description": "Section gaps, card padding"
+    },
+    "lg": {
+      "$value": "40px",
+      "$type": "dimension",
+      "rem": "2.5rem",
+      "$description": "Between sections"
+    },
+    "xl": {
+      "$value": "64px",
+      "$type": "dimension",
+      "rem": "4rem",
+      "$description": "Desktop margins"
+    }
+  }
+}

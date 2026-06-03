@@ -1,0 +1,912 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Hanken+Grotesk:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .guide {
+    background: #131313;
+    color: #e5e2e1;
+    font-family: 'Hanken Grotesk', sans-serif;
+    padding: 32px 24px;
+    min-height: 100vh;
+  }
+
+  .guide-header {
+    border-bottom: 1px solid #4e4633;
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+
+  .brand-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: #f5c518;
+    margin-bottom: 4px;
+  }
+
+  .brand-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #9a9078;
+  }
+
+  .section {
+    margin-bottom: 40px;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #9a9078;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #4e4633;
+  }
+
+  /* COLORS */
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+  }
+
+  .color-swatch {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .swatch-block {
+    height: 52px;
+  }
+
+  .swatch-info {
+    background: #1c1b1b;
+    padding: 8px 10px;
+  }
+
+  .swatch-name {
+    font-family: 'Hanken Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: #e5e2e1;
+    display: block;
+  }
+
+  .swatch-hex {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #9a9078;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+    display: block;
+  }
+
+  .swatch-role {
+    font-size: 10px;
+    color: #d1c5ac;
+    margin-top: 2px;
+    display: block;
+  }
+
+  /* TYPOGRAPHY */
+  .type-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .type-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 16px;
+    background: #1c1b1b;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .type-meta {
+    flex-shrink: 0;
+    width: 160px;
+  }
+
+  .type-token {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #f5c518;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .type-spec {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #9a9078;
+    line-height: 1.6;
+    display: block;
+  }
+
+  .type-preview {
+    flex: 1;
+    color: #e5e2e1;
+    word-break: break-word;
+  }
+
+  /* SPACING */
+  .spacing-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .spacing-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .spacing-bar-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .spacing-bar {
+    background: #dab9ff;
+    height: 20px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .spacing-token {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #9a9078;
+    width: 60px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+  }
+
+  .spacing-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #d1c5ac;
+    width: 40px;
+    flex-shrink: 0;
+  }
+
+  /* RADIUS */
+  .radius-grid {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .radius-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .radius-box {
+    width: 56px;
+    height: 56px;
+    background: #2a2a2a;
+    border: 1px solid #9a9078;
+  }
+
+  .radius-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #9a9078;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-align: center;
+  }
+
+  /* COMPONENTS */
+  .components-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .comp-card {
+    background: #1c1b1b;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .comp-card-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #9a9078;
+    margin-bottom: 12px;
+  }
+
+  .comp-examples {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    background: #f5c518;
+    color: #241a00;
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    border: none;
+    border-radius: 6px;
+    padding: 9px 16px;
+    cursor: pointer;
+    width: 100%;
+    letter-spacing: -0.01em;
+  }
+
+  .btn-social {
+    background: transparent;
+    color: #dab9ff;
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    border: 2px solid #dab9ff;
+    border-radius: 6px;
+    padding: 7px 16px;
+    cursor: pointer;
+    width: 100%;
+    letter-spacing: -0.01em;
+  }
+
+  .btn-vibe {
+    background: rgba(96, 43, 157, 0.3);
+    border: 1px solid #602b9d;
+    border-radius: 50px;
+    padding: 8px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    color: #dab9ff;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: fit-content;
+  }
+
+  /* Vibe chips */
+  .vibe-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .vibe-chip {
+    background: #602b9d;
+    border-radius: 9999px;
+    padding: 5px 12px;
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    color: #eedbff;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .vibe-chip.yellow {
+    background: #3d2f00;
+    color: #ffe5a0;
+    border: 1px solid #f5c518;
+  }
+
+  .vibe-chip.teal {
+    background: #003731;
+    color: #55ffea;
+    border: 1px solid #23e2ce;
+  }
+
+  /* Input */
+  .cyber-input {
+    background: #201f1f;
+    border: none;
+    border-bottom: 2px solid #4e4633;
+    border-radius: 4px 4px 0 0;
+    padding: 10px 12px;
+    color: #e5e2e1;
+    font-family: 'Hanken Grotesk', sans-serif;
+    font-size: 14px;
+    width: 100%;
+    outline: none;
+  }
+
+  /* Rating big */
+  .rating-display {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+
+  .rating-num {
+    font-family: 'Sora', sans-serif;
+    font-size: 36px;
+    font-weight: 800;
+    color: #f5c518;
+    line-height: 1;
+  }
+
+  .rating-denom {
+    font-family: 'Sora', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #9a9078;
+  }
+
+  /* Progress */
+  .progress-track {
+    height: 2px;
+    background: #2a2a2a;
+    border-radius: 1px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: #dab9ff;
+    border-radius: 1px;
+  }
+
+  .progress-fill.teal {
+    background: #23e2ce;
+  }
+
+  /* Elevation */
+  .elevation-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+  }
+
+  .elev-box {
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .elev-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #9a9078;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: block;
+    margin-top: 6px;
+  }
+
+  .elev-hex {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: #4e4633;
+    letter-spacing: 0.04em;
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* Gradient badge */
+  .gradient-badge {
+    background: linear-gradient(135deg, #602b9d, #f5c518);
+    border-radius: 9999px;
+    padding: 6px 16px;
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    display: inline-block;
+    width: fit-content;
+  }
+
+  /* Icon usage area */
+  .icon-row {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .icon-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .icon-item i {
+    font-size: 22px;
+    color: #d1c5ac;
+  }
+
+  .icon-item span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: #9a9078;
+    letter-spacing: 0.04em;
+  }
+
+  .divider {
+    height: 1px;
+    background: #4e4633;
+    margin: 4px 0 20px;
+    opacity: 0.5;
+  }
+
+  h2.s-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #ffe5a0;
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+  }
+</style>
+
+<div class="guide">
+  <h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Cyber-Social Cinema design system guide covering colors, typography, spacing, radii, elevation, and components</h2>
+
+  <div class="guide-header">
+    <div class="brand-title">Cyber-Social Cinema</div>
+    <div class="brand-sub">Design System · Gen Z Movie Explorer</div>
+  </div>
+
+  <!-- COLORS -->
+  <div class="section">
+    <div class="section-label">Color Tokens</div>
+
+    <h2 class="s-title">Primary Palette</h2>
+    <div class="color-grid" style="margin-bottom: 16px;">
+      <div class="color-swatch">
+        <div class="swatch-block" style="background:#f5c518;"></div>
+        <div class="swatch-info">
+          <span class="swatch-name">Electric Yellow</span>
+          <span class="swatch-hex">#F5C518</span>
+          <span class="swatch-role">primary-container</span>
+        </div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-block" style="background:#ffe5a0;"></div>
+        <div class="swatch-info">
+          <span class="swatch-name">Yellow Soft</span>
+          <span class="swatch-hex">#FFE5A0</span>
+          <span class="swatch-role">primary</span>
+        </div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-block" style="background:#dab9ff;"></div>
+        <div class="swatch-info">
+          <span class="swatch-name">Neon Purple</span>
+          <span class="swatch-hex">#DAB9FF</span>
+          <span class="swatch-role">secondary</span>
+        </div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-block" style="background:#602b9d;"></div>
+        <div class="swatch-info">
+          <span class="swatch-name">Deep Purple</span>
+          <span class="swatch-hex">#602B9D</span>
+          <span class="swatch-role">secondary-container</span>
+        </div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-block" style="background:#55ffea;"></div>
+        <div class="swatch-info">
+          <span class="swatch-name">Cyber Teal</span>
+          <span class="swatch-hex">#55FFEA</span>
+          <span class="swatch-role">tertiary</span>
+        </div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-block" style="background:#23e2ce;"></div>
+        <div class="swatch-info">
+          <span class="swatch-name">Teal Container</span>
+          <span class="swatch-hex">#23E2CE</span>
+          <span class="swatch-role">tertiary-container</span>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="s-title">Surface Scale</h2>
+    <div class="elevation-grid">
+      <div class="elev-box" style="background:#0e0e0e;">
+        <span class="elev-label">Lowest</span>
+        <span class="elev-hex">#0E0E0E</span>
+      </div>
+      <div class="elev-box" style="background:#131313;">
+        <span class="elev-label">Base</span>
+        <span class="elev-hex">#131313</span>
+      </div>
+      <div class="elev-box" style="background:#1c1b1b;">
+        <span class="elev-label">Low</span>
+        <span class="elev-hex">#1C1B1B</span>
+      </div>
+      <div class="elev-box" style="background:#201f1f;">
+        <span class="elev-label">Mid</span>
+        <span class="elev-hex">#201F1F</span>
+      </div>
+      <div class="elev-box" style="background:#2a2a2a;">
+        <span class="elev-label">High</span>
+        <span class="elev-hex">#2A2A2A</span>
+      </div>
+    </div>
+
+    <div style="margin-top: 16px;">
+      <h2 class="s-title">Semantic</h2>
+      <div class="color-grid">
+        <div class="color-swatch">
+          <div class="swatch-block" style="background:#e5e2e1;"></div>
+          <div class="swatch-info">
+            <span class="swatch-name">On Surface</span>
+            <span class="swatch-hex">#E5E2E1</span>
+            <span class="swatch-role">Body text</span>
+          </div>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch-block" style="background:#d1c5ac;"></div>
+          <div class="swatch-info">
+            <span class="swatch-name">On Surface Variant</span>
+            <span class="swatch-hex">#D1C5AC</span>
+            <span class="swatch-role">Secondary text</span>
+          </div>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch-block" style="background:#9a9078;"></div>
+          <div class="swatch-info">
+            <span class="swatch-name">Outline</span>
+            <span class="swatch-hex">#9A9078</span>
+            <span class="swatch-role">Borders / muted</span>
+          </div>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch-block" style="background:#4e4633;"></div>
+          <div class="swatch-info">
+            <span class="swatch-name">Outline Variant</span>
+            <span class="swatch-hex">#4E4633</span>
+            <span class="swatch-role">Dividers</span>
+          </div>
+        </div>
+        <div class="color-swatch">
+          <div class="swatch-block" style="background:#ffb4ab;"></div>
+          <div class="swatch-info">
+            <span class="swatch-name">Error</span>
+            <span class="swatch-hex">#FFB4AB</span>
+            <span class="swatch-role">Error states</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 14px; padding: 12px 14px; background: #1c1b1b; border-radius: 8px; border-left: 3px solid #f5c518;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #f5c518; margin-bottom: 6px;">Gradient — High Impact Only</div>
+      <div class="gradient-badge">PREMIERE · PRO</div>
+      <div style="font-size: 11px; color: #9a9078; margin-top: 8px; font-family: 'JetBrains Mono', monospace;">linear-gradient(135deg, #602b9d → #f5c518)</div>
+    </div>
+  </div>
+
+  <!-- TYPOGRAPHY -->
+  <div class="section">
+    <div class="section-label">Typography</div>
+
+    <div class="type-stack">
+      <div class="type-row">
+        <div class="type-meta">
+          <span class="type-token">display-xl</span>
+          <span class="type-spec">Sora 800<br>80px / 88px<br>-0.04em</span>
+        </div>
+        <div class="type-preview" style="font-family:'Sora',sans-serif; font-size:36px; font-weight:800; letter-spacing:-0.04em; line-height:1.1;">YELLOWSTONE</div>
+      </div>
+
+      <div class="type-row">
+        <div class="type-meta">
+          <span class="type-token">headline-lg</span>
+          <span class="type-spec">Sora 700<br>40px / 48px<br>-0.02em</span>
+        </div>
+        <div class="type-preview" style="font-family:'Sora',sans-serif; font-size:26px; font-weight:700; letter-spacing:-0.02em;">Featured Today</div>
+      </div>
+
+      <div class="type-row">
+        <div class="type-meta">
+          <span class="type-token">headline-md</span>
+          <span class="type-spec">Sora 600<br>24px / 32px</span>
+        </div>
+        <div class="type-preview" style="font-family:'Sora',sans-serif; font-size:20px; font-weight:600;">Community Vibe Check</div>
+      </div>
+
+      <div class="type-row">
+        <div class="type-meta">
+          <span class="type-token">body-lg</span>
+          <span class="type-spec">Hanken Grotesk 400<br>18px / 28px</span>
+        </div>
+        <div class="type-preview" style="font-family:'Hanken Grotesk',sans-serif; font-size:15px; font-weight:400; color:#d1c5ac;">A ranching family in Montana faces off against others encroaching on their land.</div>
+      </div>
+
+      <div class="type-row">
+        <div class="type-meta">
+          <span class="type-token">body-md</span>
+          <span class="type-spec">Hanken Grotesk 400<br>16px / 24px</span>
+        </div>
+        <div class="type-preview" style="font-family:'Hanken Grotesk',sans-serif; font-size:13px; font-weight:400; color:#d1c5ac;">User reviews · Cast lists · Synopsis · Social captions</div>
+      </div>
+
+      <div class="type-row">
+        <div class="type-meta">
+          <span class="type-token">label-md</span>
+          <span class="type-spec">JetBrains Mono 500<br>14px / 20px<br>+0.05em</span>
+        </div>
+        <div class="type-preview" style="font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:#9a9078;">TV SERIES · 2018–2024 · TV-MA · 1H</div>
+      </div>
+
+      <div class="type-row">
+        <div class="type-meta">
+          <span class="type-token">vibe-rating</span>
+          <span class="type-spec">Sora 800<br>14px / 14px</span>
+        </div>
+        <div class="type-preview" style="display:flex; gap:8px; align-items:center;">
+          <span style="font-family:'Sora',sans-serif; font-size:13px; font-weight:800; background:#602b9d; border-radius:9999px; padding:4px 10px; color:#dab9ff;">🔥 98%</span>
+          <span style="font-family:'Sora',sans-serif; font-size:13px; font-weight:800; background:#3d2f00; border-radius:9999px; padding:4px 10px; color:#ffe5a0; border: 1px solid #f5c518;">⭐ 8.6</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 14px; padding: 12px 14px; background: #1c1b1b; border-radius: 8px; border-left: 3px solid #dab9ff;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#dab9ff; margin-bottom:6px;">Font Stack</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#9a9078; line-height:1.8;">
+        DISPLAY / HEADLINES → Sora<br>
+        BODY / REVIEWS → Hanken Grotesk<br>
+        META / DATA / LABELS → JetBrains Mono
+      </div>
+    </div>
+  </div>
+
+  <!-- SPACING -->
+  <div class="section">
+    <div class="section-label">Spacing Scale</div>
+    <div class="spacing-rows">
+      <div class="spacing-row">
+        <span class="spacing-token">xs</span>
+        <span class="spacing-value">4px</span>
+        <div class="spacing-bar-wrap"><div class="spacing-bar" style="width:4px;"></div><span style="font-size:11px; color:#9a9078; font-family:'JetBrains Mono',monospace;">Icon gaps, tight inline</span></div>
+      </div>
+      <div class="spacing-row">
+        <span class="spacing-token">base</span>
+        <span class="spacing-value">8px</span>
+        <div class="spacing-bar-wrap"><div class="spacing-bar" style="width:8px;"></div><span style="font-size:11px; color:#9a9078; font-family:'JetBrains Mono',monospace;">Component internals</span></div>
+      </div>
+      <div class="spacing-row">
+        <span class="spacing-token">sm</span>
+        <span class="spacing-value">12px</span>
+        <div class="spacing-bar-wrap"><div class="spacing-bar" style="width:12px;"></div><span style="font-size:11px; color:#9a9078; font-family:'JetBrains Mono',monospace;">Button padding, chip gap</span></div>
+      </div>
+      <div class="spacing-row">
+        <span class="spacing-token">gutter</span>
+        <span class="spacing-value">16px</span>
+        <div class="spacing-bar-wrap"><div class="spacing-bar" style="width:16px;"></div><span style="font-size:11px; color:#9a9078; font-family:'JetBrains Mono',monospace;">Grid gutters</span></div>
+      </div>
+      <div class="spacing-row">
+        <span class="spacing-token">md</span>
+        <span class="spacing-value">24px</span>
+        <div class="spacing-bar-wrap"><div class="spacing-bar" style="width:24px;"></div><span style="font-size:11px; color:#9a9078; font-family:'JetBrains Mono',monospace;">Section gaps, card padding</span></div>
+      </div>
+      <div class="spacing-row">
+        <span class="spacing-token">lg</span>
+        <span class="spacing-value">40px</span>
+        <div class="spacing-bar-wrap"><div class="spacing-bar" style="width:40px;"></div><span style="font-size:11px; color:#9a9078; font-family:'JetBrains Mono',monospace;">Between sections</span></div>
+      </div>
+      <div class="spacing-row">
+        <span class="spacing-token">xl</span>
+        <span class="spacing-value">64px</span>
+        <div class="spacing-bar-wrap"><div class="spacing-bar" style="width:64px;"></div><span style="font-size:11px; color:#9a9078; font-family:'JetBrains Mono',monospace;">Desktop margins</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RADIUS -->
+  <div class="section">
+    <div class="section-label">Border Radius</div>
+    <div class="radius-grid">
+      <div class="radius-item">
+        <div class="radius-box" style="border-radius:2px;"></div>
+        <div class="radius-label">sm<br>2px</div>
+      </div>
+      <div class="radius-item">
+        <div class="radius-box" style="border-radius:4px;"></div>
+        <div class="radius-label">default<br>4px / 0.25rem</div>
+      </div>
+      <div class="radius-item">
+        <div class="radius-box" style="border-radius:8px;"></div>
+        <div class="radius-label">md<br>8px / 0.5rem</div>
+      </div>
+      <div class="radius-item">
+        <div class="radius-box" style="border-radius:12px;"></div>
+        <div class="radius-label">lg<br>12px / 0.75rem</div>
+      </div>
+      <div class="radius-item">
+        <div class="radius-box" style="border-radius:16px;"></div>
+        <div class="radius-label">xl<br>16px / 1rem</div>
+      </div>
+      <div class="radius-item">
+        <div class="radius-box" style="border-radius:24px;"></div>
+        <div class="radius-label">2xl<br>24px / 1.5rem</div>
+      </div>
+      <div class="radius-item">
+        <div class="radius-box" style="border-radius:9999px; width:80px; height:32px;"></div>
+        <div class="radius-label">pill<br>9999px</div>
+      </div>
+    </div>
+    <div style="margin-top:12px; font-family:'JetBrains Mono',monospace; font-size:10px; color:#9a9078; line-height:1.8; padding: 10px 14px; background:#1c1b1b; border-radius:8px;">
+      BUTTONS / INPUTS → 0.5rem (8px)<br>
+      BENTO CARDS → 1rem (16px)<br>
+      VIBE CHIPS / BADGES → pill (9999px)<br>
+      MEDIA (img/video) → follows container
+    </div>
+  </div>
+
+  <!-- ELEVATION -->
+  <div class="section">
+    <div class="section-label">Elevation & Depth</div>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <div style="display:flex; align-items:center; gap:16px; padding:12px; background:#0e0e0e; border-radius:8px; border:1px solid rgba(255,255,255,0.04);">
+        <div style="width:40px; height:40px; background:#0e0e0e; border:1px solid rgba(255,255,255,0.06); border-radius:4px; flex-shrink:0;"></div>
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#f5c518;">Layer 0 · Base</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#9a9078; margin-top:3px;">Obsidian #0E0E0E — deepest bg, behind content</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:16px; padding:12px; background:#1c1b1b; border-radius:8px; border:1px solid rgba(255,255,255,0.04);">
+        <div style="width:40px; height:40px; background:#1c1b1b; border:1px solid rgba(255,255,255,0.1); border-radius:4px; flex-shrink:0;"></div>
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#d1c5ac;">Layer 1 · Cards</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#9a9078; margin-top:3px;">Deep Charcoal #1C1B1B + 1px border (10% white)</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:16px; padding:12px; background:#2a2a2a; border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
+        <div style="width:40px; height:40px; background:#2a2a2a; border:2px solid rgba(218,185,255,0.4); border-radius:4px; flex-shrink:0; box-shadow:0 0 12px rgba(218,185,255,0.15);"></div>
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#dab9ff;">Layer 2 · Active / Hover</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#9a9078; margin-top:3px;">Glow bloom — purple/yellow 20px blur 15% opacity. No shadow lift.</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:16px; padding:12px; background:rgba(19,19,19,0.8); border-radius:8px; border:1px solid rgba(255,255,255,0.08); backdrop-filter:blur(12px);">
+        <div style="width:40px; height:40px; background:rgba(19,19,19,0.8); border:1px solid rgba(255,255,255,0.12); border-radius:4px; flex-shrink:0;"></div>
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#55ffea;">Layer 3 · Glass Overlay</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#9a9078; margin-top:3px;">backdrop-filter: blur(12px) · bg: 80% Obsidian · Navbars, modals, vibes selector</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPONENTS -->
+  <div class="section">
+    <div class="section-label">Core Components</div>
+    <div class="components-grid">
+
+      <div class="comp-card">
+        <div class="comp-card-title">Buttons</div>
+        <div class="comp-examples">
+          <button class="btn-primary">+ Add to Watchlist</button>
+          <button class="btn-social">↗ Share Vibe</button>
+          <button class="btn-vibe">🔥 React</button>
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-card-title">Vibe Chips</div>
+        <div class="vibe-chips">
+          <span class="vibe-chip">🔥 98%</span>
+          <span class="vibe-chip">🤯 92%</span>
+          <span class="vibe-chip yellow">⭐ 8.6</span>
+          <span class="vibe-chip teal">📺 Live</span>
+          <span class="vibe-chip">#MustWatch</span>
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-card-title">Input Field</div>
+        <div class="comp-examples">
+          <input class="cyber-input" type="text" placeholder="Search movies, shows..." style="border-bottom-color:#f5c518;" />
+          <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#9a9078; margin-top:6px; text-transform:uppercase; letter-spacing:0.06em;">Focus → Yellow bottom border + glow</div>
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-card-title">Community Rating</div>
+        <div class="comp-examples">
+          <div class="rating-display">
+            <span class="rating-num">8.6</span>
+            <span class="rating-denom">/ 10</span>
+          </div>
+          <div style="font-family:'Hanken Grotesk',sans-serif; font-size:11px; color:#9a9078; margin-top:4px;">Based on 312.5K reaction drops</div>
+          <div class="progress-track" style="margin-top:8px;">
+            <div class="progress-fill" style="width:88%;"></div>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#dab9ff; margin-top:4px; text-align:right;">88% HIGH ENGAGEMENT</div>
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-card-title">Playback Progress</div>
+        <div class="comp-examples">
+          <div style="background:#201f1f; border-radius:6px; padding:10px; position:relative; overflow:hidden;">
+            <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#9a9078; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px;">2:37</div>
+            <div style="font-family:'Sora',sans-serif; font-size:13px; font-weight:700; color:#e5e2e1;">Neon Nights Dir. Cut</div>
+            <div class="progress-track" style="margin-top:10px;">
+              <div class="progress-fill teal" style="width:42%;"></div>
+            </div>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#9a9078; margin-top:6px; text-transform:uppercase; letter-spacing:0.06em;">2px purple/teal — social trend segments</div>
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-card-title">Label / Tag Chip</div>
+        <div class="comp-examples">
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <span style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.06em; text-transform:uppercase; background:#201f1f; border:1px solid #4e4633; border-radius:4px; padding:4px 8px; color:#d1c5ac;">Video</span>
+            <span style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.06em; text-transform:uppercase; background:#201f1f; border:1px solid #4e4633; border-radius:4px; padding:4px 8px; color:#d1c5ac;">Photo</span>
+            <span style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.06em; text-transform:uppercase; background:#3d2f00; border:1px solid #f5c518; border-radius:4px; padding:4px 8px; color:#ffe5a0;">Trending Mashup</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- GRID -->
+  <div class="section">
+    <div class="section-label">Grid & Layout</div>
+    <div style="padding:14px; background:#1c1b1b; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:10px; line-height:2; color:#9a9078; text-transform:uppercase; letter-spacing:0.06em;">
+      <span style="color:#f5c518;">Desktop</span> — 12-col grid · 64px margin · 16px gutter<br>
+      <span style="color:#f5c518;">Mobile</span> — 4-col grid · 24px margin · 16px gutter<br>
+      <span style="color:#dab9ff;">Bento spans</span> — 3col · 6col · 12col (desktop)<br>
+      <span style="color:#55ffea;">Vertical video</span> — 9:16 aspect ratio in bento slots<br>
+      <span style="color:#d1c5ac;">Philosophy</span> — Bento Box modular · masonry rhythm
+    </div>
+
+    <div style="margin-top:12px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+      <div style="background:#201f1f; border:1px solid #4e4633; border-radius:8px; height:60px; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:10px; color:#9a9078; text-transform:uppercase;">3 col</div>
+      <div style="background:#201f1f; border:1px solid #4e4633; border-radius:8px; height:60px; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:10px; color:#9a9078; text-transform:uppercase;">3 col</div>
+      <div style="background:#201f1f; border:1px solid #4e4633; border-radius:8px; height:60px; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:10px; color:#9a9078; text-transform:uppercase;">3 col</div>
+    </div>
+    <div style="margin-top:8px; display:grid; grid-template-columns:2fr 1fr; gap:8px;">
+      <div style="background:#201f1f; border:1px solid #4e4633; border-radius:8px; height:40px; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:10px; color:#dab9ff; text-transform:uppercase;">6 col hero</div>
+      <div style="background:#201f1f; border:1px solid #4e4633; border-radius:8px; height:40px; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:10px; color:#9a9078; text-transform:uppercase;">3 col</div>
+    </div>
+    <div style="margin-top:8px; background:#201f1f; border:1px solid #4e4633; border-radius:8px; height:36px; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:10px; color:#55ffea; text-transform:uppercase; letter-spacing:0.08em;">12 col full-width</div>
+  </div>
+
+</div>

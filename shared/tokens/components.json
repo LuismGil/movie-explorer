@@ -1,0 +1,142 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "Cyber-Social Cinema — Component Tokens",
+  "component": {
+    "button": {
+      "primary": {
+        "$description": "CTA button — '+ Add to Watchlist'",
+        "background": { "$value": "{color.primary.container}" },
+        "color": { "$value": "{color.primary.on-container}" },
+        "fontFamily": { "$value": "{typography.fontFamily.display}" },
+        "fontSize": { "$value": "13px" },
+        "fontWeight": { "$value": 700 },
+        "borderRadius": { "$value": "6px" },
+        "padding": { "$value": "9px 16px" },
+        "letterSpacing": { "$value": "-0.01em" }
+      },
+      "social": {
+        "$description": "Outlined social action — '↗ Share Vibe'",
+        "background": { "$value": "transparent" },
+        "color": { "$value": "{color.secondary.default}" },
+        "fontFamily": { "$value": "{typography.fontFamily.display}" },
+        "fontSize": { "$value": "13px" },
+        "fontWeight": { "$value": 600 },
+        "border": { "$value": "2px solid {color.secondary.default}" },
+        "borderRadius": { "$value": "6px" },
+        "padding": { "$value": "7px 16px" },
+        "letterSpacing": { "$value": "-0.01em" }
+      },
+      "vibe": {
+        "$description": "Rounded reaction button — '🔥 React'",
+        "background": { "$value": "{color.secondary.container-alpha}" },
+        "color": { "$value": "{color.secondary.default}" },
+        "border": { "$value": "1px solid {color.secondary.container}" },
+        "borderRadius": { "$value": "{radii.scale.pill}" },
+        "padding": { "$value": "8px 12px" },
+        "fontSize": { "$value": "13px" },
+        "gap": { "$value": "6px" }
+      }
+    },
+    "chip": {
+      "vibe-default": {
+        "$description": "Purple vibe chip — percentage scores, hashtags",
+        "background": { "$value": "{color.secondary.container}" },
+        "color": { "$value": "{color.secondary.on-container}" },
+        "fontFamily": { "$value": "{typography.fontFamily.display}" },
+        "fontSize": { "$value": "12px" },
+        "fontWeight": { "$value": 800 },
+        "borderRadius": { "$value": "{radii.scale.pill}" },
+        "padding": { "$value": "5px 12px" },
+        "gap": { "$value": "5px" }
+      },
+      "vibe-yellow": {
+        "$description": "Yellow vibe chip — star ratings",
+        "background": { "$value": "{color.primary.muted}" },
+        "color": { "$value": "{color.primary.default}" },
+        "border": { "$value": "1px solid {color.primary.container}" }
+      },
+      "vibe-teal": {
+        "$description": "Teal vibe chip — live indicators",
+        "background": { "$value": "{color.tertiary.muted}" },
+        "color": { "$value": "{color.tertiary.default}" },
+        "border": { "$value": "1px solid {color.tertiary.container}" }
+      },
+      "label-tag": {
+        "$description": "Label/tag chip — Video, Photo, etc.",
+        "fontFamily": { "$value": "{typography.fontFamily.mono}" },
+        "fontSize": { "$value": "11px" },
+        "letterSpacing": { "$value": "0.06em" },
+        "textTransform": { "$value": "uppercase" },
+        "background": { "$value": "{color.surface.mid}" },
+        "border": { "$value": "1px solid {color.semantic.outline-variant}" },
+        "borderRadius": { "$value": "{radii.scale.default}" },
+        "padding": { "$value": "4px 8px" },
+        "color": { "$value": "{color.semantic.on-surface-variant}" }
+      },
+      "label-tag-accent": {
+        "$description": "Accented label/tag chip — Trending Mashup",
+        "background": { "$value": "{color.primary.muted}" },
+        "border": { "$value": "1px solid {color.primary.container}" },
+        "color": { "$value": "{color.primary.default}" }
+      }
+    },
+    "input": {
+      "default": {
+        "$description": "Cyber input field with underline",
+        "background": { "$value": "{color.surface.mid}" },
+        "color": { "$value": "{color.semantic.on-surface}" },
+        "fontFamily": { "$value": "{typography.fontFamily.body}" },
+        "fontSize": { "$value": "14px" },
+        "borderBottom": { "$value": "2px solid {color.semantic.outline-variant}" },
+        "borderRadius": { "$value": "4px 4px 0 0" },
+        "padding": { "$value": "10px 12px" }
+      },
+      "focus": {
+        "$description": "Focus state — yellow border with glow",
+        "borderBottomColor": { "$value": "{color.primary.container}" }
+      }
+    },
+    "rating": {
+      "$description": "Community rating display",
+      "number": {
+        "fontFamily": { "$value": "{typography.fontFamily.display}" },
+        "fontSize": { "$value": "36px" },
+        "fontWeight": { "$value": 800 },
+        "color": { "$value": "{color.primary.container}" },
+        "lineHeight": { "$value": "1" }
+      },
+      "denominator": {
+        "fontFamily": { "$value": "{typography.fontFamily.display}" },
+        "fontSize": { "$value": "16px" },
+        "fontWeight": { "$value": 600 },
+        "color": { "$value": "{color.semantic.outline}" }
+      }
+    },
+    "progress": {
+      "track": {
+        "$description": "Progress bar track",
+        "height": { "$value": "2px" },
+        "background": { "$value": "{color.surface.high}" },
+        "borderRadius": { "$value": "1px" }
+      },
+      "fill-purple": {
+        "$description": "Default purple progress fill — engagement bars",
+        "background": { "$value": "{color.secondary.default}" }
+      },
+      "fill-teal": {
+        "$description": "Teal progress fill — playback, social trend segments",
+        "background": { "$value": "{color.tertiary.container}" }
+      }
+    },
+    "gradient-badge": {
+      "$description": "High-impact gradient badge — PREMIERE · PRO",
+      "background": { "$value": "{gradient.high-impact.value}" },
+      "borderRadius": { "$value": "{radii.scale.pill}" },
+      "padding": { "$value": "6px 16px" },
+      "fontFamily": { "$value": "{typography.fontFamily.display}" },
+      "fontSize": { "$value": "12px" },
+      "fontWeight": { "$value": 700 },
+      "color": { "$value": "{color.fixed.white}" }
+    }
+  }
+}

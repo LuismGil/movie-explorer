@@ -1,0 +1,121 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "Cyber-Social Cinema — Typography Tokens",
+  "typography": {
+    "fontFamily": {
+      "display": {
+        "$value": "'Sora', sans-serif",
+        "$type": "fontFamily",
+        "$description": "Display and headlines"
+      },
+      "body": {
+        "$value": "'Hanken Grotesk', sans-serif",
+        "$type": "fontFamily",
+        "$description": "Body text, reviews, descriptions"
+      },
+      "mono": {
+        "$value": "'JetBrains Mono', monospace",
+        "$type": "fontFamily",
+        "$description": "Meta data, labels, tags, technical info"
+      }
+    },
+    "fontImport": {
+      "$value": "https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Hanken+Grotesk:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap",
+      "$type": "other",
+      "$description": "Google Fonts import URL"
+    },
+    "scale": {
+      "display-xl": {
+        "$description": "Hero titles, splash screens",
+        "fontFamily": { "$value": "{typography.fontFamily.display}" },
+        "fontSize": { "$value": "80px", "$type": "dimension" },
+        "lineHeight": { "$value": "88px", "$type": "dimension" },
+        "fontWeight": { "$value": 800, "$type": "fontWeight" },
+        "letterSpacing": { "$value": "-0.04em", "$type": "dimension" }
+      },
+      "headline-lg": {
+        "$description": "Section headings, featured titles",
+        "fontFamily": { "$value": "{typography.fontFamily.display}" },
+        "fontSize": { "$value": "40px", "$type": "dimension" },
+        "lineHeight": { "$value": "48px", "$type": "dimension" },
+        "fontWeight": { "$value": 700, "$type": "fontWeight" },
+        "letterSpacing": { "$value": "-0.02em", "$type": "dimension" }
+      },
+      "headline-md": {
+        "$description": "Sub-section headings, card titles",
+        "fontFamily": { "$value": "{typography.fontFamily.display}" },
+        "fontSize": { "$value": "24px", "$type": "dimension" },
+        "lineHeight": { "$value": "32px", "$type": "dimension" },
+        "fontWeight": { "$value": 600, "$type": "fontWeight" },
+        "letterSpacing": { "$value": "0", "$type": "dimension" }
+      },
+      "body-lg": {
+        "$description": "Synopses, long descriptions, reviews",
+        "fontFamily": { "$value": "{typography.fontFamily.body}" },
+        "fontSize": { "$value": "18px", "$type": "dimension" },
+        "lineHeight": { "$value": "28px", "$type": "dimension" },
+        "fontWeight": { "$value": 400, "$type": "fontWeight" },
+        "letterSpacing": { "$value": "0", "$type": "dimension" }
+      },
+      "body-md": {
+        "$description": "User reviews, cast lists, synopsis, social captions",
+        "fontFamily": { "$value": "{typography.fontFamily.body}" },
+        "fontSize": { "$value": "16px", "$type": "dimension" },
+        "lineHeight": { "$value": "24px", "$type": "dimension" },
+        "fontWeight": { "$value": 400, "$type": "fontWeight" },
+        "letterSpacing": { "$value": "0", "$type": "dimension" }
+      },
+      "label-md": {
+        "$description": "Meta labels, tags, timestamps, categories",
+        "fontFamily": { "$value": "{typography.fontFamily.mono}" },
+        "fontSize": { "$value": "14px", "$type": "dimension" },
+        "lineHeight": { "$value": "20px", "$type": "dimension" },
+        "fontWeight": { "$value": 500, "$type": "fontWeight" },
+        "letterSpacing": { "$value": "0.05em", "$type": "dimension" },
+        "textTransform": { "$value": "uppercase" }
+      },
+      "vibe-rating": {
+        "$description": "Vibe score chips, reaction percentages",
+        "fontFamily": { "$value": "{typography.fontFamily.display}" },
+        "fontSize": { "$value": "14px", "$type": "dimension" },
+        "lineHeight": { "$value": "14px", "$type": "dimension" },
+        "fontWeight": { "$value": 800, "$type": "fontWeight" },
+        "letterSpacing": { "$value": "0", "$type": "dimension" }
+      }
+    },
+    "component": {
+      "button": {
+        "$description": "Button text style",
+        "fontFamily": { "$value": "{typography.fontFamily.display}" },
+        "fontSize": { "$value": "13px", "$type": "dimension" },
+        "fontWeight": { "$value": 700, "$type": "fontWeight" },
+        "letterSpacing": { "$value": "-0.01em", "$type": "dimension" }
+      },
+      "chip": {
+        "$description": "Vibe chip text style",
+        "fontFamily": { "$value": "{typography.fontFamily.display}" },
+        "fontSize": { "$value": "12px", "$type": "dimension" },
+        "fontWeight": { "$value": 800, "$type": "fontWeight" }
+      },
+      "input": {
+        "$description": "Input field text style",
+        "fontFamily": { "$value": "{typography.fontFamily.body}" },
+        "fontSize": { "$value": "14px", "$type": "dimension" },
+        "fontWeight": { "$value": 400, "$type": "fontWeight" }
+      },
+      "rating-large": {
+        "$description": "Large community rating number",
+        "fontFamily": { "$value": "{typography.fontFamily.display}" },
+        "fontSize": { "$value": "36px", "$type": "dimension" },
+        "fontWeight": { "$value": 800, "$type": "fontWeight" },
+        "lineHeight": { "$value": "1", "$type": "dimension" }
+      },
+      "rating-denom": {
+        "$description": "Rating denominator ( / 10 )",
+        "fontFamily": { "$value": "{typography.fontFamily.display}" },
+        "fontSize": { "$value": "16px", "$type": "dimension" },
+        "fontWeight": { "$value": 600, "$type": "fontWeight" }
+      }
+    }
+  }
+}

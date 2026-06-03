@@ -1,0 +1,27 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "Cyber-Social Cinema — Gradient Tokens",
+  "gradient": {
+    "high-impact": {
+      "$description": "High impact only — premiere badges, pro labels. Use sparingly.",
+      "value": {
+        "$value": "linear-gradient(135deg, #602B9D, #F5C518)",
+        "$type": "gradient"
+      },
+      "angle": {
+        "$value": "135deg",
+        "$type": "dimension"
+      },
+      "stops": [
+        {
+          "color": "#602B9D",
+          "position": "0%"
+        },
+        {
+          "color": "#F5C518",
+          "position": "100%"
+        }
+      ]
+    }
+  }
+}

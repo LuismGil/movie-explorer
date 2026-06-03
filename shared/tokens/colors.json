@@ -1,0 +1,180 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "Cyber-Social Cinema — Color Tokens",
+  "color": {
+    "primary": {
+      "$description": "Primary palette — Electric Yellow family",
+      "default": {
+        "$value": "#FFE5A0",
+        "$type": "color",
+        "$description": "Yellow Soft — primary text accents, section titles"
+      },
+      "container": {
+        "$value": "#F5C518",
+        "$type": "color",
+        "$description": "Electric Yellow — CTA buttons, ratings, highlights"
+      },
+      "on-container": {
+        "$value": "#241A00",
+        "$type": "color",
+        "$description": "Dark text on primary-container backgrounds"
+      },
+      "muted": {
+        "$value": "#3D2F00",
+        "$type": "color",
+        "$description": "Dark yellow background for yellow vibe chips"
+      }
+    },
+    "secondary": {
+      "$description": "Secondary palette — Purple family",
+      "default": {
+        "$value": "#DAB9FF",
+        "$type": "color",
+        "$description": "Neon Purple — social features, share buttons, progress fills"
+      },
+      "container": {
+        "$value": "#602B9D",
+        "$type": "color",
+        "$description": "Deep Purple — vibe chips background, gradient start"
+      },
+      "on-container": {
+        "$value": "#EEDBFF",
+        "$type": "color",
+        "$description": "Light text on secondary-container backgrounds"
+      },
+      "container-alpha": {
+        "$value": "rgba(96, 43, 157, 0.3)",
+        "$type": "color",
+        "$description": "Translucent purple for vibe reaction buttons"
+      }
+    },
+    "tertiary": {
+      "$description": "Tertiary palette — Teal/Cyan family",
+      "default": {
+        "$value": "#55FFEA",
+        "$type": "color",
+        "$description": "Cyber Teal — live indicators, accent labels"
+      },
+      "container": {
+        "$value": "#23E2CE",
+        "$type": "color",
+        "$description": "Teal Container — playback progress, trend segments"
+      },
+      "muted": {
+        "$value": "#003731",
+        "$type": "color",
+        "$description": "Dark teal background for teal vibe chips"
+      }
+    },
+    "surface": {
+      "$description": "Surface elevation scale — darkest to lightest",
+      "lowest": {
+        "$value": "#0E0E0E",
+        "$type": "color",
+        "$description": "Obsidian — deepest background, behind content (Layer 0)"
+      },
+      "base": {
+        "$value": "#131313",
+        "$type": "color",
+        "$description": "App background, page canvas"
+      },
+      "low": {
+        "$value": "#1C1B1B",
+        "$type": "color",
+        "$description": "Cards, panels, swatch info areas (Layer 1)"
+      },
+      "mid": {
+        "$value": "#201F1F",
+        "$type": "color",
+        "$description": "Input backgrounds, nested containers"
+      },
+      "high": {
+        "$value": "#2A2A2A",
+        "$type": "color",
+        "$description": "Active/hover states, elevated elements (Layer 2)"
+      }
+    },
+    "semantic": {
+      "$description": "Semantic text and border colors",
+      "on-surface": {
+        "$value": "#E5E2E1",
+        "$type": "color",
+        "$description": "Body text — primary readable content"
+      },
+      "on-surface-variant": {
+        "$value": "#D1C5AC",
+        "$type": "color",
+        "$description": "Secondary text — descriptions, icons, captions"
+      },
+      "outline": {
+        "$value": "#9A9078",
+        "$type": "color",
+        "$description": "Borders, muted labels, meta text"
+      },
+      "outline-variant": {
+        "$value": "#4E4633",
+        "$type": "color",
+        "$description": "Dividers, subtle separators"
+      },
+      "error": {
+        "$value": "#FFB4AB",
+        "$type": "color",
+        "$description": "Error states — validation, alerts"
+      }
+    },
+    "fixed": {
+      "$description": "Fixed utility colors",
+      "white": {
+        "$value": "#FFFFFF",
+        "$type": "color"
+      },
+      "black": {
+        "$value": "#000000",
+        "$type": "color"
+      }
+    },
+    "alpha": {
+      "$description": "Alpha/opacity overlays",
+      "white-4": {
+        "$value": "rgba(255, 255, 255, 0.04)",
+        "$type": "color",
+        "$description": "Subtle card borders"
+      },
+      "white-6": {
+        "$value": "rgba(255, 255, 255, 0.06)",
+        "$type": "color",
+        "$description": "Swatch and elevation borders"
+      },
+      "white-8": {
+        "$value": "rgba(255, 255, 255, 0.08)",
+        "$type": "color",
+        "$description": "Glass overlay borders"
+      },
+      "white-10": {
+        "$value": "rgba(255, 255, 255, 0.10)",
+        "$type": "color",
+        "$description": "Card layer borders"
+      },
+      "white-12": {
+        "$value": "rgba(255, 255, 255, 0.12)",
+        "$type": "color",
+        "$description": "Active element borders"
+      },
+      "obsidian-80": {
+        "$value": "rgba(19, 19, 19, 0.8)",
+        "$type": "color",
+        "$description": "Glass overlay background — navbars, modals"
+      },
+      "purple-glow-15": {
+        "$value": "rgba(218, 185, 255, 0.15)",
+        "$type": "color",
+        "$description": "Purple glow bloom shadow"
+      },
+      "purple-border-40": {
+        "$value": "rgba(218, 185, 255, 0.4)",
+        "$type": "color",
+        "$description": "Active hover purple border"
+      }
+    }
+  }
+}

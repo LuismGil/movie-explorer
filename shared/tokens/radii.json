@@ -1,0 +1,70 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "Cyber-Social Cinema — Border Radius Tokens",
+  "radii": {
+    "scale": {
+      "sm": {
+        "$value": "2px",
+        "$type": "dimension",
+        "rem": "0.125rem"
+      },
+      "default": {
+        "$value": "4px",
+        "$type": "dimension",
+        "rem": "0.25rem"
+      },
+      "md": {
+        "$value": "8px",
+        "$type": "dimension",
+        "rem": "0.5rem"
+      },
+      "lg": {
+        "$value": "12px",
+        "$type": "dimension",
+        "rem": "0.75rem"
+      },
+      "xl": {
+        "$value": "16px",
+        "$type": "dimension",
+        "rem": "1rem"
+      },
+      "2xl": {
+        "$value": "24px",
+        "$type": "dimension",
+        "rem": "1.5rem"
+      },
+      "pill": {
+        "$value": "9999px",
+        "$type": "dimension",
+        "$description": "Fully rounded / capsule shape"
+      }
+    },
+    "component": {
+      "$description": "Recommended radius per component type",
+      "button": {
+        "$value": "{radii.scale.md}",
+        "$description": "Buttons and inputs → 8px (0.5rem)"
+      },
+      "input": {
+        "$value": "{radii.scale.default}",
+        "$description": "Input top corners → 4px (0.25rem) with flat bottom"
+      },
+      "card": {
+        "$value": "{radii.scale.md}",
+        "$description": "Standard cards and panels → 8px"
+      },
+      "bento": {
+        "$value": "{radii.scale.xl}",
+        "$description": "Bento grid cards → 16px (1rem)"
+      },
+      "chip": {
+        "$value": "{radii.scale.pill}",
+        "$description": "Vibe chips and badges → pill (9999px)"
+      },
+      "media": {
+        "$value": "inherit",
+        "$description": "Media (img/video) follows container radius"
+      }
+    }
+  }
+}

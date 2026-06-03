@@ -1,0 +1,67 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "Cyber-Social Cinema — Grid & Layout Tokens",
+  "grid": {
+    "desktop": {
+      "$description": "Desktop layout grid",
+      "columns": {
+        "$value": 12,
+        "$type": "number"
+      },
+      "margin": {
+        "$value": "64px",
+        "$type": "dimension"
+      },
+      "gutter": {
+        "$value": "16px",
+        "$type": "dimension"
+      }
+    },
+    "mobile": {
+      "$description": "Mobile layout grid",
+      "columns": {
+        "$value": 4,
+        "$type": "number"
+      },
+      "margin": {
+        "$value": "24px",
+        "$type": "dimension"
+      },
+      "gutter": {
+        "$value": "16px",
+        "$type": "dimension"
+      }
+    },
+    "bento": {
+      "$description": "Bento Box modular layout — masonry rhythm",
+      "spans": {
+        "small": {
+          "$value": 3,
+          "$type": "number",
+          "$description": "3-column span"
+        },
+        "medium": {
+          "$value": 6,
+          "$type": "number",
+          "$description": "6-column span — hero content"
+        },
+        "full": {
+          "$value": 12,
+          "$type": "number",
+          "$description": "12-column full-width span"
+        }
+      }
+    },
+    "aspectRatio": {
+      "vertical-video": {
+        "$value": "9/16",
+        "$type": "other",
+        "$description": "Vertical video in bento slots"
+      }
+    },
+    "philosophy": {
+      "$value": "Bento Box modular with masonry rhythm",
+      "$type": "other"
+    }
+  }
+}
