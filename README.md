@@ -64,15 +64,20 @@ The application is currently configured as a **Client-Side Single Page Applicati
 
 The application follows a traditional Vite-based client-only SPA flow. State management, routing, and data operations are processed exclusively within the user's browser:
 
-```
-[ Client Browser ]
-  ├── React Components (Home, MovieDetails, Watchlist)
-  ├── React Context (WatchlistContext) ──> [ Browser localStorage ]
-  └── Axios Services (tmdb.ts)
-        │
-        └── (Direct HTTP Requests with API Key in URL params)
-              ▼
-       [ TMDB API Server ]
+```mermaid
+flowchart TD
+  Browser["Client Browser"]
+  Components["React Components<br/>Home / MovieDetails / Watchlist"]
+  Context["WatchlistContext"]
+  Storage["Browser localStorage"]
+  Service["Axios TMDB Service<br/>src/services/tmdb.ts"]
+  TMDB["TMDB API Server"]
+
+  Browser --> Components
+  Components --> Context
+  Context --> Storage
+  Components --> Service
+  Service -->|"Direct HTTP requests<br/>API key in URL params"| TMDB
 ```
 
 ---
@@ -234,24 +239,33 @@ Current test suites cover:
 Once migrated to Next.js App Router and integrated with the AI-native layers, the target system architecture will flow securely as follows:
 
 ```
-[ Client Browser ]
-      │
-      │ (Secure Next.js Routes / Session Auth)
-      ▼
-[ Next.js Server / App Router ]
-  ├── React Server Components (RSC)
-  ├── Route Handlers (API Proxy) ──> [ Hides TMDB API Key ]
-  ├── Semantic Cache
-  └── Vercel AI SDK Integration
-        │
-        ├── (Secure Server Fetching) ──> [ TMDB API Server ]
-        │
-        └── (Secure Agent Communication)
-              ▼
-   [ Standalone MCP Server ]
-     ├── Quality Agent
-     ├── Search Agent
-     └── Discovery Orchestrator
+flowchart TD
+  User["User"]
+  UI["Next.js App Router UI<br/>React Server Components + Client Islands"]
+  Server["Next.js Server Layer<br/>Route Handlers / Server Actions"]
+  TMDBProxy["Server-side TMDB Access<br/>API key hidden from browser"]
+  Cache["Semantic Cache"]
+  AI["Vercel AI SDK"]
+  Orchestrator["Orchestrator Agent<br/>intent + planning"]
+  Search["Search Agent<br/>tool execution"]
+  Quality["Quality / Safety Agent<br/>validation before UI"]
+  MCP["Standalone MCP Server"]
+  Tools["TMDB Tools<br/>search_movies / get_movie_details / get_recommendations / get_trending / get_credits"]
+  TMDB["TMDB API"]
+
+  User --> UI
+  UI --> Server
+  Server --> TMDBProxy
+  TMDBProxy --> TMDB
+  Server --> Cache
+  Server --> AI
+  AI --> Orchestrator
+  Orchestrator --> Search
+  Search --> MCP
+  MCP --> Tools
+  Tools --> TMDB
+  Search --> Quality
+  Quality --> UI
 ```
 
 ---
