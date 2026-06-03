@@ -1,7 +1,8 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, beforeEach } from 'vitest';
-import { WatchlistProvider, useWatchlist } from '../WatchlistContext';
+import { useWatchlist } from '../WatchlistContext';
+import { WatchlistProvider } from '../WatchlistProvider';
 import type { MovieListItem } from '../../types/movie';
 
 const sampleMovie: MovieListItem = {

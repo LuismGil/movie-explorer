@@ -15,13 +15,13 @@ const TMDB_POSTER_BASE = 'https://image.tmdb.org/t/p/w500';
 export function MovieDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const { data, videos, cast, director, similar, isLoading, error } = useMovieDetails(id);
+  const { isInWatchlist, toggleWatchlist } = useWatchlist();
 
   if (isLoading) return <LoadingSpinner />;
   if (error || !data) return <ErrorState message={error ?? 'Filme não encontrado.'} />;
 
   const backdropUrl = data.backdrop_path ? `${TMDB_IMAGE_BASE}${data.backdrop_path}` : null;
   const posterUrl = data.poster_path ? `${TMDB_POSTER_BASE}${data.poster_path}` : null;
-  const { isInWatchlist, toggleWatchlist } = useWatchlist();
   const inWatchlist = isInWatchlist(data.id);
   const compactMovie: MovieListItem = {
     id: data.id,

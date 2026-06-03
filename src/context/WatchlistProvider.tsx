@@ -1,11 +1,6 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { type MovieListItem } from '../types/movie';
-
-type WatchlistContextValue = {
-  watchlist: MovieListItem[];
-  isInWatchlist: (id: number) => boolean;
-  toggleWatchlist: (movie: MovieListItem) => void;
-};
+import { WatchlistContext } from './WatchlistContext';
 
 type WatchlistProviderProps = {
   children: ReactNode;
@@ -13,24 +8,22 @@ type WatchlistProviderProps = {
 
 const WATCHLIST_STORAGE_KEY = 'movie-explorer:watchlist';
 
-export const WatchlistContext = createContext<WatchlistContextValue | undefined>(undefined);
-
 export function WatchlistProvider({ children }: WatchlistProviderProps) {
-  const [watchlist, setWatchlist] = useState<MovieListItem[]>([]);
-
-  useEffect(() => {
-    const stored = localStorage.getItem(WATCHLIST_STORAGE_KEY);
-    if (!stored) return;
-
+  const [watchlist, setWatchlist] = useState<MovieListItem[]>(() => {
+    if (typeof window === 'undefined') return [];
     try {
-      const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed)) {
-        setWatchlist(parsed);
+      const stored = window.localStorage.getItem(WATCHLIST_STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          return parsed;
+        }
       }
     } catch {
       // ignore malformed storage
     }
-  }, []);
+    return [];
+  });
 
   useEffect(() => {
     localStorage.setItem(WATCHLIST_STORAGE_KEY, JSON.stringify(watchlist));
@@ -51,12 +44,4 @@ export function WatchlistProvider({ children }: WatchlistProviderProps) {
       {children}
     </WatchlistContext.Provider>
   );
-}
-
-export function useWatchlist() {
-  const context = useContext(WatchlistContext);
-  if (!context) {
-    throw new Error('useWatchlist must be used within WatchlistProvider');
-  }
-  return context;
 }

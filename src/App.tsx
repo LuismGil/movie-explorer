@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import Header from './components/Header';
-import { WatchlistProvider } from './context/WatchlistContext';
+import { WatchlistProvider } from './context/WatchlistProvider';
 
 export default function App() {
   return (

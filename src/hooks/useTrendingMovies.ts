@@ -31,7 +31,7 @@ export function useTrendingMovies(
         if (!isMounted) return;
         setData(response.results);
         setTotalPages(response.total_pages);
-      } catch (err) {
+      } catch {
         if (!isMounted) return;
         setError('Nao foi possivel carregar os filmes em alta.');
         setData([]);

@@ -64,7 +64,7 @@ export function useMovieDetails(id?: string): UseMovieDetailsResult {
         setCast(mainCast);
         setDirector(directorName);
         setSimilar(similarResponse.results);
-      } catch (err) {
+      } catch {
         if (!isMounted) return;
         setError('Não foi possível carregar os detalhes do filme.');
         setData(null);

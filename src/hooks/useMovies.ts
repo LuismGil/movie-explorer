@@ -35,7 +35,7 @@ export function useMovies(query: string): UseMoviesResult {
         if (!isMounted) return;
         setData(response.results);
         setTotalPages(response.total_pages);
-      } catch (err) {
+      } catch {
         if (!isMounted) return;
         setError('Não foi possível carregar os filmes.');
         setData([]);

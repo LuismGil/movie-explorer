@@ -3,7 +3,8 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { describe, expect, it, beforeEach } from 'vitest';
 import { MovieCard } from '../MovieCard';
-import { WatchlistProvider, useWatchlist } from '../../context/WatchlistContext';
+import { useWatchlist } from '../../context/WatchlistContext';
+import { WatchlistProvider } from '../../context/WatchlistProvider';
 import type { MovieListItem } from '../../types/movie';
 
 const sampleMovie: MovieListItem = {
