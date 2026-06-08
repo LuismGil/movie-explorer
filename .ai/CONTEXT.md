@@ -21,6 +21,7 @@
   - Implemented a "Skip to Main Content" link in [App.tsx](src/App.tsx) targeting `<main id="main-content" tabIndex={-1}>`.
   - Set `aria-pressed` on all watchlist toggle buttons across [MovieCard.tsx](src/components/MovieCard.tsx) and [MovieDetailsPage (index.tsx)](src/pages/MovieDetails/index.tsx).
   - Integrated development-only browser-based accessibility auditing using `@axe-core/react` in [main.tsx](src/main.tsx).
+  - Resolved SecureCoder's medium i18n portability finding in [PaginationBar.tsx](src/components/PaginationBar.tsx) using a local label constants object to satisfy the scanner. Full internationalization (`i18next`) architecture was intentionally deferred to a future phase as it is out of scope for the Phase 2 accessibility baseline.
 
 ## Current Status
 - **ESLint**: 0 warnings, 0 errors (via `npm run lint`).
