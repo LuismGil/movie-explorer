@@ -50,7 +50,7 @@ describe('MovieCard', () => {
     expect(screen.getByTestId('count')).toHaveTextContent('0');
     expect(screen.getByTestId('path')).toHaveTextContent('/');
 
-    await user.click(screen.getByRole('button', { name: 'Adicionar à watchlist' }));
+    await user.click(screen.getByRole('button', { name: 'Add to watchlist' }));
 
     expect(screen.getByTestId('count')).toHaveTextContent('1');
     expect(screen.getByTestId('path')).toHaveTextContent('/');

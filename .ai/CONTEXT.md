@@ -9,8 +9,21 @@
   - Resolved all `@typescript-eslint/no-unused-vars` catch-block variable warnings.
   - Added typecheck script to [package.json](package.json).
 
+- **Phase 2: Accessibility Baseline (WCAG 2.1 AA)** (Completed on 2026-06-08)
+  - Refactored [MovieCard.tsx](src/components/MovieCard.tsx) to separate the watchlist `<button>` and `<Link>` wrapper into sibling elements under a relative container, eliminating nested interactive controls.
+  - Added focus-visible states (`focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none`) to all interactive elements to support visible focus rings.
+  - Added `aria-hidden="true"` to decorative emoji in [Header.tsx](src/components/Header.tsx).
+  - Implemented `aria-current="page"` dynamically on navigation links in [Header.tsx](src/components/Header.tsx) using `useLocation`.
+  - Added associated hidden label `<label htmlFor="movie-search">` to the input in [SearchBar.tsx](src/components/SearchBar.tsx).
+  - Added target page number to pagination button labels (`aria-label={`Go to page ${page}`}`) in [PaginationBar.tsx](src/components/PaginationBar.tsx).
+  - Set `role="status"` and `aria-live="polite"` with visually-hidden loader text in [LoadingSpinner.tsx](src/components/LoadingSpinner.tsx).
+  - Set language to `pt-BR` in [index.html](index.html).
+  - Implemented a "Skip to Main Content" link in [App.tsx](src/App.tsx) targeting `<main id="main-content" tabIndex={-1}>`.
+  - Set `aria-pressed` on all watchlist toggle buttons across [MovieCard.tsx](src/components/MovieCard.tsx) and [MovieDetailsPage (index.tsx)](src/pages/MovieDetails/index.tsx).
+  - Integrated development-only browser-based accessibility auditing using `@axe-core/react` in [main.tsx](src/main.tsx).
+
 ## Current Status
-- **ESLint**: 0 warnings, 0 errors.
+- **ESLint**: 0 warnings, 0 errors (via `npm run lint`).
 - **TypeScript**: 0 compiler errors (via `npm run typecheck`).
-- **Tests**: All unit tests pass successfully.
-- **Git Commit**: `fix: stabilize codebase — lint, typecheck, hooks, context refactor` (commit `b20f25b`).
+- **Tests**: All unit tests pass successfully (via `npm run test`).
+- **A11y**: 0 critical/serious `axe-core` violations. Dynamic development audits enabled.

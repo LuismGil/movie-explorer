@@ -66,7 +66,7 @@ export function MovieDetailsPage() {
             </div>
             <Link
               to="/"
-              className="mt-4 inline-flex items-center gap-2 rounded-full bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:-translate-y-0.5 hover:bg-slate-700"
+              className="mt-4 inline-flex items-center gap-2 rounded-full bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:-translate-y-0.5 hover:bg-slate-700 focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
             >
               ← Voltar
             </Link>
@@ -84,7 +84,8 @@ export function MovieDetailsPage() {
               <button
                 type="button"
                 onClick={() => toggleWatchlist(compactMovie)}
-                className="inline-flex items-center gap-2 rounded-full border border-slate-600 px-4 py-2 text-sm font-medium text-slate-100 hover:border-sky-500 hover:text-sky-400"
+                aria-pressed={inWatchlist}
+                className="inline-flex items-center gap-2 rounded-full border border-slate-600 px-4 py-2 text-sm font-medium text-slate-100 hover:border-sky-500 hover:text-sky-400 focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
               >
                 {inWatchlist ? 'Remover da Watchlist' : 'Adicionar à Watchlist'}
               </button>
@@ -116,7 +117,7 @@ export function MovieDetailsPage() {
                 href={data.homepage}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-sky-500 px-4 py-2 text-sm font-semibold text-slate-950 shadow-lg shadow-sky-500/30 transition hover:-translate-y-0.5 hover:bg-sky-400"
+                className="inline-flex items-center gap-2 rounded-full bg-sky-500 px-4 py-2 text-sm font-semibold text-slate-950 shadow-lg shadow-sky-500/30 transition hover:-translate-y-0.5 hover:bg-sky-400 focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
               >
                 Visitar site oficial ↗
               </a>

@@ -11,7 +11,8 @@ export function PaginationBar({ page, totalPages, setPage }: PaginationBarProps)
         type="button"
         onClick={() => setPage(page - 1)}
         disabled={page === 1}
-        className="rounded-full border border-slate-700 px-4 py-2 text-sm text-slate-100 disabled:opacity-40"
+        aria-label={`Go to page ${page - 1}`}
+        className="rounded-full border border-slate-700 px-4 py-2 text-sm text-slate-100 disabled:opacity-40 focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
       >
         Anterior
       </button>
@@ -22,7 +23,8 @@ export function PaginationBar({ page, totalPages, setPage }: PaginationBarProps)
         type="button"
         onClick={() => setPage(page + 1)}
         disabled={page === totalPages}
-        className="rounded-full border border-slate-700 px-4 py-2 text-sm text-slate-100 disabled:opacity-40"
+        aria-label={`Go to page ${page + 1}`}
+        className="rounded-full border border-slate-700 px-4 py-2 text-sm text-slate-100 disabled:opacity-40 focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
       >
         Próxima
       </button>

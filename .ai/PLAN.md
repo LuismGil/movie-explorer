@@ -67,31 +67,31 @@ npm run test        # all existing tests pass
 ### Tasks
 
 #### MovieCard.tsx
-- [ ] **2.1** Extract the watchlist `<button>` from inside the `<Link>` wrapper. Use CSS `position: absolute; z-index: 10` on the button and `position: relative` on the card container so both elements are siblings in the DOM but visually overlapping.
-- [ ] **2.2** Add `focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none` to every interactive element in the card (the `<Link>` and the watchlist `<button>`).
+- [x] **2.1** Extract the watchlist `<button>` from inside the `<Link>` wrapper. Use CSS `position: absolute; z-index: 10` on the button and `position: relative` on the card container so both elements are siblings in the DOM but visually overlapping.
+- [x] **2.2** Add `focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none` to every interactive element in the card (the `<Link>` and the watchlist `<button>`).
 
 #### Header.tsx
-- [ ] **2.3** Add `aria-hidden="true"` to the `🎬` emoji span.
-- [ ] **2.4** Add `aria-current="page"` to the active `<NavLink>`. Use the `NavLink` `className` callback: `({ isActive }) => isActive ? "... aria-current" : "..."` — note this requires the `aria-current` prop, not the class. Set it conditionally: `aria-current={isActive ? "page" : undefined}`.
+- [x] **2.3** Add `aria-hidden="true"` to the `🎬` emoji span.
+- [x] **2.4** Add `aria-current="page"` to the active `<NavLink>`. Use the `NavLink` `className` callback: `({ isActive }) => isActive ? "... aria-current" : "..."` — note this requires the `aria-current` prop, not the class. Set it conditionally: `aria-current={isActive ? "page" : undefined}`.
 
 #### Home/index.tsx (SearchBar component after 1.7)
-- [ ] **2.5** Add `<label htmlFor="movie-search" className="sr-only">Search movies</label>` paired with `id="movie-search"` on the `<input>`. Do NOT use only `aria-label` — a visible/hidden `<label>` is preferred for WCAG 2.1 SC 1.3.1.
-- [ ] **2.6** Add `aria-label={`Go to page ${page}`}` to each pagination `<button>`.
+- [x] **2.5** Add `<label htmlFor="movie-search" className="sr-only">Search movies</label>` paired with `id="movie-search"` on the `<input>`. Do NOT use only `aria-label` — a visible/hidden `<label>` is preferred for WCAG 2.1 SC 1.3.1.
+- [x] **2.6** Add `aria-label={`Go to page ${page}`}` to each pagination `<button>`.
 
 #### LoadingSpinner.tsx
-- [ ] **2.7** Add `role="status"` and `aria-live="polite"` to the spinner container. Add a visually-hidden `<span className="sr-only">Loading…</span>` inside.
+- [x] **2.7** Add `role="status"` and `aria-live="polite"` to the spinner container. Add a visually-hidden `<span className="sr-only">Loading…</span>` inside.
 
 #### Global / Layout
-- [ ] **2.8** Set `lang="pt-BR"` on the `<html>` element in `index.html` (Vite) or `app/layout.tsx` (post-migration).
-- [ ] **2.9** Add a "Skip to Main Content" anchor as the very first child of `<body>`:
+- [x] **2.8** Set `lang="pt-BR"` on the `<html>` element in `index.html` (Vite) or `app/layout.tsx` (post-migration).
+- [x] **2.9** Add a "Skip to Main Content" anchor as the very first child of `<body>`:
   ```html
   <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-sky-500 focus:text-white focus:rounded">
     Skip to Main Content
   </a>
   ```
   Add `id="main-content"` to the `<main>` element.
-- [ ] **2.10** Add `aria-pressed={isInWatchlist}` to all watchlist toggle buttons.
-- [ ] **2.11** Install `axe-core` and `@axe-core/react` as dev dependencies. Add a dev-mode automatic a11y overlay (axe runs in the browser console in development, not production).
+- [x] **2.10** Add `aria-pressed={isInWatchlist}` to all watchlist toggle buttons.
+- [x] **2.11** Install `axe-core` and `@axe-core/react` as dev dependencies. Add a dev-mode automatic a11y overlay (axe runs in the browser console in development, not production).
 
 ### Phase 2 Verification
 ```bash
