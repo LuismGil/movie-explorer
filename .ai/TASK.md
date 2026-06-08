@@ -1,24 +1,33 @@
-## Phase 1 — Stabilization & Code Quality
+## Phase 2 — Accessibility Baseline (WCAG 2.1 AA)
 
-> **Goal**: Zero ESLint errors, zero TypeScript compiler errors, clean hooks, scripts ready for CI.
+> **Goal**: Zero `axe-core` critical/serious violations. Full keyboard and screen-reader support.
 
 ### Tasks
 
-- [ ] **1.1** Run `npm run lint` and document every error/warning in a scratch list. Do not fix yet — inventory first.
-- [ ] **1.2** Fix all ESLint errors. Priority order: `react-hooks/rules-of-hooks` violations → `no-unused-vars` → remaining warnings.
-- [ ] **1.3** Resolve the React Hooks rule violation in `MovieDetailsPage` (hooks called conditionally or after early returns).
-- [ ] **1.4** Refactor `WatchlistContext.tsx`: replace eager `useState(JSON.parse(localStorage…))` with lazy initializer `useState(() => JSON.parse(…))` to prevent SSR hydration mismatch.
-- [ ] **1.5** Add `"typecheck": "tsc --noEmit"` to `package.json` scripts.
-- [ ] **1.6** Run `npm run typecheck` — fix all type errors until exit code 0.
-- [ ] **1.7** Reduce `Home/index.tsx` from 347 lines: extract `<MovieGrid>`, `<PaginationBar>`, and `<SearchBar>` as standalone components. Each file must be < 150 lines after extraction.
-- [ ] **1.8** Replace the 14-item `useMemo` dependency array with a properly scoped derived computation or split into smaller memos. (These will be removed entirely in Phase 5, but must not cause bugs now.)
+- [ ] **2.1** Extract the watchlist `<button>` from inside the `<Link>` wrapper in `MovieCard.tsx`. Use CSS `position: absolute; z-index: 10` on the button and `position: relative` on the card container so both elements are siblings in the DOM but visually overlapping.
+- [ ] **2.2** Add `focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none` to every interactive element in the card (the `<Link>` and the watchlist `<button>`).
+- [ ] **2.3** Add `aria-hidden="true"` to the `🎬` emoji span in `Header.tsx`.
+- [ ] **2.4** Add `aria-current="page"` to the active `<NavLink>` in `Header.tsx`. Use the `NavLink` `className` callback: `({ isActive }) => isActive ? "... aria-current" : "..."` — note this requires the `aria-current` prop, not the class. Set it conditionally: `aria-current={isActive ? "page" : undefined}`.
+- [ ] **2.5** Add `<label htmlFor="movie-search" className="sr-only">Search movies</label>` paired with `id="movie-search"` on the `<input>` inside the `SearchBar` component. Do NOT use only `aria-label` — a visible/hidden `<label>` is preferred for WCAG 2.1 SC 1.3.1.
+- [ ] **2.6** Add `aria-label={`Go to page ${page}`}` to each pagination `<button>` in `PaginationBar`.
+- [ ] **2.7** Add `role="status"` and `aria-live="polite"` to the spinner container in `LoadingSpinner.tsx`. Add a visually-hidden `<span className="sr-only">Loading…</span>` inside.
+- [ ] **2.8** Set `lang="pt-BR"` on the `<html>` element in `index.html`.
+- [ ] **2.9** Add a "Skip to Main Content" anchor as the very first child of `<body>` in `index.html`:
+  ```html
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-sky-500 focus:text-white focus:rounded">
+    Skip to Main Content
+  </a>
+  ```
+  Add `id="main-content"` to the `<main>` element in the layout.
+- [ ] **2.10** Add `aria-pressed={isInWatchlist}` to all watchlist toggle buttons.
+- [ ] **2.11** Install `axe-core` and `@axe-core/react` as dev dependencies. Add a dev-mode automatic a11y overlay (axe runs in the browser console in development, not production).
 
-### Phase 1 Verification
+### Phase 2 Verification
 ```bash
-npm run lint        # exit 0, zero errors
-npm run typecheck   # exit 0, zero errors
-npm run test        # all existing tests pass
+npm run lint        # exit 0
+npm run typecheck   # exit 0
+npm run test        # pass
+# Manual: Tab through entire app — every interactive element must show a visible focus ring
+# Manual: Run axe DevTools browser extension on Home, MovieDetail, Watchlist — 0 critical/serious
 ```
-**Commit**: `fix: stabilize codebase — lint, typecheck, hooks, context refactor`
-
----
+**Commit**: `fix(a11y): achieve WCAG 2.1 AA baseline — nested elements, ARIA, skip nav, lang`
