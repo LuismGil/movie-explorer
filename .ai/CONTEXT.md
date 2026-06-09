@@ -38,6 +38,7 @@
   - No `VITE_TMDB_API_KEY` is required by the Docker runtime.
 
 ## Current Status
+- **Active Phase**: Phase 5 — Next.js App Router Migration (Migration has not yet started; task tracker and context updated).
 - **ESLint**: 0 warnings, 0 errors (via `npm run lint`).
 - **TypeScript**: 0 compiler errors (via `npm run typecheck`).
 - **Tests**: All unit tests pass successfully (via `npm run test -- --run`).

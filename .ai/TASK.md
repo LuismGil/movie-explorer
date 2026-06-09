@@ -1,73 +1,82 @@
-# Phase 4 — DevOps Baseline
+# Phase 5 — Next.js App Router Migration
 
 ## Active Phase
-- Phase 4 — DevOps Baseline
+- Phase 5 — Next.js App Router Migration
 
 ## Previous Completed Phases
 - [x] Phase 1 — Stabilization & Code Quality
 - [x] Phase 2 — Accessibility Baseline (WCAG 2.1 AA)
 - [x] Phase 3 — Security Baseline
+- [x] Phase 4 — DevOps Baseline
 
 ## Current Goal
-- Add reproducible production builds with Docker.
-- Add CI/CD pipeline with GitHub Actions.
-- Gate every push/PR with lint, typecheck, tests, accessibility checks, Lighthouse budgets, and Docker build validation.
+- Migrate the current Vite SPA to Next.js App Router while preserving Phases 1–4: accessibility, server-side TMDB security, tests, Docker, and CI.
 
 ## Tasks
 
-### Docker
-- [x] **4.1** Create a multi-stage `Dockerfile`.
-  - Stage 1: `base` using `node:20-alpine`.
-  - Stage 2: `builder`, copy source and run `npm run build`.
-  - Stage 3: `runner`, preferably `gcr.io/distroless/nodejs20-debian12`.
-  - Expose the correct production port.
-  - Set `NODE_ENV=production`.
-  - Ensure the app can run with the current Vite/Express proxy setup.
-- [x] **4.2** Create `.dockerignore`.
-  - Exclude:
-    - `node_modules`
-    - `.git`
-    - `.env`
-    - `.env.*`
-    - `dist`
-    - `coverage`
-    - `.next`
-- [x] **4.3** Verify Docker build and runtime (manually verified configurations; local Docker daemon unavailable on host).
-  - `docker build -t movie-explorer:latest .`
-  - `docker run --rm -p 3000:3000 movie-explorer:latest`
-  - Confirm the app serves correctly.
+- [ ] Confirm Next.js App Router is approved as the target framework before implementation.
+- [ ] Install and configure Next.js.
+- [ ] Update package.json scripts:
+  - dev → next dev
+  - build → next build
+  - start → next start
+  - keep lint, typecheck, test, and test:a11y.
+- [ ] Create app/layout.tsx with:
+  - `<html lang="pt-BR">`
+  - skip navigation link
+  - shared Header
+  - `<main id="main-content">`.
+- [ ] Create app/page.tsx as the Home route.
+- [ ] Create app/movie/[id]/page.tsx as the Movie Details route.
+- [ ] Create app/watchlist/page.tsx as the Watchlist route.
+- [ ] Use React Server Components by default for data-heavy pages.
+- [ ] Add "use client" only where required:
+  - Watchlist provider/state
+  - localStorage access
+  - event handlers
+  - interactive search if still client-side.
+- [ ] Create a server-only TMDB layer:
+  - src/server/tmdb.ts or src/server/actions/tmdb.ts
+  - use process.env.TMDB_API_KEY
+  - no VITE_ env variables
+  - no client-side TMDB key exposure.
+- [ ] Replace the temporary Express/Vite TMDB proxy when Next.js server-side access is ready.
+- [ ] Remove or retire Vite-specific files only after Next.js works:
+  - index.html
+  - vite.config.ts
+  - Vite-specific scripts/config.
+- [ ] Preserve Phase 2 accessibility fixes:
+  - no nested interactive elements
+  - focus-visible rings
+  - labels
+  - aria-current
+  - aria-pressed
+  - decorative aria-hidden
+  - loading states with role="status"
+  - skip navigation.
+- [ ] Preserve Watchlist behavior with localStorage.
+- [ ] Preserve Home search/trending behavior.
+- [ ] Preserve Movie Details page behavior:
+  - details
+  - trailer
+  - credits/cast
+  - recommendations/similar movies.
+- [ ] Update Dockerfile for Next.js production runtime.
+- [ ] Update .dockerignore if needed.
+- [ ] Update GitHub Actions CI if needed.
+- [ ] Update Lighthouse CI config if needed.
+- [ ] Update Playwright/axe a11y audit script if routes or startup commands change.
+- [ ] Update README only with what is actually implemented.
+- [ ] Update .ai/CONTEXT.md with Phase 5 start status.
 
-### GitHub Actions CI
-- [x] **4.4** Create `.github/workflows/ci.yml`.
-  - Sequential pipeline:
-    - lint
-    - typecheck
-    - test
-    - a11y
-    - lighthouse
-    - docker
-  - Use fail-fast behavior.
-  - Do not expose secrets.
-  - Use GitHub Actions secrets for `TMDB_API_KEY` and future `GOOGLE_AI_API_KEY`.
-- [x] **4.5** Add Lighthouse CI config.
-  - Create `lighthouserc.json`.
-  - Include performance budgets:
-    - LCP < 1.2s (configured as warning for environment-dependent results)
-    - CLS < 0.05
-    - accessibility checks enabled
-- [x] **4.6** Add automated accessibility check.
-  - Use axe-core with Playwright or an equivalent headless check.
-  - Ensure zero critical/serious violations for core pages where possible.
-- [x] **4.7** Update README only if needed.
-  - Document Docker usage.
-  - Document CI expectations.
-  - Document required GitHub Actions secrets.
-  - Do not claim Next.js, MCP, or MAS are implemented yet.
-- [x] **4.8** Update `.ai/CONTEXT.md` after implementation.
-  - Add Phase 4 summary.
-  - Include changed files.
-  - Include verification results.
-  - Include known limitations.
+## Restrictions
+- Do not implement Phase 6:
+  - no MCP Server
+  - no Vercel AI SDK
+  - no Gemini integration
+  - no multi-agent system
+  - no semantic cache
+  - no token telemetry.
 
 ## Verification Checklist
 
@@ -76,22 +85,16 @@ npm run lint
 npm run typecheck
 npm run test -- --run
 npm run build
-docker build -t movie-explorer:latest .
-docker run --rm -p 3000:3000 movie-explorer:latest
+npm run test:a11y
 ```
 
-### Manual Verification
-- App serves from Docker.
-- CI YAML is valid.
-- `.env` is not copied into image.
-- Docker image does not require client-exposed `VITE_` secrets.
-- `TMDB_API_KEY` is passed only as runtime/server-side env.
+### Security Verification
+```bash
+grep -R "VITE_TMDB_API_KEY\|import.meta.env\|api.themoviedb.org" -n src app server .env.example package.json next.config.* --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.next --exclude-dir=dist
+```
 
-## Restrictions
-- Do not start Phase 5.
-- Do not migrate to Next.js.
-- Do not implement MCP.
-- Do not implement AI agents.
-- Do not redesign UI.
-- Do not commit.
-- Do not stage files.
+### Docker Verification
+```bash
+docker build -t movie-explorer:latest .
+docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:latest
+```
