@@ -1,0 +1,62 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  quality-gate:
+    name: Quality Gate (Vite/Express)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit Tests
+        run: npm run test -- --run
+
+      - name: Build Client & Server
+        run: npm run build
+
+      - name: Install Playwright Browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Run Accessibility Audit
+        run: |
+          npm run start &
+          # Wait for server to be responsive on port 3000
+          until $(curl --output /dev/null --silent --head --fail http://localhost:3000); do
+            printf '.'
+            sleep 1
+          done
+          npm run test:a11y
+          # Terminate background server
+          kill $(jobs -p)
+        env:
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY || 'dummy' }}
+
+      - name: Run Lighthouse CI Budget Check
+        run: npx lhci autorun
+        env:
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY || 'dummy' }}
+
+      - name: Docker Build Smoke Test
+        run: docker build -t movie-explorer:latest .

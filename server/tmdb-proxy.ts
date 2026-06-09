@@ -2,12 +2,13 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import axios from 'axios';
+import path from 'path';
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || (process.env.NODE_ENV === 'production' ? 3000 : 3001);
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 
 if (!TMDB_API_KEY) {
@@ -165,6 +166,19 @@ app.get('/api/tmdb/movie/:id/videos', async (req, res) => {
     handleProxyError(res, error, `Failed to fetch videos for movie ID ${movieId}`);
   }
 });
+
+// Serve static assets in production
+if (process.env.NODE_ENV === 'production') {
+  const distPath = path.resolve(process.cwd(), 'dist');
+  app.use(express.static(distPath));
+
+  app.get('*any', (req, res, next) => {
+    if (req.path.startsWith('/api/')) {
+      return next();
+    }
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
 
 app.listen(PORT, () => {
   console.log(`Server proxy listening on http://localhost:${PORT}`);

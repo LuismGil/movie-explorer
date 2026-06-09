@@ -168,8 +168,7 @@ GOOGLE_AI_API_KEY=your_google_ai_key_here
 ```
 
 ```bash
-# 4. Start the MCP Server and the Next.js dev server
-npm run mcp:dev &
+# 4. Start the Express proxy and Vite dev server
 npm run dev
 ```
 
@@ -205,9 +204,9 @@ docker run -p 3000:3000 \
 
 | Script | Description |
 |---|---|
-| `npm run dev` | Starts the Next.js development server with HMR at `http://localhost:3000`. |
-| `npm run build` | Compiles TypeScript and produces an optimized production build. |
-| `npm run start` | Serves the production build locally. |
+| `npm run dev` | Starts the Express proxy and Vite development server concurrently. |
+| `npm run build` | Compiles the Vite SPA client assets and compiles the Express server using esbuild. |
+| `npm run start` | Runs the compiled production Express server serving the Vite SPA. |
 | `npm run lint` | Runs ESLint across all source files. |
 | `npm run typecheck` | Runs `tsc --noEmit` for type-only validation without emitting files. |
 | `npm run test` | Runs Vitest unit tests in interactive watch mode. |

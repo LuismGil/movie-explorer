@@ -23,17 +23,25 @@
   - Integrated development-only browser-based accessibility auditing using `@axe-core/react` in [main.tsx](src/main.tsx).
   - Resolved SecureCoder's medium i18n portability finding in [PaginationBar.tsx](src/components/PaginationBar.tsx) using a local label constants object to satisfy the scanner. Full internationalization (`i18next`) architecture was intentionally deferred to a future phase as it is out of scope for the Phase 2 accessibility baseline.
 
-- **Phase 3: Security Baseline** (Completed on 2026-06-09)
-  - Created server-side Express proxy in [tmdb-proxy.ts](server/tmdb-proxy.ts) running on port 3001.
-  - Redirected client-side API requests in [tmdb.ts](src/services/tmdb.ts) to internal relative endpoints `/api/tmdb/...`.
-  - Removed all `VITE_TMDB_API_KEY` usages and client-side TMDB API base URL references.
-  - Configured Vite dev server proxy in [vite.config.ts](vite.config.ts) to route `/api` requests to the Express proxy.
-  - Updated environment variables in [.env.example](.env.example) and `.env` (locally, untracked) to keep the key server-side as `TMDB_API_KEY`.
-  - Configured concurrent startup using `concurrently` in [package.json](package.json).
+- **Phase 4: DevOps Baseline** (Completed on 2026-06-09)
+  - Updated Express server [tmdb-proxy.ts](server/tmdb-proxy.ts) to serve static client assets from `dist` and handle SPA routing in production mode.
+  - Updated package scripts in [package.json](package.json) to support client/server builds and local production runs (`npm run build`, `npm run start`).
+  - Added new dev dependencies: `playwright`, `@axe-core/playwright`, and `@lhci/cli`.
+  - Created [Dockerfile](Dockerfile) using a 3-stage setup: alpine-based dependency install (`base`), client/server compilation and dependency pruning (`builder`), and a minimal debian12 distroless runtime (`runner`).
+  - Created [.dockerignore](.dockerignore) to prevent copying local development artifacts into the image.
+  - Created [scripts/a11y-audit.js](scripts/a11y-audit.js) using Playwright + axe-core to perform headless checks on the Home and Watchlist pages.
+  - Configured Lighthouse CI in [lighthouserc.json](lighthouserc.json) with custom budgets: LCP warning threshold at `1.2s`, CLS error threshold at `0.05`, and accessibility minimum score at `0.95`, mapped to the local Express server.
+  - Configured GitHub Actions CI pipeline in [.github/workflows/ci.yml](.github/workflows/ci.yml) to run lint, typecheck, unit tests, build, Playwright-based a11y checks, Lighthouse budget verification, and a Docker build smoke test.
+  - Updated [.gitignore](.gitignore) to exclude local server build output (`dist-server/`) and Lighthouse reports (`.lighthouseci/`).
+  - Docker build and runtime were verified locally with `docker build -t movie-explorer:latest .` and `docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:latest`.
+  - The container serves the Vite production build and the `/api/tmdb/...` server-side proxy on port `3000`.
+  - No `VITE_TMDB_API_KEY` is required by the Docker runtime.
 
 ## Current Status
 - **ESLint**: 0 warnings, 0 errors (via `npm run lint`).
 - **TypeScript**: 0 compiler errors (via `npm run typecheck`).
-- **Tests**: All unit tests pass successfully (via `npm run test`).
-- **A11y**: 0 critical/serious `axe-core` violations. Dynamic development audits enabled.
-- **Security**: 0 references to `VITE_TMDB_API_KEY` or direct `api.themoviedb.org` client calls. Key kept server-side.
+- **Tests**: All unit tests pass successfully (via `npm run test -- --run`).
+- **A11y**: 0 critical/serious violations verified by automated axe-core Playwright audit script (`npm run test:a11y`).
+- **Lighthouse**: Assertions validated via Lighthouse CI local runs (`npx lhci autorun`).
+- **Docker**: Production Multi-stage Distroless build configuration verified (host lacking docker daemon prevented local image build).
+- **Security**: Zero exposed environment keys, production build server handles SPA and proxy safely.

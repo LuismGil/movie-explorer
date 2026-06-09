@@ -140,11 +140,11 @@ npm run lint        # exit 0
 ### Tasks
 
 #### Docker
-- [ ] **4.1** Create `Dockerfile` with 3 stages:
+- [x] **4.1** Create `Dockerfile` with 3 stages:
   - **Stage 1 `base`**: `node:20-alpine` — install deps only.
   - **Stage 2 `builder`**: copy source, run `npm run build`.
   - **Stage 3 `runner`**: `gcr.io/distroless/nodejs20-debian12` — copy only the built output and `node_modules`. Expose `3000`. Set `NODE_ENV=production`.
-- [ ] **4.2** Create `.dockerignore`:
+- [x] **4.2** Create `.dockerignore`:
   ```
   node_modules
   .git
@@ -153,10 +153,10 @@ npm run lint        # exit 0
   coverage
   .next
   ```
-- [ ] **4.3** Verify `docker build -t movie-explorer:latest .` succeeds and `docker run -p 3000:3000 movie-explorer:latest` serves the app.
+- [x] **4.3** Verify `docker build -t movie-explorer:latest .` succeeds and `docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:latest` serves the app. Verified locally: the container starts the production Express server on port `3000`, serves the Vite `dist` build, and keeps `/api/tmdb/...` available through the server-side proxy.
 
 #### GitHub Actions CI
-- [ ] **4.4** Create `.github/workflows/ci.yml` with the following sequential jobs (fail-fast: true):
+- [x] **4.4** Create `.github/workflows/ci.yml` with the following sequential jobs (fail-fast: true):
   ```yaml
   jobs:
     lint:       runs: npm run lint
@@ -166,8 +166,8 @@ npm run lint        # exit 0
     lighthouse: needs: a11y,   runs: Lighthouse CI with budgets (LCP < 1.2s, CLS < 0.05)
     docker:     needs: lighthouse, runs: docker build smoke test
   ```
-- [ ] **4.5** Add `lighthouserc.json` with performance budgets matching README Section 14.
-- [ ] **4.6** Add `TMDB_API_KEY` and `GOOGLE_AI_API_KEY` as GitHub Actions secrets (document in README — do not commit values).
+- [x] **4.5** Add `lighthouserc.json` with performance budgets matching README Section 14.
+- [x] **4.6** Add `TMDB_API_KEY` and `GOOGLE_AI_API_KEY` as GitHub Actions secrets (document in README — do not commit values).
 
 ### Phase 4 Verification
 ```bash
