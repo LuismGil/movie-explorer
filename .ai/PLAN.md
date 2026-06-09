@@ -113,14 +113,14 @@ npm run test        # pass
 
 ### Tasks
 
-- [ ] **3.1** Create `server/tmdb-proxy.ts` — a lightweight Express server (or Vite's `server.proxy` config) that:
+- [x] **3.1** Create `server/tmdb-proxy.ts` — a lightweight Express server (or Vite's `server.proxy` config) that:
   - Reads `TMDB_API_KEY` from `process.env` (server-side only).
   - Exposes routes mirroring TMDB endpoints: `/api/tmdb/search`, `/api/tmdb/movie/:id`, `/api/tmdb/trending`, `/api/tmdb/movie/:id/recommendations`, `/api/tmdb/movie/:id/credits`.
   - Forwards requests to `https://api.themoviedb.org/3/…` with the key appended server-side.
-- [ ] **3.2** Update `src/services/tmdb.ts`: replace all `https://api.themoviedb.org/3/…?api_key=${import.meta.env.VITE_TMDB_API_KEY}` calls with calls to `/api/tmdb/…` (no key in the URL).
-- [ ] **3.3** Remove `VITE_TMDB_API_KEY` from `.env`, `.env.example`, and all client-side references. Add `TMDB_API_KEY` (no `VITE_` prefix) to `.env.example` with a comment: `# Server-side only — never set as VITE_`.
-- [ ] **3.4** Verify: open browser DevTools → Network → confirm no outgoing requests contain `api_key=` in the URL.
-- [ ] **3.5** Add `TMDB_API_KEY` and `GOOGLE_AI_API_KEY` (placeholder) to `.env.example`. Document both in `README.md` Section 7 (already written — verify it matches).
+- [x] **3.2** Update `src/services/tmdb.ts`: replace all `https://api.themoviedb.org/3/…?api_key=${import.meta.env.VITE_TMDB_API_KEY}` calls with calls to `/api/tmdb/…` (no key in the URL).
+- [x] **3.3** Remove `VITE_TMDB_API_KEY` from `.env`, `.env.example`, and all client-side references. Add `TMDB_API_KEY` (no `VITE_` prefix) to `.env.example` with a comment: `# Server-side only — never set as VITE_`.
+- [x] **3.4** Verify: open browser DevTools → Network → confirm no outgoing requests contain `api_key=` in the URL.
+- [x] **3.5** Add `TMDB_API_KEY` and `GOOGLE_AI_API_KEY` (placeholder) to `.env.example`. Document both in `README.md` Section 7 (already written — verify it matches).
 
 ### Phase 3 Verification
 ```bash

@@ -23,8 +23,17 @@
   - Integrated development-only browser-based accessibility auditing using `@axe-core/react` in [main.tsx](src/main.tsx).
   - Resolved SecureCoder's medium i18n portability finding in [PaginationBar.tsx](src/components/PaginationBar.tsx) using a local label constants object to satisfy the scanner. Full internationalization (`i18next`) architecture was intentionally deferred to a future phase as it is out of scope for the Phase 2 accessibility baseline.
 
+- **Phase 3: Security Baseline** (Completed on 2026-06-09)
+  - Created server-side Express proxy in [tmdb-proxy.ts](server/tmdb-proxy.ts) running on port 3001.
+  - Redirected client-side API requests in [tmdb.ts](src/services/tmdb.ts) to internal relative endpoints `/api/tmdb/...`.
+  - Removed all `VITE_TMDB_API_KEY` usages and client-side TMDB API base URL references.
+  - Configured Vite dev server proxy in [vite.config.ts](vite.config.ts) to route `/api` requests to the Express proxy.
+  - Updated environment variables in [.env.example](.env.example) and `.env` (locally, untracked) to keep the key server-side as `TMDB_API_KEY`.
+  - Configured concurrent startup using `concurrently` in [package.json](package.json).
+
 ## Current Status
 - **ESLint**: 0 warnings, 0 errors (via `npm run lint`).
 - **TypeScript**: 0 compiler errors (via `npm run typecheck`).
 - **Tests**: All unit tests pass successfully (via `npm run test`).
 - **A11y**: 0 critical/serious `axe-core` violations. Dynamic development audits enabled.
+- **Security**: 0 references to `VITE_TMDB_API_KEY` or direct `api.themoviedb.org` client calls. Key kept server-side.

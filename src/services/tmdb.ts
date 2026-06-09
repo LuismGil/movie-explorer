@@ -7,14 +7,8 @@ import type {
   TmdbPaginatedResponse,
 } from '../types/movie';
 
-const apiKey = import.meta.env.VITE_TMDB_API_KEY;
-
 const tmdb = axios.create({
-  baseURL: 'https://api.themoviedb.org/3',
-  params: {
-    api_key: apiKey,
-    language: 'pt-BR',
-  },
+  baseURL: '/api/tmdb',
 });
 
 export async function fetchPopularMovies(
@@ -30,7 +24,7 @@ export async function searchMovies(
   query: string,
   page = 1,
 ): Promise<TmdbPaginatedResponse<MovieListItem>> {
-  const { data } = await tmdb.get<TmdbPaginatedResponse<MovieListItem>>('/search/movie', {
+  const { data } = await tmdb.get<TmdbPaginatedResponse<MovieListItem>>('/search', {
     params: { query, page },
   });
   return data;
@@ -54,7 +48,7 @@ export async function fetchMovieCredits(id: string): Promise<MovieCredits> {
 export async function fetchSimilarMovies(
   id: string,
 ): Promise<TmdbPaginatedResponse<MovieListItem>> {
-  const { data } = await tmdb.get<TmdbPaginatedResponse<MovieListItem>>(`/movie/${id}/similar`);
+  const { data } = await tmdb.get<TmdbPaginatedResponse<MovieListItem>>(`/movie/${id}/recommendations`);
   return data;
 }
 
@@ -63,10 +57,11 @@ export async function fetchTrendingMovies(
   page = 1,
 ): Promise<TmdbPaginatedResponse<MovieListItem>> {
   const { data } = await tmdb.get<TmdbPaginatedResponse<MovieListItem>>(
-    `/trending/movie/${timeWindow}`,
+    '/trending',
     {
-      params: { page },
+      params: { timeWindow, page },
     },
   );
   return data;
 }
+
