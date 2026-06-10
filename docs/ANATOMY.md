@@ -1,11 +1,35 @@
 .
+├── .ai
+│   ├── ARCHITECTURE.md
+│   ├── CONTEXT.md
+│   ├── MCP_INTERFACE.md
+│   ├── PLAN.md
+│   ├── RULES.md
+│   ├── SECURITY.md
+│   ├── SPEC.md
+│   └── TASK.md
+├── dist-server
+│   └── index.js
 ├── docs
-│   ├── CURRENT_STATE.md
-│   ├── README_STRATEGY.md
+│   ├── ANATOMY.md
 │   └── ui_ux_principles_design_guide.html
+├── .github
+│   └── workflows
+│       └── ci.yml
+├── scripts
+│   └── a11y-audit.js
+├── server
+│   └── tmdb-proxy.ts
 ├── shared
 │   └── tokens
-│       └── colors.json
+│       ├── colors.json
+│       ├── components.json
+│       ├── elevation.json
+│       ├── gradients.json
+│       ├── grid.json
+│       ├── radii.json
+│       ├── spacing.json
+│       └── typography.json
 ├── src
 │   ├── components
 │   │   ├── __tests__
@@ -18,13 +42,17 @@
 │   │   ├── LoadingSpinner.tsx
 │   │   ├── MovieCardSkeleton.tsx
 │   │   ├── MovieCard.tsx
+│   │   ├── MovieGrid.tsx
+│   │   ├── PaginationBar.tsx
+│   │   ├── SearchBar.tsx
 │   │   ├── SimilarMovies.tsx
 │   │   └── TrailerPlayer.tsx
 │   ├── context
 │   │   ├── __tests__
 │   │   │   └── WatchlistContext.test.tsx
 │   │   ├── watchlist
-│   │   └── WatchlistContext.tsx
+│   │   ├── WatchlistContext.ts
+│   │   └── WatchlistProvider.tsx
 │   ├── hooks
 │   │   ├── useMovieDetails.ts
 │   │   ├── useMovies.ts
@@ -49,9 +77,12 @@
 │   ├── App.tsx
 │   ├── index.css
 │   └── main.tsx
-├── anatomy.md
+├── Dockerfile
+├── .dockerignore
 ├── eslint.config.js
+├── .gitignore
 ├── index.html
+├── lighthouserc.json
 ├── package.json
 ├── package-lock.json
 ├── postcss.config.js
@@ -63,4 +94,4 @@
 ├── vite.config.ts
 └── vitest.config.ts
 
-19 directories, 45 files
+26 directories, 77 files
