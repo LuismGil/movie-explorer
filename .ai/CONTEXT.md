@@ -50,6 +50,14 @@
   - Configured `output: 'standalone'` in `next.config.ts` for optimized Docker building.
   - Updated `Dockerfile` to copy standalone build artifacts into distroless Node environment.
   - Addressed touch target, heading order, and image CLS issues to achieve perfect Lighthouse audits.
+  - Remediated the internationalization security warning by extracting the skip-navigation link (`app/layout.tsx`) and header navigation texts (`src/components/Header.tsx`) into translation mapping objects.
+
+- **Phase 5 Post-Migration Bugfix: Docker CSS** (Fixed on 2026-06-13)
+  - **Root cause**: After the Vite → Next.js migration, [tailwind.config.js](tailwind.config.js) still referenced the deleted `./index.html` and only scanned `./src/**/*`. It did not scan the `./app/**/*` directory where all Next.js App Router pages reside (`layout.tsx`, `page.tsx`, `movie/[id]/page.tsx`, `watchlist/page.tsx`). Tailwind's production purge removed all utility classes used exclusively in `app/` files, causing broken CSS in Docker.
+  - **Fix**: Updated the `content` array in `tailwind.config.js` from `['./index.html', './src/**/*.{js,ts,jsx,tsx}']` to `['./app/**/*.{js,ts,jsx,tsx,mdx}', './src/**/*.{js,ts,jsx,tsx,mdx}']`.
+  - **Files changed**: `tailwind.config.js` (1 line).
+  - **Verification**: `npm run lint` (0 errors), `npm run typecheck` (0 errors), `npm run test -- --run` (3/3 pass), `npm run build` (success). Confirmed Tailwind classes (`min-h-screen`, `bg-slate-950`, `antialiased`, `sr-only`) present in production CSS output (`.next/static/chunks/*.css`).
+  - **Docker verification**: Pending user execution of `sudo docker build --no-cache -t movie-explorer:latest . && sudo docker run --rm -p 3000:3000 -e TMDB_API_KEY=dummy movie-explorer:latest` followed by `curl -I` on the CSS asset URL.
 
 ## Current Status
 - **Active Phase**: Phase 6 — AI-Native Layer (Not started; Phase 5 complete and verified).
@@ -58,5 +66,5 @@
 - **Tests**: All unit tests pass successfully (via `npm run test -- --run`).
 - **A11y**: 0 critical/serious violations verified by automated axe-core Playwright audit script (`npm run test:a11y`).
 - **Lighthouse**: Assertions validated via Lighthouse CI local runs (`npx lhci autorun`). All budgets for Performance, Accessibility, and CLS met.
-- **Docker**: Standalone multi-stage Distroless configuration prepared for CI run.
+- **Docker**: Standalone multi-stage Distroless configuration. CSS asset serving fixed via Tailwind content path correction.
 - **Security**: No `NEXT_PUBLIC_` API keys, all TMDB fetching isolated server-side.

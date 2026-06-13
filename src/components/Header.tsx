@@ -3,6 +3,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+const HEADER_LABELS = {
+  home: 'Início',
+  watchlist: 'Watchlist',
+};
+
 export function Header() {
   const pathname = usePathname();
   const isHomeActive = pathname === '/';
@@ -22,7 +27,7 @@ export function Header() {
               isHomeActive ? 'font-semibold text-sky-400' : 'text-slate-300'
             }`}
           >
-            Início
+            {HEADER_LABELS.home}
           </Link>
           <Link
             href="/watchlist"
@@ -31,7 +36,7 @@ export function Header() {
               isWatchlistActive ? 'font-semibold text-sky-400' : 'text-slate-300'
             }`}
           >
-            Watchlist
+            {HEADER_LABELS.watchlist}
           </Link>
         </nav>
       </div>

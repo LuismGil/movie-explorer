@@ -8,6 +8,10 @@ export const metadata: Metadata = {
   description: 'Descubra e organize seus filmes favoritos',
 };
 
+const LAYOUT_LABELS = {
+  skipLink: 'Pular para o conteúdo principal',
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -21,7 +25,7 @@ export default function RootLayout({
             href="#main-content"
             className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-sky-500 focus:text-white focus:rounded"
           >
-            Skip to Main Content
+            {LAYOUT_LABELS.skipLink}
           </a>
           <Header />
           <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl px-4 py-6 outline-none">
