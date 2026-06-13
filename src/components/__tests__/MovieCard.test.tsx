@@ -1,10 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, beforeEach } from 'vitest';
-import { MovieCard } from '../MovieCard';
-import { useWatchlist } from '../../context/WatchlistContext';
-import { WatchlistProvider } from '../../context/WatchlistProvider';
-import type { MovieListItem } from '../../types/movie';
+import { MovieCard } from '@/components/MovieCard';
+import { useWatchlist } from '@/context/WatchlistContext';
+import { WatchlistProvider } from '@/context/WatchlistProvider';
+import type { MovieListItem } from '@/types/movie';
+import { messages } from '@/i18n';
 
 const sampleMovie: MovieListItem = {
   id: 7,
@@ -40,7 +41,7 @@ describe('MovieCard', () => {
 
     expect(screen.getByTestId('count')).toHaveTextContent('0');
 
-    await user.click(screen.getByRole('button', { name: 'Add to watchlist' }));
+    await user.click(screen.getByRole('button', { name: messages.watchlist.addAriaLabel }));
 
     expect(screen.getByTestId('count')).toHaveTextContent('1');
   });

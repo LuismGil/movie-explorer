@@ -1,4 +1,5 @@
-import type { MovieCastMember } from '../types/movie';
+import type { MovieCastMember } from '@/types/movie';
+import { messages } from '@/i18n';
 
 type CastListProps = {
   cast: MovieCastMember[];
@@ -27,7 +28,7 @@ export function CastList({ cast }: CastListProps) {
                   loading="lazy"
                 />
               ) : (
-                <div className="flex h-full items-center justify-center text-slate-400">Sem foto</div>
+                <div className="flex h-full items-center justify-center text-slate-400">{messages.common.noPhoto}</div>
               )}
             </div>
             <p className="font-semibold text-slate-100">{member.name}</p>

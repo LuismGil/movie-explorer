@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import { messages } from '@/i18n';
 
 export function SearchBar() {
   const router = useRouter();
@@ -64,30 +65,30 @@ export function SearchBar() {
   const isSearchActive = queryParam.trim().length > 0;
 
   const title = isSearchActive
-    ? `Resultados para: "${queryParam}"`
+    ? messages.home.searchResultsTitle(queryParam)
     : viewParam === 'trending'
       ? windowParam === 'day'
-        ? 'Em alta hoje'
-        : 'Em alta na semana'
-      : 'Filmes populares';
+        ? messages.home.trendingTodayTitle
+        : messages.home.trendingWeekTitle
+      : messages.home.popularTitle;
 
   return (
     <>
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="space-y-2">
           <h1 className="text-3xl font-semibold text-white">{title}</h1>
-          <p className="text-slate-400">Busque por filmes ou navegue pelos populares.</p>
+          <p className="text-slate-400">{messages.home.subtitle}</p>
         </div>
         <div className="w-full max-w-md">
           <label htmlFor="movie-search" className="sr-only">
-            Buscar filmes
+            {messages.home.searchLabel}
           </label>
           <input
             type="text"
             id="movie-search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar filmes..."
+            placeholder={messages.home.searchPlaceholder}
             className="w-full rounded-full border border-slate-700 bg-slate-900 px-4 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 focus-visible:ring-2 focus-visible:ring-sky-400"
           />
         </div>
@@ -104,7 +105,7 @@ export function SearchBar() {
                   : 'text-slate-300 hover:text-white'
               }`}
             >
-              Populares
+              {messages.home.popular}
             </button>
             <button
               type="button"
@@ -115,7 +116,7 @@ export function SearchBar() {
                   : 'text-slate-300 hover:text-white'
               }`}
             >
-              Trending
+              {messages.home.trending}
             </button>
           </div>
           {viewParam === 'trending' && (
@@ -129,7 +130,7 @@ export function SearchBar() {
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
-                Hoje
+                {messages.home.today}
               </button>
               <button
                 type="button"
@@ -140,7 +141,7 @@ export function SearchBar() {
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
-                Semana
+                {messages.home.week}
               </button>
             </div>
           )}

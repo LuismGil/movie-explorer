@@ -1,6 +1,7 @@
 import { MovieCard } from './MovieCard';
 import { MovieCardSkeleton } from './MovieCardSkeleton';
-import type { MovieListItem } from '../types/movie';
+import type { MovieListItem } from '@/types/movie';
+import { messages } from '@/i18n';
 
 interface MovieGridProps {
   movies: MovieListItem[];
@@ -21,7 +22,7 @@ export function MovieGrid({ movies, isLoading }: MovieGridProps) {
   if (movies.length === 0) {
     return (
       <div className="rounded-2xl border border-slate-800 bg-slate-900 px-6 py-10 text-center text-slate-200">
-        Nenhum filme encontrado.
+        {messages.home.noMoviesFound}
       </div>
     );
   }

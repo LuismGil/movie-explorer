@@ -1,8 +1,9 @@
 "use client";
 
 import Link from 'next/link';
-import type { MovieListItem } from '../types/movie';
-import { useWatchlist } from '../context/WatchlistContext';
+import type { MovieListItem } from '@/types/movie';
+import { useWatchlist } from '@/context/WatchlistContext';
+import { messages } from '@/i18n';
 
 type MovieCardProps = {
   movie: MovieListItem;
@@ -34,7 +35,7 @@ export function MovieCard({ movie }: MovieCardProps) {
             />
           ) : (
             <div className="flex h-full items-center justify-center text-sm text-slate-300">
-              Sem imagem
+              {messages.common.noImage}
             </div>
           )}
           <div className="absolute left-2 top-2 rounded-full bg-black/70 px-3 py-1 text-xs font-semibold text-amber-200">
@@ -50,9 +51,9 @@ export function MovieCard({ movie }: MovieCardProps) {
       </Link>
       <button
         type="button"
-        aria-label={inWatchlist ? 'Remove from watchlist' : 'Add to watchlist'}
+        aria-label={inWatchlist ? messages.watchlist.removeAriaLabel : messages.watchlist.addAriaLabel}
         aria-pressed={inWatchlist}
-        title={inWatchlist ? 'Remove from watchlist' : 'Add to watchlist'}
+        title={inWatchlist ? messages.watchlist.removeAriaLabel : messages.watchlist.addAriaLabel}
         onClick={(e) => {
           e.preventDefault();
           toggleWatchlist(movie);

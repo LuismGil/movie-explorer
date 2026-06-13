@@ -5,18 +5,20 @@ import {
   fetchMovieVideos,
   fetchMovieCredits,
   fetchSimilarMovies,
-} from '../../../src/server/actions/tmdb';
-import { InfoChip } from '../../../src/components/InfoChip';
-import { CastList } from '../../../src/components/CastList';
-import { SimilarMovies } from '../../../src/components/SimilarMovies';
-import { TrailerPlayer } from '../../../src/components/TrailerPlayer';
-import { WatchlistToggle } from '../../../src/components/WatchlistToggle';
+} from '@/server/actions/tmdb';
+import { InfoChip } from '@/components/InfoChip';
+import { CastList } from '@/components/CastList';
+import { SimilarMovies } from '@/components/SimilarMovies';
+import { TrailerPlayer } from '@/components/TrailerPlayer';
+import { WatchlistToggle } from '@/components/WatchlistToggle';
 import {
   type MovieListItem,
   type MovieVideo,
   type MovieCastMember,
   type MovieDetails,
-} from '../../../src/types/movie';
+} from '@/types/movie';
+import { messages } from '@/i18n';
+
 
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w780';
 const TMDB_POSTER_BASE = 'https://image.tmdb.org/t/p/w500';
@@ -104,7 +106,7 @@ export default async function MovieDetailsPage({ params }: PageProps) {
                 />
               ) : (
                 <div className="flex h-full min-h-[360px] items-center justify-center bg-slate-800 text-slate-400">
-                  Sem imagem
+                  {messages.common.noImage}
                 </div>
               )}
             </div>
@@ -112,7 +114,7 @@ export default async function MovieDetailsPage({ params }: PageProps) {
               href="/"
               className="mt-4 inline-flex items-center gap-2 rounded-full bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:-translate-y-0.5 hover:bg-slate-700 focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
             >
-              ← Voltar
+              {messages.movie.goBack}
             </Link>
           </div>
 
@@ -121,20 +123,20 @@ export default async function MovieDetailsPage({ params }: PageProps) {
               <h1 className="text-3xl font-semibold text-white">{data.title}</h1>
               <p className="text-slate-300">{data.tagline}</p>
               <div className="flex flex-wrap gap-2">
-                <InfoChip label={`⭐ ${data.vote_average.toFixed(1)} (${data.vote_count ?? 0})`} />
-                <InfoChip label={`Duração: ${data.runtime ?? '—'} min`} />
-                <InfoChip label={`Lançamento: ${data.release_date}`} />
+                <InfoChip label={messages.movie.ratingLabel(data.vote_average, data.vote_count ?? 0)} />
+                <InfoChip label={messages.movie.durationLabel(data.runtime)} />
+                <InfoChip label={messages.movie.releaseDateLabel(data.release_date)} />
               </div>
               <WatchlistToggle movie={compactMovie} />
             </div>
 
             <div className="space-y-2">
-              <h2 className="text-lg font-semibold text-white">Sinopse</h2>
-              <p className="leading-relaxed text-slate-200">{data.overview || 'Sem descrição.'}</p>
+              <h2 className="text-lg font-semibold text-white">{messages.movie.synopsis}</h2>
+              <p className="leading-relaxed text-slate-200">{data.overview || messages.common.noDescription}</p>
             </div>
 
             <div className="space-y-2">
-              <h2 className="text-lg font-semibold text-white">Gêneros</h2>
+              <h2 className="text-lg font-semibold text-white">{messages.movie.genres}</h2>
               <div className="flex flex-wrap gap-2">
                 {data.genres.map((genre) => (
                   <InfoChip key={genre.id} label={genre.name} />
@@ -144,7 +146,7 @@ export default async function MovieDetailsPage({ params }: PageProps) {
 
             {director ? (
               <div className="space-y-1">
-                <h3 className="text-base font-semibold text-white">Diretor</h3>
+                <h3 className="text-base font-semibold text-white">{messages.movie.director}</h3>
                 <p className="text-slate-200">{director}</p>
               </div>
             ) : null}
@@ -156,7 +158,7 @@ export default async function MovieDetailsPage({ params }: PageProps) {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full bg-sky-500 px-4 py-2 text-sm font-semibold text-slate-950 shadow-lg shadow-sky-500/30 transition hover:-translate-y-0.5 hover:bg-sky-400 focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
               >
-                Visitar site oficial ↗
+                {messages.movie.visitOfficialSite}
               </a>
             ) : null}
           </div>
@@ -166,7 +168,7 @@ export default async function MovieDetailsPage({ params }: PageProps) {
       {videos.length > 0 ? (
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-white">Trailer</h2>
+            <h2 className="text-xl font-semibold text-white">{messages.movie.trailer}</h2>
             <p className="text-sm text-slate-400">{videos[0].name}</p>
           </div>
           <TrailerPlayer videoKey={videos[0].key} />
@@ -174,7 +176,7 @@ export default async function MovieDetailsPage({ params }: PageProps) {
       ) : null}
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-white">Elenco principal</h2>
+        <h2 className="text-xl font-semibold text-white">{messages.movie.mainCast}</h2>
         <CastList cast={cast} />
       </section>
 

@@ -1,14 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-
-const PAGINATION_LABELS = {
-  previous: 'Anterior',
-  next: 'Próxima',
-  pageInfo: (page: number, totalPages: number) =>
-    `Página ${page} de ${totalPages}`,
-  goToPage: (page: number) => `Ir para a página ${page}`,
-};
+import { messages } from '@/i18n';
 
 interface PaginationBarProps {
   page: number;
@@ -32,22 +25,22 @@ export function PaginationBar({ page, totalPages }: PaginationBarProps) {
         type="button"
         onClick={() => handlePageChange(page - 1)}
         disabled={page === 1}
-        aria-label={PAGINATION_LABELS.goToPage(page - 1)}
+        aria-label={messages.pagination.goToPage(page - 1)}
         className="rounded-full border border-slate-700 px-4 py-2 text-sm text-slate-100 disabled:opacity-40 focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
       >
-        {PAGINATION_LABELS.previous}
+        {messages.pagination.previous}
       </button>
       <span className="text-sm text-slate-300">
-        {PAGINATION_LABELS.pageInfo(page, totalPages)}
+        {messages.pagination.pageInfo(page, totalPages)}
       </span>
       <button
         type="button"
         onClick={() => handlePageChange(page + 1)}
         disabled={page === totalPages}
-        aria-label={PAGINATION_LABELS.goToPage(page + 1)}
+        aria-label={messages.pagination.goToPage(page + 1)}
         className="rounded-full border border-slate-700 px-4 py-2 text-sm text-slate-100 disabled:opacity-40 focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
       >
-        {PAGINATION_LABELS.next}
+        {messages.pagination.next}
       </button>
     </div>
   );

@@ -204,8 +204,16 @@ docker run --rm -p 3000:3000 movie-explorer:latest  # must serve app on :3000
 
 #### React Compiler
 - [x] **5.10** Enable the React Compiler Babel plugin in `next.config.ts`. Delete all `useMemo` and `useCallback` calls that exist purely for performance (not for referential stability needed by `useEffect`). The compiler handles memoization automatically.
+### Post-Migration Cleanups
+- [x] Fixed Tailwind production purge by adding `./app/**/*` to `tailwind.config.js`.
+- [x] Centralized static UI copy in `src/i18n/messages.ts` and `src/i18n/index.ts`.
+- [x] Replaced hardcoded JSX strings and accessible labels with centralized messages.
+- [x] Verified SecureCoder i18n warnings for static JSX copy.
+- [x] Verified TypeScript path alias imports using `@/* -> ./src/*`.
+- [x] Synchronized `.ai/TASK.md`, `.ai/PLAN.md`, `.ai/CONTEXT.md`, and `docs/ANATOMY.md`.
 
-### Phase 5 Verification
+### Verification
+
 ```bash
 npm run dev         # next dev starts, app loads on :3000
 npm run build       # next build succeeds, zero errors

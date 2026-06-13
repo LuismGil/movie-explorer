@@ -1,14 +1,15 @@
 import { Suspense } from 'react';
-import SearchBar from '../src/components/SearchBar';
-import MovieGrid from '../src/components/MovieGrid';
-import PaginationBar from '../src/components/PaginationBar';
-import { ErrorState } from '../src/components/ErrorState';
-import { MovieCardSkeleton } from '../src/components/MovieCardSkeleton';
+import SearchBar from '@/components/SearchBar';
+import MovieGrid from '@/components/MovieGrid';
+import PaginationBar from '@/components/PaginationBar';
+import { ErrorState } from '@/components/ErrorState';
+import { MovieCardSkeleton } from '@/components/MovieCardSkeleton';
 import {
   fetchPopularMovies,
   fetchTrendingMovies,
   searchMovies,
-} from '../src/server/actions/tmdb';
+} from '@/server/actions/tmdb';
+import { messages } from '@/i18n';
 
 interface PageProps {
   searchParams: Promise<{
@@ -64,7 +65,7 @@ async function MovieContent({
       moviesData = await fetchPopularMovies(page);
     }
   } catch (err) {
-    errorMsg = err instanceof Error ? err.message : 'Erro ao buscar filmes.';
+    errorMsg = err instanceof Error ? err.message : messages.error.fetchMovies;
   }
 
   if (errorMsg) {

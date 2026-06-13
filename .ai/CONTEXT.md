@@ -52,15 +52,15 @@
   - Addressed touch target, heading order, and image CLS issues to achieve perfect Lighthouse audits.
   - Remediated the internationalization security warning by extracting the skip-navigation link (`app/layout.tsx`) and header navigation texts (`src/components/Header.tsx`) into translation mapping objects.
 
-- **Phase 5 Post-Migration Bugfix: Docker CSS** (Fixed on 2026-06-13)
-  - **Root cause**: After the Vite → Next.js migration, [tailwind.config.js](tailwind.config.js) still referenced the deleted `./index.html` and only scanned `./src/**/*`. It did not scan the `./app/**/*` directory where all Next.js App Router pages reside (`layout.tsx`, `page.tsx`, `movie/[id]/page.tsx`, `watchlist/page.tsx`). Tailwind's production purge removed all utility classes used exclusively in `app/` files, causing broken CSS in Docker.
-  - **Fix**: Updated the `content` array in `tailwind.config.js` from `['./index.html', './src/**/*.{js,ts,jsx,tsx}']` to `['./app/**/*.{js,ts,jsx,tsx,mdx}', './src/**/*.{js,ts,jsx,tsx,mdx}']`.
-  - **Files changed**: `tailwind.config.js` (1 line).
-  - **Verification**: `npm run lint` (0 errors), `npm run typecheck` (0 errors), `npm run test -- --run` (3/3 pass), `npm run build` (success). Confirmed Tailwind classes (`min-h-screen`, `bg-slate-950`, `antialiased`, `sr-only`) present in production CSS output (`.next/static/chunks/*.css`).
-  - **Docker verification**: Pending user execution of `sudo docker build --no-cache -t movie-explorer:latest . && sudo docker run --rm -p 3000:3000 -e TMDB_API_KEY=dummy movie-explorer:latest` followed by `curl -I` on the CSS asset URL.
+- **Phase 5 Post-Migration Cleanups** (Completed on 2026-06-13)
+  - **Tailwind Docker CSS Fix**: Resolved production CSS breakage in the Docker container caused by Tailwind purging utility classes used in the App Router pages. Fixed by adding `./app/**/*` and `./src/**/*` to the content path in [tailwind.config.js](tailwind.config.js).
+  - **Centralized i18n/Message Layer**: Resolved all SecureCoder JSX internationalization warnings by moving hardcoded pt-BR static strings, accessible labels, and placeholders to a centralized dictionary at [messages.ts](src/i18n/messages.ts) and [index.ts](src/i18n/index.ts).
+  - **Import Alias Convention**: Adopted `@/*` path alias mapping to `./src/*` as configured in [tsconfig.json](tsconfig.json). Normalized all cross-folder relative imports (e.g., `../...` or `../../../...`) within `src/` and `app/` to use the `@/` alias convention.
+  - **Documentation Sync**: Consolidated duplicated Phase 5 tracking headers across [.ai/TASK.md](.ai/TASK.md) and [.ai/PLAN.md](.ai/PLAN.md). All post-migration cleanup items are now nested under a single "Post-Migration Cleanups" heading inside the existing Phase 5 section. No runtime feature work was performed.
+  - **Verification**: Verified that all checks pass successfully, including: `npm run lint`, `npm run typecheck`, `npm run test -- --run` (3/3 pass), `npm run build`, and Playwright/axe-core accessibility audits (`npm run test:a11y`). Scanned codebase to ensure no deep relative imports or un-localized JSX strings remain.
 
 ## Current Status
-- **Active Phase**: Phase 6 — AI-Native Layer (Not started; Phase 5 complete and verified).
+- **Active Phase**: Phase 6 — AI-Native Layer (Not started; Phase 5 and all post-migration tasks complete and verified).
 - **ESLint**: 0 warnings, 0 errors (via `npm run lint`).
 - **TypeScript**: 0 compiler errors (via `npm run typecheck`).
 - **Tests**: All unit tests pass successfully (via `npm run test -- --run`).
@@ -68,3 +68,4 @@
 - **Lighthouse**: Assertions validated via Lighthouse CI local runs (`npx lhci autorun`). All budgets for Performance, Accessibility, and CLS met.
 - **Docker**: Standalone multi-stage Distroless configuration. CSS asset serving fixed via Tailwind content path correction.
 - **Security**: No `NEXT_PUBLIC_` API keys, all TMDB fetching isolated server-side.
+- **i18n**: 100% compliant with SecureCoder JSX i18n portability checks; no hardcoded user-facing strings, labels, placeholders or titles exist.

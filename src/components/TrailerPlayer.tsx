@@ -1,3 +1,5 @@
+import { messages } from '@/i18n';
+
 type TrailerPlayerProps = {
   videoKey: string;
 };
@@ -6,7 +8,7 @@ export function TrailerPlayer({ videoKey }: TrailerPlayerProps) {
   return (
     <iframe
       src={`https://www.youtube.com/embed/${videoKey}`}
-      title="Trailer do filme"
+      title={messages.movie.trailerTitle}
       className="w-full aspect-video rounded-2xl border border-slate-700"
       allowFullScreen
     />

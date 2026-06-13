@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext } from 'react';
-import { type MovieListItem } from '../types/movie';
+import { type MovieListItem } from '@/types/movie';
 
 export type WatchlistContextValue = {
   watchlist: MovieListItem[];

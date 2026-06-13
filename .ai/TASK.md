@@ -70,6 +70,15 @@
 - [x] Update .ai/CONTEXT.md with Phase 5 start status.
 - [x] Internationalize layout JSX elements (skip-navigation link, header texts) to address SecureCoder findings.
 
+### Post-Migration Cleanups
+
+- [x] Fixed Tailwind production purge by adding `./app/**/*` to `tailwind.config.js`.
+- [x] Centralized static UI copy in `src/i18n/messages.ts` and `src/i18n/index.ts`.
+- [x] Replaced hardcoded JSX strings and accessible labels with centralized messages.
+- [x] Verified SecureCoder i18n warnings for static JSX copy.
+- [x] Verified TypeScript path alias imports using `@/* -> ./src/*`.
+- [x] Synchronized `.ai/TASK.md`, `.ai/PLAN.md`, `.ai/CONTEXT.md`, and `docs/ANATOMY.md`.
+
 ## Restrictions
 - Do not implement Phase 6:
   - no MCP Server
@@ -99,20 +108,3 @@ grep -R "VITE_TMDB_API_KEY\|import.meta.env\|api.themoviedb.org" -n src app serv
 docker build -t movie-explorer:latest .
 docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:latest
 ```
-
----
-
-## Phase 5 Post-Migration Bugfix: Docker CSS (2026-06-13)
-
-### Root Cause
-- Tailwind `content` array in `tailwind.config.js` did not scan `./app/**/*`, only `./index.html` (deleted) and `./src/**/*`.
-- Tailwind purged all utility classes used exclusively in App Router pages during production build.
-
-### Tasks
-- [x] Diagnose broken CSS in Docker container.
-- [x] Fix `tailwind.config.js` content array to scan `./app/**/*.{js,ts,jsx,tsx,mdx}`.
-- [x] Verify lint, typecheck, tests, and build pass.
-- [x] Confirm Tailwind classes present in production CSS output.
-- [ ] Docker build and CSS `200 OK` verification (requires user to run `sudo docker build/run`).
-- [x] Update `.ai/CONTEXT.md`.
-- [x] Update `.ai/TASK.md`.

@@ -57,12 +57,15 @@
 │   │   │   └── WatchlistContext.test.tsx
 │   │   ├── WatchlistContext.ts
 │   │   └── WatchlistProvider.tsx
+│   ├── i18n
+│   │   ├── index.ts
+│   │   └── messages.ts
 │   ├── server
 │   │   └── actions
 │   │       └── tmdb.ts
 │   ├── test
 │   │   └── setup.ts
-│   └── types
+│   ├── types
 │       ├── index.ts
 │       └── movie.ts
 │   ├── index.css
@@ -80,4 +83,23 @@
 ├── tsconfig.json
 └── vitest.config.ts
 
-23 directories, 53 files
+24 directories, 55 files
+
+## TypeScript Path Aliases
+
+The project configuration defines a path alias in [tsconfig.json](file:///home/luis/Lm/projects/movie-explorer/tsconfig.json):
+- `@/*` -> `./src/*`
+
+Use this alias for importing components, contexts, types, utility libraries, actions, etc. from the `src/` directory.
+
+Example:
+```typescript
+import SimilarMovies from "@/components/SimilarMovies";
+import { messages } from "@/i18n";
+import { getMovieDetails } from "@/server/actions/tmdb";
+```
+
+Keep relative imports (`./` or `../`) only for:
+- Nearby local files within the same subfolder
+- CSS imports
+- Framework specific conventions
