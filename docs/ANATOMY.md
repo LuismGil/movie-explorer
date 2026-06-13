@@ -8,8 +8,14 @@
 │   ├── SECURITY.md
 │   ├── SPEC.md
 │   └── TASK.md
-├── dist-server
-│   └── index.js
+├── app
+│   ├── layout.tsx
+│   ├── page.tsx
+│   ├── movie
+│   │   └── [id]
+│   │       └── page.tsx
+│   └── watchlist
+│       └── page.tsx
 ├── docs
 │   ├── ANATOMY.md
 │   └── ui_ux_principles_design_guide.html
@@ -18,8 +24,6 @@
 │       └── ci.yml
 ├── scripts
 │   └── a11y-audit.js
-├── server
-│   └── tmdb-proxy.ts
 ├── shared
 │   └── tokens
 │       ├── colors.json
@@ -46,52 +50,34 @@
 │   │   ├── PaginationBar.tsx
 │   │   ├── SearchBar.tsx
 │   │   ├── SimilarMovies.tsx
-│   │   └── TrailerPlayer.tsx
+│   │   ├── TrailerPlayer.tsx
+│   │   └── WatchlistToggle.tsx
 │   ├── context
 │   │   ├── __tests__
 │   │   │   └── WatchlistContext.test.tsx
-│   │   ├── watchlist
 │   │   ├── WatchlistContext.ts
 │   │   └── WatchlistProvider.tsx
-│   ├── hooks
-│   │   ├── useMovieDetails.ts
-│   │   ├── useMovies.ts
-│   │   └── useTrendingMovies.ts
-│   ├── pages
-│   │   ├── Home
-│   │   │   └── index.tsx
-│   │   ├── MovieDetails
-│   │   │   └── index.tsx
-│   │   └── Watchlist
-│   │       └── index.tsx
-│   ├── router
-│   │   └── index.tsx
-│   ├── services
-│   │   └── tmdb.ts
+│   ├── server
+│   │   └── actions
+│   │       └── tmdb.ts
 │   ├── test
 │   │   └── setup.ts
-│   ├── types
-│   │   ├── index.ts
-│   │   └── movie.ts
-│   ├── App.css
-│   ├── App.tsx
+│   └── types
+│       ├── index.ts
+│       └── movie.ts
 │   ├── index.css
-│   └── main.tsx
 ├── Dockerfile
 ├── .dockerignore
 ├── eslint.config.js
 ├── .gitignore
-├── index.html
 ├── lighthouserc.json
+├── next.config.ts
 ├── package.json
 ├── package-lock.json
 ├── postcss.config.js
 ├── README.md
 ├── tailwind.config.js
-├── tsconfig.app.json
 ├── tsconfig.json
-├── tsconfig.node.json
-├── vite.config.ts
 └── vitest.config.ts
 
-26 directories, 77 files
+23 directories, 53 files

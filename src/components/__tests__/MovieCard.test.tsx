@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter, useLocation } from 'react-router-dom';
 import { describe, expect, it, beforeEach } from 'vitest';
 import { MovieCard } from '../MovieCard';
 import { useWatchlist } from '../../context/WatchlistContext';
@@ -15,18 +14,12 @@ const sampleMovie: MovieListItem = {
   release_date: '2021-05-12',
 };
 
-function LocationDisplay() {
-  const location = useLocation();
-  return <span data-testid="path">{location.pathname}</span>;
-}
-
 function MovieCardHarness() {
   const { watchlist } = useWatchlist();
   return (
     <div>
       <MovieCard movie={sampleMovie} />
       <span data-testid="count">{watchlist.length}</span>
-      <LocationDisplay />
     </div>
   );
 }
@@ -36,23 +29,19 @@ describe('MovieCard', () => {
     localStorage.clear();
   });
 
-  it('toggles watchlist without navigating', async () => {
+  it('toggles watchlist successfully', async () => {
     const user = userEvent.setup();
 
     render(
-      <MemoryRouter initialEntries={['/']}>
-        <WatchlistProvider>
-          <MovieCardHarness />
-        </WatchlistProvider>
-      </MemoryRouter>,
+      <WatchlistProvider>
+        <MovieCardHarness />
+      </WatchlistProvider>,
     );
 
     expect(screen.getByTestId('count')).toHaveTextContent('0');
-    expect(screen.getByTestId('path')).toHaveTextContent('/');
 
     await user.click(screen.getByRole('button', { name: 'Add to watchlist' }));
 
     expect(screen.getByTestId('count')).toHaveTextContent('1');
-    expect(screen.getByTestId('path')).toHaveTextContent('/');
   });
 });

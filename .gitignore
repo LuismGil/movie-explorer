@@ -28,3 +28,8 @@ dist-server
 .env.local
 .lighthouseci
 
+# Next.js build output
+.next
+
+
+tsconfig.tsbuildinfo

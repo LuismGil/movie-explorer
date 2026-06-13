@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+"use client";
+
+import Link from 'next/link';
 import type { MovieListItem } from '../types/movie';
 import { useWatchlist } from '../context/WatchlistContext';
 
@@ -17,7 +19,7 @@ export function MovieCard({ movie }: MovieCardProps) {
   return (
     <div className="group relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-md transition duration-200 hover:-translate-y-1 hover:shadow-lg">
       <Link
-        to={`/movie/${movie.id}`}
+        href={`/movie/${movie.id}`}
         className="block focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
       >
         <div className="relative aspect-[2/3] w-full overflow-hidden bg-slate-800">
@@ -25,6 +27,8 @@ export function MovieCard({ movie }: MovieCardProps) {
             <img
               src={posterUrl}
               alt={movie.title}
+              width={342}
+              height={513}
               className="relative z-0 h-full w-full object-cover transition duration-300 group-hover:scale-105"
               loading="lazy"
             />
@@ -38,9 +42,9 @@ export function MovieCard({ movie }: MovieCardProps) {
           </div>
         </div>
         <div className="flex flex-col gap-1 px-4 py-3">
-          <h3 className="line-clamp-2 text-base font-semibold text-white group-hover:text-sky-300">
+          <h2 className="line-clamp-2 text-base font-semibold text-white group-hover:text-sky-300">
             {movie.title}
-          </h3>
+          </h2>
           <p className="text-sm text-slate-400">{year}</p>
         </div>
       </Link>
@@ -53,7 +57,7 @@ export function MovieCard({ movie }: MovieCardProps) {
           e.preventDefault();
           toggleWatchlist(movie);
         }}
-        className="absolute right-3 top-3 z-10 rounded-full bg-slate-900/80 px-2 py-1 text-sm text-slate-100 hover:bg-slate-800 focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
+        className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-slate-900/80 text-base text-slate-100 hover:bg-slate-800 focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
       >
         {inWatchlist ? '♥' : '♡'}
       </button>

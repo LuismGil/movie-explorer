@@ -21,6 +21,8 @@ export function CastList({ cast }: CastListProps) {
                 <img
                   src={profileUrl}
                   alt={member.name}
+                  width={96}
+                  height={96}
                   className="h-full w-full object-cover"
                   loading="lazy"
                 />

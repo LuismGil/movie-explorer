@@ -1,11 +1,13 @@
-import { MovieCard } from '../../components/MovieCard';
-import { useWatchlist } from '../../context/WatchlistContext';
+"use client";
 
-export function WatchlistPage() {
+import { MovieCard } from '../../src/components/MovieCard';
+import { useWatchlist } from '../../src/context/WatchlistContext';
+
+export default function WatchlistPage() {
   const { watchlist } = useWatchlist();
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 py-8">
       <h1 className="mb-4 text-2xl font-semibold text-slate-50">Minha Watchlist</h1>
 
       {watchlist.length === 0 ? (
@@ -22,5 +24,3 @@ export function WatchlistPage() {
     </div>
   );
 }
-
-export default WatchlistPage;

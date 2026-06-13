@@ -2,7 +2,7 @@
   "ci": {
     "collect": {
       "url": ["http://localhost:3000/"],
-      "startServerCommand": "NODE_ENV=production TMDB_API_KEY=dummy node dist-server/index.js",
+      "startServerCommand": "node .next/standalone/server.js",
       "numberOfRuns": 3,
       "settings": {
         "chromeFlags": "--no-sandbox --disable-gpu --headless"

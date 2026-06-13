@@ -14,38 +14,38 @@
 
 ## Tasks
 
-- [ ] Confirm Next.js App Router is approved as the target framework before implementation.
-- [ ] Install and configure Next.js.
-- [ ] Update package.json scripts:
+- [x] Confirm Next.js App Router is approved as the target framework before implementation.
+- [x] Install and configure Next.js.
+- [x] Update package.json scripts:
   - dev → next dev
   - build → next build
   - start → next start
   - keep lint, typecheck, test, and test:a11y.
-- [ ] Create app/layout.tsx with:
+- [x] Create app/layout.tsx with:
   - `<html lang="pt-BR">`
   - skip navigation link
   - shared Header
   - `<main id="main-content">`.
-- [ ] Create app/page.tsx as the Home route.
-- [ ] Create app/movie/[id]/page.tsx as the Movie Details route.
-- [ ] Create app/watchlist/page.tsx as the Watchlist route.
-- [ ] Use React Server Components by default for data-heavy pages.
-- [ ] Add "use client" only where required:
+- [x] Create app/page.tsx as the Home route.
+- [x] Create app/movie/[id]/page.tsx as the Movie Details route.
+- [x] Create app/watchlist/page.tsx as the Watchlist route.
+- [x] Use React Server Components by default for data-heavy pages.
+- [x] Add "use client" only where required:
   - Watchlist provider/state
   - localStorage access
   - event handlers
   - interactive search if still client-side.
-- [ ] Create a server-only TMDB layer:
+- [x] Create a server-only TMDB layer:
   - src/server/tmdb.ts or src/server/actions/tmdb.ts
   - use process.env.TMDB_API_KEY
   - no VITE_ env variables
   - no client-side TMDB key exposure.
-- [ ] Replace the temporary Express/Vite TMDB proxy when Next.js server-side access is ready.
-- [ ] Remove or retire Vite-specific files only after Next.js works:
+- [x] Replace the temporary Express/Vite TMDB proxy when Next.js server-side access is ready.
+- [x] Remove or retire Vite-specific files only after Next.js works:
   - index.html
   - vite.config.ts
   - Vite-specific scripts/config.
-- [ ] Preserve Phase 2 accessibility fixes:
+- [x] Preserve Phase 2 accessibility fixes:
   - no nested interactive elements
   - focus-visible rings
   - labels
@@ -54,20 +54,20 @@
   - decorative aria-hidden
   - loading states with role="status"
   - skip navigation.
-- [ ] Preserve Watchlist behavior with localStorage.
-- [ ] Preserve Home search/trending behavior.
-- [ ] Preserve Movie Details page behavior:
+- [x] Preserve Watchlist behavior with localStorage.
+- [x] Preserve Home search/trending behavior.
+- [x] Preserve Movie Details page behavior:
   - details
   - trailer
   - credits/cast
   - recommendations/similar movies.
-- [ ] Update Dockerfile for Next.js production runtime.
-- [ ] Update .dockerignore if needed.
-- [ ] Update GitHub Actions CI if needed.
-- [ ] Update Lighthouse CI config if needed.
-- [ ] Update Playwright/axe a11y audit script if routes or startup commands change.
-- [ ] Update README only with what is actually implemented.
-- [ ] Update .ai/CONTEXT.md with Phase 5 start status.
+- [x] Update Dockerfile for Next.js production runtime.
+- [x] Update .dockerignore if needed.
+- [x] Update GitHub Actions CI if needed.
+- [x] Update Lighthouse CI config if needed.
+- [x] Update Playwright/axe a11y audit script if routes or startup commands change.
+- [x] Update README only with what is actually implemented.
+- [x] Update .ai/CONTEXT.md with Phase 5 start status.
 
 ## Restrictions
 - Do not implement Phase 6:

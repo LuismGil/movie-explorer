@@ -188,22 +188,22 @@ docker run --rm -p 3000:3000 movie-explorer:latest  # must serve app on :3000
 ### Tasks
 
 #### Scaffold
-- [ ] **5.1** Install Next.js 15+ and the React Compiler Babel plugin. Update `package.json` scripts: `dev` → `next dev`, `build` → `next build`, `start` → `next start`.
-- [ ] **5.2** Create `app/layout.tsx` — root layout with `<html lang="pt-BR">`, skip-nav link, `<Header>`, `<main id="main-content">` wrapper.
-- [ ] **5.3** Delete `index.html`, `vite.config.ts`, and all `VITE_`-prefixed env references.
+- [x] **5.1** Install Next.js 15+ and the React Compiler Babel plugin. Update `package.json` scripts: `dev` → `next dev`, `build` → `next build`, `start` → `next start`.
+- [x] **5.2** Create `app/layout.tsx` — root layout with `<html lang="pt-BR">`, skip-nav link, `<Header>`, `<main id="main-content">` wrapper.
+- [x] **5.3** Delete `index.html`, `vite.config.ts`, and all `VITE_`-prefixed env references.
 
 #### Page Migration
-- [ ] **5.4** Migrate Home page: create `app/page.tsx` as an `async` Server Component. Replace `useMovies` hook with direct `await tmdbActions.getTrending()` inside the component. Wrap the movie grid in `<Suspense fallback={<MovieGridSkeleton />}>`.
-- [ ] **5.5** Migrate Movie Detail page: create `app/movie/[id]/page.tsx` as an `async` Server Component. Fetch details, credits, and recommendations in parallel using `Promise.all`. Each section wrapped in its own `<Suspense>` boundary.
-- [ ] **5.6** Migrate Watchlist page: create `app/watchlist/page.tsx`. Watchlist state is client-only (localStorage); this page uses `"use client"` and `WatchlistContext` — that is acceptable (leaf-node client boundary).
-- [ ] **5.7** Move `WatchlistContext.tsx` to `src/context/` and confirm it is only imported from `"use client"` files or a Client Component provider in `layout.tsx`.
+- [x] **5.4** Migrate Home page: create `app/page.tsx` as an `async` Server Component. Replace `useMovies` hook with direct `await tmdbActions.getTrending()` inside the component. Wrap the movie grid in `<Suspense fallback={<MovieGridSkeleton />}>`.
+- [x] **5.5** Migrate Movie Detail page: create `app/movie/[id]/page.tsx` as an `async` Server Component. Fetch details, credits, and recommendations in parallel using `Promise.all`. Each section wrapped in its own `<Suspense>` boundary.
+- [x] **5.6** Migrate Watchlist page: create `app/watchlist/page.tsx`. Watchlist state is client-only (localStorage); this page uses `"use client"` and `WatchlistContext` — that is acceptable (leaf-node client boundary).
+- [x] **5.7** Move `WatchlistContext.tsx` to `src/context/` and confirm it is only imported from `"use client"` files or a Client Component provider in `layout.tsx`.
 
 #### Server Actions
-- [ ] **5.8** Create `src/server/actions/tmdb.ts` — Server Actions wrapping all TMDB calls. Mark with `"use server"`. Use `process.env.TMDB_API_KEY` (no Vite prefix). Remove the Phase 3 proxy server (it is now superseded).
-- [ ] **5.9** Delete `src/services/tmdb.ts` (old Axios client). Confirm zero imports remain.
+- [x] **5.8** Create `src/server/actions/tmdb.ts` — Server Actions wrapping all TMDB calls. Mark with `"use server"`. Use `process.env.TMDB_API_KEY` (no Vite prefix). Remove the Phase 3 proxy server (it is now superseded).
+- [x] **5.9** Delete `src/services/tmdb.ts` (old Axios client). Confirm zero imports remain.
 
 #### React Compiler
-- [ ] **5.10** Enable the React Compiler Babel plugin in `next.config.ts`. Delete all `useMemo` and `useCallback` calls that exist purely for performance (not for referential stability needed by `useEffect`). The compiler handles memoization automatically.
+- [x] **5.10** Enable the React Compiler Babel plugin in `next.config.ts`. Delete all `useMemo` and `useCallback` calls that exist purely for performance (not for referential stability needed by `useEffect`). The compiler handles memoization automatically.
 
 ### Phase 5 Verification
 ```bash

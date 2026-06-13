@@ -1,28 +1,68 @@
-import { Link, useParams } from 'react-router-dom';
-import { useMovieDetails } from '../../hooks/useMovieDetails';
-import { LoadingSpinner } from '../../components/LoadingSpinner';
-import { ErrorState } from '../../components/ErrorState';
-import { InfoChip } from '../../components/InfoChip';
-import { CastList } from '../../components/CastList';
-import { SimilarMovies } from '../../components/SimilarMovies';
-import { TrailerPlayer } from '../../components/TrailerPlayer';
-import { useWatchlist } from '../../context/WatchlistContext';
-import { type MovieListItem } from '../../types/movie';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import {
+  fetchMovieDetails,
+  fetchMovieVideos,
+  fetchMovieCredits,
+  fetchSimilarMovies,
+} from '../../../src/server/actions/tmdb';
+import { InfoChip } from '../../../src/components/InfoChip';
+import { CastList } from '../../../src/components/CastList';
+import { SimilarMovies } from '../../../src/components/SimilarMovies';
+import { TrailerPlayer } from '../../../src/components/TrailerPlayer';
+import { WatchlistToggle } from '../../../src/components/WatchlistToggle';
+import {
+  type MovieListItem,
+  type MovieVideo,
+  type MovieCastMember,
+  type MovieDetails,
+} from '../../../src/types/movie';
 
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w780';
 const TMDB_POSTER_BASE = 'https://image.tmdb.org/t/p/w500';
 
-export function MovieDetailsPage() {
-  const { id } = useParams<{ id: string }>();
-  const { data, videos, cast, director, similar, isLoading, error } = useMovieDetails(id);
-  const { isInWatchlist, toggleWatchlist } = useWatchlist();
+interface PageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}
 
-  if (isLoading) return <LoadingSpinner />;
-  if (error || !data) return <ErrorState message={error ?? 'Filme não encontrado.'} />;
+export default async function MovieDetailsPage({ params }: PageProps) {
+  const { id } = await params;
+
+  if (!id) {
+    notFound();
+  }
+
+  let data: MovieDetails | null = null;
+  let videos: MovieVideo[] = [];
+  let cast: MovieCastMember[] = [];
+  let director: string | null = null;
+  let similar: MovieListItem[] = [];
+
+  try {
+    const [details, videosResponse, credits, similarResponse] = await Promise.all([
+      fetchMovieDetails(id),
+      fetchMovieVideos(id),
+      fetchMovieCredits(id),
+      fetchSimilarMovies(id),
+    ]);
+
+    data = details;
+    videos = videosResponse.results.filter(
+      (video) => video.site === 'YouTube' && video.type === 'Trailer'
+    );
+    cast = credits.cast.slice(0, 10);
+    director = credits.crew.find((member) => member.job === 'Director')?.name ?? null;
+    similar = similarResponse.results;
+  } catch (error) {
+    console.error('Error fetching movie details:', error);
+    notFound();
+  }
 
   const backdropUrl = data.backdrop_path ? `${TMDB_IMAGE_BASE}${data.backdrop_path}` : null;
   const posterUrl = data.poster_path ? `${TMDB_POSTER_BASE}${data.poster_path}` : null;
-  const inWatchlist = isInWatchlist(data.id);
+
   const compactMovie: MovieListItem = {
     id: data.id,
     title: data.title,
@@ -32,13 +72,15 @@ export function MovieDetailsPage() {
   };
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-10 py-6">
       <section className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-2xl shadow-black/40">
         {backdropUrl ? (
           <div className="relative z-0 h-64 w-full overflow-hidden">
             <img
               src={backdropUrl}
               alt={data.title}
+              width={780}
+              height={439}
               className="h-full w-full object-cover opacity-70"
               loading="lazy"
             />
@@ -55,6 +97,8 @@ export function MovieDetailsPage() {
                 <img
                   src={posterUrl}
                   alt={data.title}
+                  width={500}
+                  height={750}
                   className="h-full w-full object-cover"
                   loading="lazy"
                 />
@@ -65,7 +109,7 @@ export function MovieDetailsPage() {
               )}
             </div>
             <Link
-              to="/"
+              href="/"
               className="mt-4 inline-flex items-center gap-2 rounded-full bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:-translate-y-0.5 hover:bg-slate-700 focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
             >
               ← Voltar
@@ -81,14 +125,7 @@ export function MovieDetailsPage() {
                 <InfoChip label={`Duração: ${data.runtime ?? '—'} min`} />
                 <InfoChip label={`Lançamento: ${data.release_date}`} />
               </div>
-              <button
-                type="button"
-                onClick={() => toggleWatchlist(compactMovie)}
-                aria-pressed={inWatchlist}
-                className="inline-flex items-center gap-2 rounded-full border border-slate-600 px-4 py-2 text-sm font-medium text-slate-100 hover:border-sky-500 hover:text-sky-400 focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
-              >
-                {inWatchlist ? 'Remover da Watchlist' : 'Adicionar à Watchlist'}
-              </button>
+              <WatchlistToggle movie={compactMovie} />
             </div>
 
             <div className="space-y-2">
@@ -116,7 +153,7 @@ export function MovieDetailsPage() {
               <a
                 href={data.homepage}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full bg-sky-500 px-4 py-2 text-sm font-semibold text-slate-950 shadow-lg shadow-sky-500/30 transition hover:-translate-y-0.5 hover:bg-sky-400 focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
               >
                 Visitar site oficial ↗
@@ -145,5 +182,3 @@ export function MovieDetailsPage() {
     </div>
   );
 }
-
-export default MovieDetailsPage;

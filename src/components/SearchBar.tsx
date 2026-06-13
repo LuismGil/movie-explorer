@@ -1,24 +1,76 @@
-interface SearchBarProps {
-  title: string;
-  search: string;
-  setSearch: (value: string) => void;
-  viewMode: 'popular' | 'trending';
-  setViewMode: (mode: 'popular' | 'trending') => void;
-  trendingWindow: 'day' | 'week';
-  setTrendingWindow: (window: 'day' | 'week') => void;
-  isSearchActive: boolean;
-}
+"use client";
 
-export function SearchBar({
-  title,
-  search,
-  setSearch,
-  viewMode,
-  setViewMode,
-  trendingWindow,
-  setTrendingWindow,
-  isSearchActive,
-}: SearchBarProps) {
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+
+export function SearchBar() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // Read current parameters from URL
+  const queryParam = searchParams.get('query') || '';
+  const viewParam = (searchParams.get('view') as 'popular' | 'trending') || 'popular';
+  const windowParam = (searchParams.get('window') as 'day' | 'week') || 'day';
+
+  const [search, setSearch] = useState(queryParam);
+
+  // Sync input value with URL changes
+  useEffect(() => {
+    setSearch(queryParam);
+  }, [queryParam]);
+
+  // Debounce search input changes
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (search.trim()) {
+        params.set('query', search.trim());
+        params.set('page', '1');
+        params.delete('view');
+        params.delete('window');
+      } else {
+        // If query is cleared, revert to popular view
+        if (queryParam) {
+          params.delete('query');
+          params.set('view', 'popular');
+          params.set('page', '1');
+        }
+      }
+      router.push(`${pathname}?${params.toString()}`);
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [search, router, pathname, searchParams, queryParam]);
+
+  const setViewMode = (mode: 'popular' | 'trending') => {
+    const params = new URLSearchParams();
+    params.set('view', mode);
+    params.set('page', '1');
+    if (mode === 'trending') {
+      params.set('window', 'day');
+    }
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
+  const setTrendingWindow = (window: 'day' | 'week') => {
+    const params = new URLSearchParams();
+    params.set('view', 'trending');
+    params.set('window', window);
+    params.set('page', '1');
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
+  const isSearchActive = queryParam.trim().length > 0;
+
+  const title = isSearchActive
+    ? `Resultados para: "${queryParam}"`
+    : viewParam === 'trending'
+      ? windowParam === 'day'
+        ? 'Em alta hoje'
+        : 'Em alta na semana'
+      : 'Filmes populares';
+
   return (
     <>
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -28,7 +80,7 @@ export function SearchBar({
         </div>
         <div className="w-full max-w-md">
           <label htmlFor="movie-search" className="sr-only">
-            Search movies
+            Buscar filmes
           </label>
           <input
             type="text"
@@ -47,7 +99,7 @@ export function SearchBar({
               type="button"
               onClick={() => setViewMode('popular')}
               className={`rounded-full px-3 py-1.5 text-xs font-semibold transition focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none ${
-                viewMode === 'popular'
+                viewParam === 'popular'
                   ? 'bg-sky-500 text-slate-950'
                   : 'text-slate-300 hover:text-white'
               }`}
@@ -58,7 +110,7 @@ export function SearchBar({
               type="button"
               onClick={() => setViewMode('trending')}
               className={`rounded-full px-3 py-1.5 text-xs font-semibold transition focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none ${
-                viewMode === 'trending'
+                viewParam === 'trending'
                   ? 'bg-sky-500 text-slate-950'
                   : 'text-slate-300 hover:text-white'
               }`}
@@ -66,13 +118,13 @@ export function SearchBar({
               Trending
             </button>
           </div>
-          {viewMode === 'trending' && (
+          {viewParam === 'trending' && (
             <div className="flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900 p-1">
               <button
                 type="button"
                 onClick={() => setTrendingWindow('day')}
                 className={`rounded-full px-3 py-1.5 text-xs font-semibold transition focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none ${
-                  trendingWindow === 'day'
+                  windowParam === 'day'
                     ? 'bg-slate-800 text-slate-100'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
@@ -83,7 +135,7 @@ export function SearchBar({
                 type="button"
                 onClick={() => setTrendingWindow('week')}
                 className={`rounded-full px-3 py-1.5 text-xs font-semibold transition focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none ${
-                  trendingWindow === 'week'
+                  windowParam === 'week'
                     ? 'bg-slate-800 text-slate-100'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}

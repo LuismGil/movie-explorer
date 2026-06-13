@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState, type ReactNode } from 'react';
 import { type MovieListItem } from '../types/movie';
 import { WatchlistContext } from './WatchlistContext';

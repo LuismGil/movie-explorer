@@ -8,19 +8,20 @@ RUN npm ci
 FROM base AS builder
 WORKDIR /app
 COPY . .
+ENV NEXT_TELEMETRY_DISABLED 1
 RUN npm run build
-RUN npm prune --production
 
 # Stage 3: runner
 FROM gcr.io/distroless/nodejs20-debian12 AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
+ENV NEXT_TELEMETRY_DISABLED 1
 
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/dist-server ./dist-server
+# Copy Next.js standalone output and static/public assets
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
 
 EXPOSE 3000
-CMD ["dist-server/index.js"]
+CMD ["server.js"]

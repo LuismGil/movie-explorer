@@ -23,6 +23,9 @@
   - Integrated development-only browser-based accessibility auditing using `@axe-core/react` in [main.tsx](src/main.tsx).
   - Resolved SecureCoder's medium i18n portability finding in [PaginationBar.tsx](src/components/PaginationBar.tsx) using a local label constants object to satisfy the scanner. Full internationalization (`i18next`) architecture was intentionally deferred to a future phase as it is out of scope for the Phase 2 accessibility baseline.
 
+- **Phase 3: Security Baseline** (Completed on 2026-06-08)
+  - Moved all client-side TMDB API consumption to a local backend API proxy to completely hide the API key from the browser bundle.
+
 - **Phase 4: DevOps Baseline** (Completed on 2026-06-09)
   - Updated Express server [tmdb-proxy.ts](server/tmdb-proxy.ts) to serve static client assets from `dist` and handle SPA routing in production mode.
   - Updated package scripts in [package.json](package.json) to support client/server builds and local production runs (`npm run build`, `npm run start`).
@@ -37,12 +40,23 @@
   - The container serves the Vite production build and the `/api/tmdb/...` server-side proxy on port `3000`.
   - No `VITE_TMDB_API_KEY` is required by the Docker runtime.
 
+- **Phase 5: Next.js App Router Migration** (Completed on 2026-06-13)
+  - Migrated the application from Vite SPA to Next.js App Router.
+  - Implemented async Server Components for data-heavy pages: `app/page.tsx` (Home) and `app/movie/[id]/page.tsx` (Movie Details).
+  - Implemented Server Actions in `src/server/actions/tmdb.ts` to fetch movies server-side without direct REST/HTTP endpoints exposed to client or browser.
+  - Converted watchlist to dynamic Next.js client component page (`app/watchlist/page.tsx`) referencing `localStorage` via context provider.
+  - Isolated client components with `"use client"` leaf boundaries: `Header`, `MovieCard`, `SearchBar`, `PaginationBar`, `WatchlistToggle`.
+  - Removed Vite runtime (`vite.config.ts`, `index.html`), legacy Express proxy (`server/tmdb-proxy.ts`), and unused custom hooks/files.
+  - Configured `output: 'standalone'` in `next.config.ts` for optimized Docker building.
+  - Updated `Dockerfile` to copy standalone build artifacts into distroless Node environment.
+  - Addressed touch target, heading order, and image CLS issues to achieve perfect Lighthouse audits.
+
 ## Current Status
-- **Active Phase**: Phase 5 — Next.js App Router Migration (Migration has not yet started; task tracker and context updated).
+- **Active Phase**: Phase 6 — AI-Native Layer (Not started; Phase 5 complete and verified).
 - **ESLint**: 0 warnings, 0 errors (via `npm run lint`).
 - **TypeScript**: 0 compiler errors (via `npm run typecheck`).
 - **Tests**: All unit tests pass successfully (via `npm run test -- --run`).
 - **A11y**: 0 critical/serious violations verified by automated axe-core Playwright audit script (`npm run test:a11y`).
-- **Lighthouse**: Assertions validated via Lighthouse CI local runs (`npx lhci autorun`).
-- **Docker**: Production Multi-stage Distroless build configuration verified (host lacking docker daemon prevented local image build).
-- **Security**: Zero exposed environment keys, production build server handles SPA and proxy safely.
+- **Lighthouse**: Assertions validated via Lighthouse CI local runs (`npx lhci autorun`). All budgets for Performance, Accessibility, and CLS met.
+- **Docker**: Standalone multi-stage Distroless configuration prepared for CI run.
+- **Security**: No `NEXT_PUBLIC_` API keys, all TMDB fetching isolated server-side.
