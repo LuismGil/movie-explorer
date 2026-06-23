@@ -92,6 +92,8 @@ The project configuration defines a path alias in [tsconfig.json](file:///home/l
 
 Use this alias for importing components, contexts, types, utility libraries, actions, etc. from the `src/` directory.
 
+Note: By default, the path alias resolves within all source files and test files (including those in `__tests__` folders), as test exclusions have been removed from [tsconfig.json](file:///home/luis/Lm/projects/movie-explorer/tsconfig.json).
+
 Example:
 ```typescript
 import SimilarMovies from "@/components/SimilarMovies";
