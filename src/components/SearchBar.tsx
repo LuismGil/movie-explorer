@@ -9,40 +9,39 @@ export function SearchBar() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // Read current parameters from URL
   const queryParam = searchParams.get('query') || '';
   const viewParam = (searchParams.get('view') as 'popular' | 'trending') || 'popular';
   const windowParam = (searchParams.get('window') as 'day' | 'week') || 'day';
 
   const [search, setSearch] = useState(queryParam);
 
-  // Sync input value with URL changes
   useEffect(() => {
     setSearch(queryParam);
   }, [queryParam]);
 
-  // Debounce search input changes
   useEffect(() => {
+    if (search.trim() === queryParam.trim()) {
+      return;
+    }
+
     const timeout = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
-      if (search.trim()) {
-        params.set('query', search.trim());
+      const trimmedSearch = search.trim();
+      if (trimmedSearch) {
+        params.set('query', trimmedSearch);
         params.set('page', '1');
         params.delete('view');
         params.delete('window');
       } else {
-        // If query is cleared, revert to popular view
-        if (queryParam) {
-          params.delete('query');
-          params.set('view', 'popular');
-          params.set('page', '1');
-        }
+        params.delete('query');
+        params.set('view', 'popular');
+        params.set('page', '1');
       }
       router.push(`${pathname}?${params.toString()}`);
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, [search, router, pathname, searchParams, queryParam]);
+  }, [search, queryParam, router, pathname, searchParams]);
 
   const setViewMode = (mode: 'popular' | 'trending') => {
     const params = new URLSearchParams();

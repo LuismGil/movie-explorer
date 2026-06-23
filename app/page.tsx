@@ -89,9 +89,16 @@ async function MovieContent({
 export default async function HomePage({ searchParams }: PageProps) {
   const params = await searchParams;
   const query = params.query || '';
-  const viewMode = (params.view as 'popular' | 'trending') || 'popular';
-  const trendingWindow = (params.window as 'day' | 'week') || 'day';
-  const page = params.page ? parseInt(params.page, 10) : 1;
+  const viewMode = params.view === 'trending' ? 'trending' : 'popular';
+  const trendingWindow = params.window === 'week' ? 'week' : 'day';
+
+  let page = 1;
+  if (params.page) {
+    const parsedPage = parseInt(params.page, 10);
+    if (!isNaN(parsedPage) && parsedPage > 0) {
+      page = parsedPage;
+    }
+  }
 
   // Key the Suspense on parameters so that page transition/search displays loading skeleton
   const key = `${query}-${viewMode}-${trendingWindow}-${page}`;

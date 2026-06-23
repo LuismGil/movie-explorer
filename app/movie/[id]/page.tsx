@@ -36,30 +36,44 @@ export default async function MovieDetailsPage({ params }: PageProps) {
     notFound();
   }
 
-  let data: MovieDetails | null = null;
+  let data: MovieDetails;
+
+  try {
+    data = await fetchMovieDetails(id);
+  } catch (error) {
+    console.error(`Error fetching core movie details for ID ${id}:`, error);
+    notFound();
+  }
+
   let videos: MovieVideo[] = [];
   let cast: MovieCastMember[] = [];
   let director: string | null = null;
   let similar: MovieListItem[] = [];
 
   try {
-    const [details, videosResponse, credits, similarResponse] = await Promise.all([
-      fetchMovieDetails(id),
-      fetchMovieVideos(id),
-      fetchMovieCredits(id),
-      fetchSimilarMovies(id),
+    const [videosResponse, credits, similarResponse] = await Promise.all([
+      fetchMovieVideos(id).catch((error) => {
+        console.warn(`Error fetching videos for movie ID ${id}:`, error);
+        return { id: Number(id), results: [] };
+      }),
+      fetchMovieCredits(id).catch((error) => {
+        console.warn(`Error fetching credits for movie ID ${id}:`, error);
+        return { cast: [], crew: [] };
+      }),
+      fetchSimilarMovies(id).catch((error) => {
+        console.warn(`Error fetching similar movies for movie ID ${id}:`, error);
+        return { page: 1, results: [], total_pages: 1, total_results: 0 };
+      }),
     ]);
 
-    data = details;
-    videos = videosResponse.results.filter(
+    videos = (videosResponse.results || []).filter(
       (video) => video.site === 'YouTube' && video.type === 'Trailer'
     );
-    cast = credits.cast.slice(0, 10);
-    director = credits.crew.find((member) => member.job === 'Director')?.name ?? null;
-    similar = similarResponse.results;
+    cast = (credits.cast || []).slice(0, 10);
+    director = (credits.crew || []).find((member) => member.job === 'Director')?.name ?? null;
+    similar = similarResponse.results || [];
   } catch (error) {
-    console.error('Error fetching movie details:', error);
-    notFound();
+    console.error(`Unexpected error during supplementary requests for movie ID ${id}:`, error);
   }
 
   const backdropUrl = data.backdrop_path ? `${TMDB_IMAGE_BASE}${data.backdrop_path}` : null;

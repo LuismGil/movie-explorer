@@ -9,29 +9,31 @@ import type {
   TmdbPaginatedResponse,
 } from '@/types/movie';
 
-const TMDB_API_KEY = process.env.TMDB_API_KEY;
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 
-// Reusable axios client configured server-side only
+// Reusable axios client configured server-side only to prevent leaking key to client
 const tmdbClient = axios.create({
   baseURL: TMDB_BASE_URL,
   params: {
-    api_key: TMDB_API_KEY,
     language: 'pt-BR',
   },
 });
 
-function getApiKey() {
-  if (!TMDB_API_KEY) {
+tmdbClient.interceptors.request.use((config) => {
+  const apiKey = process.env.TMDB_API_KEY;
+  if (!apiKey) {
     throw new Error('Serviço indisponível: chave de API não configurada.');
   }
-  return TMDB_API_KEY;
-}
+  config.params = {
+    ...config.params,
+    api_key: apiKey,
+  };
+  return config;
+});
 
 export async function fetchPopularMovies(
   page = 1,
 ): Promise<TmdbPaginatedResponse<MovieListItem>> {
-  getApiKey();
   try {
     const { data } = await tmdbClient.get<TmdbPaginatedResponse<MovieListItem>>('/movie/popular', {
       params: { page },
@@ -47,7 +49,6 @@ export async function searchMovies(
   query: string,
   page = 1,
 ): Promise<TmdbPaginatedResponse<MovieListItem>> {
-  getApiKey();
   if (!query || !query.trim()) {
     return { page: 1, results: [], total_pages: 1, total_results: 0 };
   }
@@ -63,7 +64,6 @@ export async function searchMovies(
 }
 
 export async function fetchMovieDetails(id: string): Promise<MovieDetails> {
-  getApiKey();
   try {
     const { data } = await tmdbClient.get<MovieDetails>(`/movie/${id}`);
     return data;
@@ -74,7 +74,6 @@ export async function fetchMovieDetails(id: string): Promise<MovieDetails> {
 }
 
 export async function fetchMovieVideos(id: string): Promise<MovieVideoResponse> {
-  getApiKey();
   try {
     const { data } = await tmdbClient.get<MovieVideoResponse>(`/movie/${id}/videos`);
     return data;
@@ -85,7 +84,6 @@ export async function fetchMovieVideos(id: string): Promise<MovieVideoResponse> 
 }
 
 export async function fetchMovieCredits(id: string): Promise<MovieCredits> {
-  getApiKey();
   try {
     const { data } = await tmdbClient.get<MovieCredits>(`/movie/${id}/credits`);
     return data;
@@ -98,7 +96,6 @@ export async function fetchMovieCredits(id: string): Promise<MovieCredits> {
 export async function fetchSimilarMovies(
   id: string,
 ): Promise<TmdbPaginatedResponse<MovieListItem>> {
-  getApiKey();
   try {
     const { data } = await tmdbClient.get<TmdbPaginatedResponse<MovieListItem>>(`/movie/${id}/recommendations`);
     return data;
@@ -112,7 +109,6 @@ export async function fetchTrendingMovies(
   timeWindow: 'day' | 'week',
   page = 1,
 ): Promise<TmdbPaginatedResponse<MovieListItem>> {
-  getApiKey();
   try {
     const { data } = await tmdbClient.get<TmdbPaginatedResponse<MovieListItem>>(
       `/trending/movie/${timeWindow}`,

@@ -21,8 +21,8 @@ export function WatchlistProvider({ children }: WatchlistProviderProps) {
           return parsed;
         }
       }
-    } catch {
-      // ignore malformed storage
+    } catch (error) {
+      console.warn('WatchlistProvider: Failed to parse watchlist from localStorage:', error);
     }
     return [];
   });
