@@ -1,17 +1,31 @@
 # Movie Explorer: Technical Specification
 
-## 1. Intent Classification Matrix (Orchestrator Rules)
-The Orchestrator Agent (Gemini 3 Pro) must classify all incoming user strings into exactly one of these 4 intents:
-* `browse`: General exploration without specific titles (e.g., "Show me top sci-fi movies").
-* `search`: Direct lookup for specific keywords, titles, or people (e.g., "Nolan space movie").
-* `recommend`: Contextual or comparative discovery (e.g., "Something like Interstellar").
-* `conversational`: Chitchat or system questions (e.g., "Who are you?", "Help me").
+## 1. Agent Responsibilities
 
-## 2. Dynamic Pipeline Flow & Execution Plan
-Once the intent is matched, the multi-agent pipeline enforces the following deterministic sequence:
-1. **Orchestrator Plan:** Outputs raw JSON satisfying `OrchestratorPlan` schema.
-2. **Search Fetching:** Search Agent reads the plan, connects to the MCP server via `stdio`/`SSE`, and triggers tools.
-3. **Quality Gate:** Output is intercepted. Quality Agent runs factual validation against raw payload before UI streaming.
+The system freezes exactly three agents with strictly isolated responsibilities:
+
+### Orchestrator Agent
+* **Owns**: intent classification, execution planning, tool selection, agent sequencing, global timeout, tool-call budget, token budget, and final pipeline coordination.
+* **Constraints**: It must not call TMDB directly.
+
+### Search Agent
+* **Owns**: MCP tool execution, result aggregation, normalization, deduplication, preservation of TMDB IDs, partial failure handling, and structured search context.
+* **Constraints**: It must not render user-facing content. It must not call TMDB directly.
+
+### Quality/Safety Agent
+* **Owns**: factual validation against MCP-derived data, unsupported-claim rejection, contradiction detection, schema validation, sanitization, and final structured UI DTO approval.
+* **Constraints**: It is the only agent allowed to approve final user-visible AI data. It must not bypass schemas.
+
+## 2. Dynamic Pipeline & Data Validation Flow
+1. **User input** → validated request schema.
+2. **Next.js UI** → server-side AI entry point → **Orchestrator Agent**.
+3. **Orchestrator Agent** builds an execution plan and calls the **Search Agent**.
+4. **Search Agent** executes MCP tools through a server-only MCP Client Adapter via Streamable HTTP (with Bearer auth).
+5. **Standalone MCP Server** calls TMDB API and returns validated tool output schemas to the Search Agent.
+6. Search Agent returns an aggregated, validated agent schema to the **Quality/Safety Agent**.
+7. Quality/Safety Agent verifies data, sanitizes it, and outputs a validated presentation DTO schema.
+8. The result is safely sent to the accessible Streaming UI.
 
 ## 3. Streaming Response Contracts
-All responses from `/api/chat` must adhere to the Vercel AI SDK streaming format. Text tokens stream immediately, while UI entity blocks (Movie Cards) must leverage React 19 `use()` promise resolution to prevent layout shift.
+* **Allowed**: Progress events may be streamed only when they contain controlled application-defined status data.
+* **Forbidden**: Never stream raw model output, raw MCP responses, private prompts, chain-of-thought, tool arguments containing secrets, or unvalidated Markdown or HTML.

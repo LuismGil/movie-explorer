@@ -230,83 +230,36 @@ npm run lint        # exit 0
 
 > **Goal**: Semantic, conversational movie search via a 3-agent pipeline backed by a standalone MCP Server.
 
-> ⚠️ **User approval required before starting**: confirm Google AI (Gemini) API key is provisioned.
+> ⚠️ **Phase 6 Implementation Order** (Do not start 6.1–6.9 until 6.0 is approved):
+6.0 Architecture and Entry Gates
+6.1 Standalone MCP Foundation
+6.2 TMDB MCP Tools
+6.3 Server-only MCP Client
+6.4 Search Agent
+6.5 Quality/Safety Agent
+6.6 Orchestrator Agent
+6.7 Validated Streaming UI
+6.8 Cache, Limits, and Observability
+6.9 Hardening and Phase Closure
 
-### 6A — MCP Server
+### 6.0 Architecture and Entry Gates
 
-- [ ] **6.1** Create `mcp-server/package.json` — standalone Node package. Dependencies: `@modelcontextprotocol/sdk`, `zod`, `axios` (server-only), `typescript`.
-- [ ] **6.2** Create `mcp-server/index.ts` — MCP Server entry point. Registers all 5 tools. Starts with `StdioServerTransport` in dev, `SSEServerTransport` in production.
-- [ ] **6.3** Create `mcp-server/tools/search-movies.ts`:
-  - Input schema (Zod): `{ query: string, page?: number }`
-  - Calls TMDB `/search/movie` with server-side key
-  - Returns: `{ results: MovieSummary[], total_pages: number }`
-- [ ] **6.4** Create `mcp-server/tools/get-movie-details.ts`:
-  - Input: `{ movieId: string }`
-  - Returns: full TMDB movie object
-- [ ] **6.5** Create `mcp-server/tools/get-recommendations.ts`:
-  - Input: `{ movieId: string }`
-  - Returns: `{ results: MovieSummary[] }`
-- [ ] **6.6** Create `mcp-server/tools/get-trending.ts`:
-  - Input: `{ window: "day" | "week" }`
-  - Returns: `{ results: MovieSummary[] }`
-- [ ] **6.7** Create `mcp-server/tools/get-credits.ts`:
-  - Input: `{ movieId: string }`
-  - Returns: top 10 cast + director from crew
-- [ ] **6.8** Add `"mcp:dev": "tsx mcp-server/index.ts"` and `"mcp:build": "tsc -p mcp-server/tsconfig.json"` to root `package.json`.
-
-### 6B — Multi-Agent System
-
-- [ ] **6.9** Install Vercel AI SDK (`ai`, `@ai-sdk/google`). Configure `GOOGLE_AI_API_KEY` in `.env.local`.
-- [ ] **6.10** Create `src/server/agents/token-budget.ts`:
-  - Exports `TokenBudget` class tracking per-agent token usage per request.
-  - Enforces hard limits: Orchestrator 4096, Search 2048, Quality 1024 input tokens.
-  - Implements semantic cache: store query embeddings; on new query compute cosine similarity; if ≥ 0.95 against cached query, return cached result (no LLM call).
-  - Logs usage to an in-memory store accessible by `GET /api/telemetry/tokens`.
-- [ ] **6.11** Create `src/server/agents/orchestrator.ts` (Gemini 3 Pro):
-  - Receives raw user query string.
-  - Classifies intent into one of: `browse | search | recommend | conversational`.
-  - Generates a structured execution plan: `{ intent, searchQuery?, movieId?, timeWindow? }`.
-  - Token budget: enforce 4096 input token max via `TokenBudget`.
-  - Returns a typed `OrchestratorPlan` object.
-- [ ] **6.12** Create `src/server/agents/search-agent.ts` (Gemini 3 Flash):
-  - Receives `OrchestratorPlan`.
-  - Connects to MCP Server as a client (`@modelcontextprotocol/sdk` client).
-  - Calls the appropriate MCP tools based on the plan.
-  - Aggregates and deduplicates results.
-  - Returns `SearchResult[]` with TMDB-sourced metadata.
-  - Token budget: enforce 2048 input token max.
-- [ ] **6.13** Create `src/server/agents/quality-agent.ts` (Gemini 3 Flash):
-  - Receives `SearchResult[]` + original query.
-  - Validates each result: checks factual consistency (title/year match TMDB data), content safety (no adult content unless `include_adult=true`), hallucination detection (rejects any field not present in the TMDB source data).
-  - Returns only validated results; rejects with a typed error if nothing passes.
-  - Token budget: enforce 1024 input token max.
-- [ ] **6.14** Create `app/api/chat/route.ts` — Next.js Route Handler:
-  - Accepts `POST { messages: Message[] }`.
-  - Extracts latest user message.
-  - Checks semantic cache (via `TokenBudget`).
-  - Runs Orchestrator → Search Agent → Quality Agent pipeline.
-  - Streams validated results back using Vercel AI SDK `StreamingTextResponse`.
-- [ ] **6.15** Create `app/api/telemetry/tokens/route.ts` — `GET` handler:
-  - Returns JSON: `{ perAgent: { orchestrator, search, quality }, cacheHitRate, totalCalls }`.
-- [ ] **6.16** Create `src/components/AIChatPanel.tsx` (`"use client"`):
-  - Uses Vercel AI SDK `useChat` hook pointing to `/api/chat`.
-  - Chat input replaces the static keyword search input.
-  - Renders agent-generated movie cards using existing `<MovieCard>` component.
-  - Shows a streaming typing indicator while the pipeline runs.
-  - Displays token telemetry summary (cache hit rate, cost estimate) in a collapsible panel.
+- [ ] Phase 5 production deployment verified.
+- [ ] Streamable HTTP approved as the only MCP transport.
+- [ ] `packages/mcp-server` approved as the standalone server boundary.
+- [ ] Vercel approved as the Next.js deployment boundary.
+- [ ] Standalone MCP hosting provider approved by the user.
+- [ ] Bearer authentication using `MCP_INTERNAL_API_KEY` approved.
+- [ ] `GOOGLE_GENERATIVE_AI_API_KEY` available locally and in Vercel.
+- [ ] Default and fallback Gemini model identifiers approved.
+- [ ] MCP tool contracts reviewed and approved.
+- [ ] Final Phase 6 architecture reviewed and approved.
 
 ### Phase 6 Verification
 ```bash
-npm run mcp:dev &   # MCP server starts on stdio
-npm run dev         # Next.js starts on :3000
-# Manual: type "A thriller set in space" in the chat panel
-# Expected: Orchestrator classifies as 'search' → Search Agent calls MCP search_movies
-#           → Quality Agent validates → streaming movie cards appear
-# Manual: repeat same query → verify cache hit in /api/telemetry/tokens response
-# Manual: hit GET /api/telemetry/tokens → verify per-agent breakdown JSON
 npm run test        # agent mock tests pass
 ```
-**Commit**: `feat(ai): add MCP Server (5 TMDB tools) + 3-agent MAS pipeline (Orchestrator→Search→Quality)`
+**Commit**: `feat(ai): freeze architecture and prepare for Phase 6 implementation`
 
 ---
 

@@ -109,144 +109,76 @@ docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:lat
 **Status:** Planned  
 **Goal:** Introduce a standalone MCP server for TMDB and a validated three-agent AI orchestration flow without exposing secrets or rendering raw LLM output.
 
-## Entry Gates
+## Architecture and Entry Gates
 
-- [ ] Phase 5 production deployment is verified.
-- [ ] `TMDB_API_KEY` remains server-side only.
-- [ ] `GOOGLE_AI_API_KEY` is available locally and in the deployment environment.
-- [ ] AI provider and model strategy are confirmed.
-- [ ] MCP server runtime and transport strategy are confirmed.
-- [ ] Phase 6 implementation plan is reviewed and explicitly approved.
+- [ ] Phase 5 production deployment verified.
+- [ ] Streamable HTTP approved as the only MCP transport.
+- [ ] `packages/mcp-server` approved as the standalone server boundary.
+- [ ] Vercel approved as the Next.js deployment boundary.
+- [ ] Standalone MCP hosting provider approved by the user.
+- [ ] Bearer authentication using `MCP_INTERNAL_API_KEY` approved.
+- [ ] `GOOGLE_GENERATIVE_AI_API_KEY` available locally and in Vercel.
+- [ ] Default and fallback Gemini model identifiers approved.
+- [ ] MCP tool contracts reviewed and approved.
+- [ ] Final Phase 6 architecture reviewed and approved.
 
-## MCP Server Foundation
+## 6.1 Standalone MCP Foundation
 
-- [ ] Create the MCP server as an independent package/process.
+- [ ] Create the MCP server as an independent package under `packages/mcp-server/`.
 - [ ] Define package boundaries and runtime scripts.
 - [ ] Keep the MCP server isolated from the Next.js UI runtime.
-- [ ] Add strict TypeScript configuration.
-- [ ] Add environment validation with Zod.
-- [ ] Add structured logging and safe error handling.
-- [ ] Add health/readiness verification.
-- [ ] Document local development and production execution.
+- [ ] Implement Streamable HTTP transport bounding to 127.0.0.1 locally.
+- [ ] Add `MCP_INTERNAL_API_KEY` Bearer token authentication.
+- [ ] Add strict TypeScript configuration and Zod environment validation.
 
-## TMDB MCP Tools
+## 6.2 TMDB MCP Tools
 
 - [ ] Implement `search_movies`.
 - [ ] Implement `get_movie_details`.
 - [ ] Implement `get_recommendations`.
 - [ ] Implement `get_trending`.
 - [ ] Implement `get_credits`.
-- [ ] Define Zod input schemas for every tool.
-- [ ] Define normalized structured outputs.
-- [ ] Add pagination and result limits.
-- [ ] Add timeout and retry policies.
+- [ ] Define Zod input/output schemas for every tool.
 - [ ] Prevent secrets from appearing in logs or tool responses.
-- [ ] Add unit and integration tests for every tool.
 
-## Orchestrator Agent
+## 6.3 Server-only MCP Client
 
-- [ ] Define supported user intents.
-- [ ] Implement intent classification.
-- [ ] Create structured execution plans.
-- [ ] Select the minimum required MCP tools.
-- [ ] Enforce tool-call and token budgets.
-- [ ] Reject unsupported or unsafe requests.
-- [ ] Return structured results only.
+- [ ] Build Next.js server-only MCP client adapter.
+- [ ] Integrate Bearer authentication.
 
-## Search Agent
+## 6.4 Search Agent
 
-- [ ] Execute MCP tool calls.
-- [ ] Aggregate results from multiple tools.
-- [ ] Normalize movie data.
-- [ ] Deduplicate movies.
-- [ ] Preserve TMDB identifiers and factual metadata.
-- [ ] Handle partial tool failures.
-- [ ] Return structured context to the validation agent.
+- [ ] Execute MCP tool calls via the MCP Client.
+- [ ] Aggregate, normalize, and deduplicate results.
+- [ ] Preserve TMDB identifiers and handle partial failures.
+- [ ] Ensure agent does not call TMDB directly.
 
-## Quality/Safety Agent
+## 6.5 Quality/Safety Agent
 
 - [ ] Validate factual claims against MCP/TMDB results.
-- [ ] Reject unsupported recommendations or invented metadata.
-- [ ] Detect missing or contradictory data.
-- [ ] Apply output schemas.
-- [ ] Sanitize user-visible content.
-- [ ] Prevent raw LLM responses from reaching the UI.
-- [ ] Return approved structured UI data only.
+- [ ] Reject unsupported claims and detect contradictions.
+- [ ] Apply final DTO output schemas and sanitize content.
+- [ ] Ensure no raw LLM output reaches the UI.
 
-## AI Provider Integration
+## 6.6 Orchestrator Agent
 
-- [ ] Integrate the approved AI provider through the Vercel AI SDK.
-- [ ] Keep `GOOGLE_AI_API_KEY` server-side.
-- [ ] Define model selection rules for Flash and Pro-class models.
-- [ ] Configure timeouts, retries, and abort signals.
-- [ ] Define token budgets per request and per agent.
-- [ ] Add graceful provider failure handling.
-- [ ] Validate all model outputs with schemas.
+- [ ] Classify intent, plan execution, and select tools.
+- [ ] Sequence agents and coordinate pipeline.
+- [ ] Enforce global timeout, tool-call budgets, and token budgets.
 
-## Streaming UI
+## 6.7 Validated Streaming UI
 
-- [ ] Define the server-side AI entry point.
-- [ ] Stream only validated progress and final structured data.
-- [ ] Add loading, error, empty, and cancellation states.
-- [ ] Maintain accessible announcements for streamed updates.
-- [ ] Avoid exposing chain-of-thought or internal agent reasoning.
-- [ ] Avoid rendering raw Markdown or unvalidated model output.
+- [ ] Stream only validated progress and structured data.
+- [ ] Add loading, error, and empty states.
+- [ ] Prevent streaming of private prompts, chain-of-thought, or unvalidated Markdown.
 
-## Cache and Observability
+## 6.8 Cache, Limits, and Observability
 
-- [ ] Define TMDB response caching.
-- [ ] Define semantic cache boundaries.
-- [ ] Prevent user-specific data leakage between cache entries.
-- [ ] Record tool latency and failure rates.
-- [ ] Record token usage without logging sensitive prompts.
-- [ ] Add request correlation identifiers.
-- [ ] Define rate limits and abuse protection.
+- [ ] Define caching strategies without leaking user data.
+- [ ] Record tool latency and token usage.
 
-## Security and Accessibility
+## 6.9 Hardening and Phase Closure
 
-- [ ] Verify no AI or TMDB key reaches the client bundle.
-- [ ] Validate all user input server-side.
-- [ ] Sanitize all user-visible AI content.
-- [ ] Protect AI endpoints against abuse.
-- [ ] Maintain WCAG 2.1 AA keyboard navigation.
-- [ ] Add accessible names and live-region behavior where required.
-- [ ] Run axe-core with no critical or serious violations.
-
-## Testing and Verification
-
-- [ ] Unit tests for MCP schemas and tools.
-- [ ] Integration tests for MCP-to-TMDB communication.
-- [ ] Unit tests for all three agents.
-- [ ] Tests for hallucination and unsupported-claim rejection.
-- [ ] Tests proving raw LLM output cannot reach the UI.
-- [ ] Tests for provider and MCP failures.
-- [ ] Lint passes.
-- [ ] Typecheck passes.
-- [ ] Unit and integration tests pass.
-- [ ] Production build passes.
-- [ ] Accessibility tests pass.
-- [ ] Docker build and runtime verification pass.
-
-## Documentation
-
-- [ ] Update architecture documentation.
-- [ ] Update MCP interface documentation.
-- [ ] Document environment variables.
-- [ ] Document agent responsibilities and boundaries.
-- [ ] Document security and validation flow.
-- [ ] Update `docs/ANATOMY.md`.
-- [ ] Update `.ai/PLAN.md`.
-- [ ] Update `.ai/CONTEXT.md`.
-- [ ] Update the README only after implemented behavior is verified.
-
-## Definition of Done
-
-- [ ] MCP server runs as an independent process.
-- [ ] All five TMDB tools are implemented and tested.
-- [ ] Orchestrator, Search, and Quality/Safety agents are separated.
-- [ ] Every model output is schema-validated.
-- [ ] No raw LLM output reaches the UI.
-- [ ] No secrets are exposed to the browser.
-- [ ] Streaming UI is accessible and resilient.
-- [ ] CI, Docker, tests, build, and accessibility checks pass.
-- [ ] Documentation reflects the real implemented state.
+- [ ] Verify unit, integration, and accessibility tests pass.
+- [ ] Verify standalone Docker container build for MCP server.
+- [ ] Update final documentation.

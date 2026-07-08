@@ -73,3 +73,17 @@
 - **Docker**: Standalone multi-stage Distroless configuration. CSS asset serving fixed via Tailwind content path correction.
 - **Security**: No `NEXT_PUBLIC_` API keys, all TMDB fetching isolated server-side.
 - **i18n**: 100% compliant with SecureCoder JSX i18n portability checks; no hardcoded user-facing strings, labels, placeholders or titles exist.
+- **Phase 6.0: Architecture and Entry Gates** (Planned)
+  - Phase 6.0 architecture review performed.
+  - **Current State versus Target State**: Currently, Next.js owns the existing server-side TMDB integration. The target state introduces an isolated, standalone Node.js MCP server (`packages/mcp-server/`) accessed via a Streamable HTTP transport and Bearer authentication, and a 3-agent orchestration pipeline.
+  - **Decisions Frozen**:
+    - Transport: Streamable HTTP exclusively.
+    - Boundaries: `packages/mcp-server` for MCP; Vercel for Next.js app; Container-based service for MCP.
+    - Agents: Orchestrator, Search, and Quality/Safety.
+    - Tools: `search_movies`, `get_movie_details`, `get_recommendations`, `get_trending`, `get_credits`.
+    - Validation: Zod schemas at all boundaries.
+    - Strict stream rules (no raw output).
+  - **Unresolved Approval Gates**: Standalone MCP hosting provider, default/fallback Gemini model identifiers, Phase 5 verification, and full architecture review remain unchecked.
+  - **Files Changed**: `.ai/ARCHITECTURE.md`, `.ai/MCP_INTERFACE.md`, `.ai/SECURITY.md`, `.ai/SPEC.md`, `.ai/PLAN.md`, `.ai/TASK.md`, `.ai/CONTEXT.md`.
+  - **Confirmation**: No package, runtime, UI, or configuration code/dependencies were changed.
+  - **Exact Next Step**: Phase 6.1 implementation can begin only after the unresolved entry gates are explicitly approved by the user.
