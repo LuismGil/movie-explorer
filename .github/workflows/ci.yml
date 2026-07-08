@@ -60,3 +60,35 @@ jobs:
 
       - name: Docker Build Smoke Test
         run: docker build -t movie-explorer:latest .
+
+  mcp-gate:
+    name: Quality Gate (MCP Server)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/mcp-server
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit Tests
+        run: npm run test
+
+      - name: Build MCP Server
+        run: npm run build

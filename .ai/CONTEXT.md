@@ -83,7 +83,12 @@
     - Tools: `search_movies`, `get_movie_details`, `get_recommendations`, `get_trending`, `get_credits`.
     - Validation: Zod schemas at all boundaries.
     - Strict stream rules (no raw output).
-  - **Unresolved Approval Gates**: Standalone MCP hosting provider, default/fallback Gemini model identifiers, Phase 5 verification, and full architecture review remain unchecked.
+  - **Unresolved Approval Gates**: Standalone MCP hosting provider, default/fallback Gemini model identifiers, Phase 5 verification.
+
+## 6. Recent Changes
+
+* **Architecture Alignment:** Formalized Phase 6 and Phase 7 roadmap for Multi-Agent & Standalone MCP architecture.
+* **MCP Server Foundation:** Built the standalone `packages/mcp-server` with Streamable HTTP transport, Zod environment validation, constant-time bearer authentication, strict origin validation, vitest unit/integration tests, tsup builds, independent ESLint/TSConfig setup, and a separate Dockerfile. Integrated into the root CI workflow via `mcp-gate` job.
   - **Files Changed**: `.ai/ARCHITECTURE.md`, `.ai/MCP_INTERFACE.md`, `.ai/SECURITY.md`, `.ai/SPEC.md`, `.ai/PLAN.md`, `.ai/TASK.md`, `.ai/CONTEXT.md`.
   - **Confirmation**: No package, runtime, UI, or configuration code/dependencies were changed.
   - **Exact Next Step**: Phase 6.1 implementation can begin only after the unresolved entry gates are explicitly approved by the user.

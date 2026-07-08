@@ -122,14 +122,19 @@ docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:lat
 - [ ] MCP tool contracts reviewed and approved.
 - [ ] Final Phase 6 architecture reviewed and approved.
 
-## 6.1 Standalone MCP Foundation
+#### Standalone MCP Server Foundation
+**Status**: `Complete`
 
-- [ ] Create the MCP server as an independent package under `packages/mcp-server/`.
-- [ ] Define package boundaries and runtime scripts.
-- [ ] Keep the MCP server isolated from the Next.js UI runtime.
-- [ ] Implement Streamable HTTP transport bounding to 127.0.0.1 locally.
-- [ ] Add `MCP_INTERNAL_API_KEY` Bearer token authentication.
-- [ ] Add strict TypeScript configuration and Zod environment validation.
+* **Goal**: Establish the standalone `packages/mcp-server` Node.js HTTP runtime, independent of Next.js.
+* **Scope**:
+  * Set up `packages/mcp-server/` with independent build (`tsup`), tests (`vitest`), and linting.
+  * Implement the Streamable HTTP transport and basic Express lifecycle.
+  * Implement robust environment validation with Zod (stripping `.env` from the root).
+  * Implement the internal authentication middleware (`Authorization: Bearer <MCP_INTERNAL_API_KEY>`).
+  * Implement health/readiness endpoints for deployment health checks.
+  * Add the standalone `Dockerfile`.
+  * Add isolated CI checks for `mcp-server`.
+* **Out of Scope**: Real TMDB tools, Next.js client implementation, agents.
 
 ## 6.2 TMDB MCP Tools
 

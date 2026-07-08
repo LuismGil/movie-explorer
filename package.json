@@ -10,7 +10,14 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
-    "test:a11y": "node scripts/a11y-audit.js"
+    "test:a11y": "node scripts/a11y-audit.js",
+    "mcp:dev": "npm --prefix packages/mcp-server run dev",
+    "mcp:lint": "npm --prefix packages/mcp-server run lint",
+    "mcp:typecheck": "npm --prefix packages/mcp-server run typecheck",
+    "mcp:test": "npm --prefix packages/mcp-server run test",
+    "mcp:build": "npm --prefix packages/mcp-server run build",
+    "mcp:start": "npm --prefix packages/mcp-server run start",
+    "mcp:verify": "npm --prefix packages/mcp-server run verify"
   },
   "dependencies": {
     "axios": "^1.13.2",

@@ -1,0 +1,12 @@
+node_modules
+.git
+.env
+.env.*
+dist
+coverage
+tests
+src
+tsconfig.json
+eslint.config.mjs
+tsup.config.ts
+vitest.config.ts
