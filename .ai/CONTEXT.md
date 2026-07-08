@@ -61,7 +61,10 @@
   - **Verification**: Verified that all checks pass successfully, including: `npm run lint`, `npm run typecheck`, `npm run test -- --run` (3/3 pass), `npm run build`, and Playwright/axe-core accessibility audits (`npm run test:a11y`). Scanned codebase to ensure no deep relative imports or un-localized JSX strings remain.
 
 ## Current Status
-- **Active Phase**: Phase 6 — AI-Native Layer (Not started; Phase 5 and all post-migration tasks complete and verified).
+- **Active Phase**: Phase 6 — MCP Server + Multi-Agent System (Planned, not implemented).
+  - Phase 6 task structure was prepared.
+  - Implementation is gated by Phase 5 production verification and AI provider credentials.
+  - No runtime code or dependencies were changed.
 - **ESLint**: 0 warnings, 0 errors (via `npm run lint`).
 - **TypeScript**: 0 compiler errors (via `npm run typecheck`).
 - **Tests**: All unit tests pass successfully (via `npm run test -- --run`).
