@@ -231,9 +231,9 @@ npm run lint        # exit 0
 > **Goal**: Semantic, conversational movie search via a 3-agent pipeline backed by a standalone MCP Server.
 
 > ⚠️ **Phase 6 Implementation Order** (Do not start 6.1–6.9 until 6.0 is approved):
-6.0 Architecture and Entry Gates
-6.1 Standalone MCP Foundation
-6.2 TMDB MCP Tools
+6.0 Architecture and Entry Gates - [Completed]
+6.1 Standalone MCP Foundation - [Completed]
+6.2 TMDB MCP Tools - [Completed]
 6.3 Server-only MCP Client
 6.4 Search Agent
 6.5 Quality/Safety Agent

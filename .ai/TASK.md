@@ -106,7 +106,7 @@ docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:lat
 
 # Phase 6 — MCP Server + Multi-Agent System
 
-**Status:** Planned  
+**Status:** In Progress
 **Goal:** Introduce a standalone MCP server for TMDB and a validated three-agent AI orchestration flow without exposing secrets or rendering raw LLM output.
 
 ## Architecture and Entry Gates
@@ -138,13 +138,13 @@ docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:lat
 
 ## 6.2 TMDB MCP Tools
 
-- [ ] Implement `search_movies`.
-- [ ] Implement `get_movie_details`.
-- [ ] Implement `get_recommendations`.
-- [ ] Implement `get_trending`.
-- [ ] Implement `get_credits`.
-- [ ] Define Zod input/output schemas for every tool.
-- [ ] Prevent secrets from appearing in logs or tool responses.
+- [x] Implement `search_movies`.
+- [x] Implement `get_movie_details`.
+- [x] Implement `get_recommendations`.
+- [x] Implement `get_trending`.
+- [x] Implement `get_credits`.
+- [x] Define Zod input/output schemas for every tool.
+- [x] Prevent secrets from appearing in logs or tool responses.
 
 ## 6.3 Server-only MCP Client
 

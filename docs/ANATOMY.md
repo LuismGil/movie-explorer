@@ -34,6 +34,15 @@
 │       ├── radii.json
 │       ├── spacing.json
 │       └── typography.json
+├── packages
+│   └── mcp-server/          # Standalone MCP Server package (Node.js/Express)
+│       ├── src/             
+│       │   ├── tmdb/        # Shared TMDB client, schemas, mapper, errors
+│       │   ├── tools/       # MCP tool handlers (search-movies, get-movie-details, etc.)
+│       │   ├── server/      # MCP Express Server logic
+│       │   ├── config/      # Env validation
+│       │   └── observability/# Structured logging
+│       └── tests/           # Unit and Integration tests
 ├── src
 │   ├── components
 │   │   ├── __tests__
