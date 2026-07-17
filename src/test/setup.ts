@@ -25,3 +25,6 @@ vi.mock('next/navigation', () => {
     useSearchParams: () => new URLSearchParams(),
   };
 });
+
+// Mock server-only for vitest environment
+vi.mock('server-only', () => ({}));

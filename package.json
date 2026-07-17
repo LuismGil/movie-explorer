@@ -20,11 +20,14 @@
     "mcp:verify": "npm --prefix packages/mcp-server run verify"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "axios": "^1.13.2",
     "dotenv": "^17.4.2",
     "next": "^16.2.9",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "server-only": "^0.0.1",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
