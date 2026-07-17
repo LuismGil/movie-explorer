@@ -51,7 +51,15 @@ describe('MCP Integration Test', () => {
     await client.connect(transport);
     
     const result = await client.listTools();
-    expect(result.tools).toEqual([]);
+    expect(result.tools.length).toBe(5);
+    const names = result.tools.map(t => t.name).sort();
+    expect(names).toEqual([
+      'get_credits',
+      'get_movie_details',
+      'get_recommendations',
+      'get_trending',
+      'search_movies'
+    ]);
     
     await client.close();
   });
