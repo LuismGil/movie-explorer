@@ -14,11 +14,12 @@
 **Contrato de schemas:** Zod schemas exact mapping to MCP_INTERFACE.md limits, no any, `z.infer`.
 **Estrategia del cliente TMDB:** Shared native fetch client, reads key from config, centralized error mapping, timeout logic, no axios.
 **Estrategia de errores:** Custom error classes (`TmdbApiError`, `TmdbNetworkError`, `TmdbValidationError`) translating to `McpError` securely.
-**Tests ejecutados:** Unit tests for schemas, mappers, client logic, and tools. Root tests passed.
+**Tests ejecutados:** Unit tests for schemas, mappers, client logic, tools, y client adapter SSR-only.
 **Resultados reales:** Root lint, typecheck, test, build, and a11y tests all pass. MCP Server tests pass.
 **Limitaciones:** Docker daemon required sudo password, so runtime check marked as pending.
+**Nuevas implementaciones:** Se implementó `src/server/mcp/client.ts` encapsulando `StreamableHTTPClientTransport`, garantizado exclusivo al backend gracias al paquete `server-only`. 
 **Gates pendientes:** Docker runtime verification.
-**Siguiente tarea exacta:** Phase 6.3 — Server-only MCP Client.
+**Siguiente tarea exacta:** Phase 6.4 — Search Agent.
 
 ## Completed Phases
 - **Phase 1: Stabilization & Code Quality** (Completed on 2026-06-03)

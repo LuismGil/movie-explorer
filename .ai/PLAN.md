@@ -234,7 +234,7 @@ npm run lint        # exit 0
 6.0 Architecture and Entry Gates - [Completed]
 6.1 Standalone MCP Foundation - [Completed]
 6.2 TMDB MCP Tools - [Completed]
-6.3 Server-only MCP Client
+6.3 Server-only MCP Client - [Completed]
 6.4 Search Agent
 6.5 Quality/Safety Agent
 6.6 Orchestrator Agent

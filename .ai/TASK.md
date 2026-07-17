@@ -148,8 +148,8 @@ docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:lat
 
 ## 6.3 Server-only MCP Client
 
-- [ ] Build Next.js server-only MCP client adapter.
-- [ ] Integrate Bearer authentication.
+- [x] Build Next.js server-only MCP client adapter.
+- [x] Integrate Bearer authentication.
 
 ## 6.4 Search Agent
 
