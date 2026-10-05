@@ -12,7 +12,7 @@ The application is migrating from a traditional Vite SPA to a server-rendered ar
 
 ## 2. Canonical Target Flow
 
-The system implements the following target flow for AI interactions:
+The target flow for AI interactions is:
 
 User
 → Next.js UI
@@ -29,6 +29,8 @@ User
 * The Quality/Safety Agent must validate the complete result before final user-visible content reaches the UI.
 * Progress events may be streamed only when they contain controlled application-defined status data.
 * **Never stream:** raw model output; raw MCP responses; private prompts; chain-of-thought; tool arguments containing secrets; unvalidated Markdown or HTML.
+
+**Current implementation:** the standalone MCP server, five TMDB tools, server-only client, and deterministic Search Agent executor exist. The Search Agent accepts a validated tool plan and produces normalized, deduplicated data plus sanitized per-call outcomes. The Orchestrator does not yet produce that plan; Quality/Safety, the AI provider integration, and UI streaming remain pending.
 
 ## 3. Canonical Repository Boundaries
 
@@ -65,7 +67,7 @@ src/
 
 ## 4. MCP Server Boundary
 
-* **Current State:** Next.js currently owns the existing server-side TMDB integration.
+* **Current State:** Next.js owns the existing server-side TMDB integration used by movie pages. The standalone MCP server and client adapter also exist, and the deterministic Search Agent now executes validated tool plans against MCP. The existing pages and future AI flow are not yet migrated to MCP.
 * **Target State:** The MCP server is a standalone Node.js process. It has an independent package, build, test, start, Docker, and deployment lifecycle. It is not embedded in the Next.js application.
 * React components must never import MCP server modules. Next.js must communicate with MCP through a server-only network client. The browser must never call the MCP server directly.
 * The MCP server becomes the canonical owner of TMDB integration by the Phase 6 Definition of Done. Duplicate TMDB HTTP implementations must not remain in the final architecture. Existing server-side TMDB code must have an explicit migration and removal task. `TMDB_API_KEY` belongs only to the standalone MCP server after the migration is completed.

@@ -231,11 +231,11 @@ npm run lint        # exit 0
 > **Goal**: Semantic, conversational movie search via a 3-agent pipeline backed by a standalone MCP Server.
 
 > ⚠️ **Phase 6 Implementation Order** (Do not start 6.1–6.9 until 6.0 is approved):
-6.0 Architecture and Entry Gates - [Completed]
+6.0 Architecture and Entry Gates - [Pending approval gates]
 6.1 Standalone MCP Foundation - [Completed]
 6.2 TMDB MCP Tools - [Completed]
 6.3 Server-only MCP Client - [Completed]
-6.4 Search Agent
+6.4 Search Agent - [Implemented; entry gates still open]
 6.5 Quality/Safety Agent
 6.6 Orchestrator Agent
 6.7 Validated Streaming UI
@@ -254,6 +254,17 @@ npm run lint        # exit 0
 - [ ] Default and fallback Gemini model identifiers approved.
 - [ ] MCP tool contracts reviewed and approved.
 - [ ] Final Phase 6 architecture reviewed and approved.
+
+### 6.4 Search Agent
+
+- [x] Execute orchestrator-supplied tool plans through the server-only MCP client.
+- [x] Validate MCP tool outputs at the Next.js boundary with Zod schemas.
+- [x] Aggregate and deduplicate movie, detail, and credits results by TMDB ID.
+- [x] Preserve TMDB identifiers and reject mismatched detail/credits IDs.
+- [x] Keep successful results when other tool calls fail; return sanitized per-call outcomes.
+- [x] Keep the executor deterministic: no direct TMDB access, model provider, or user-facing rendering.
+
+**Gate note:** This deterministic 6.4 implementation was explicitly requested, but it does not approve or close the 6.0 production, hosting, credential, model, contract, or architecture gates. Do not wire a production AI flow or make those decisions by inference.
 
 ### Phase 6 Verification
 ```bash

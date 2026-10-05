@@ -70,8 +70,16 @@
 │   │   ├── index.ts
 │   │   └── messages.ts
 │   ├── server
-│   │   └── actions
-│   │       └── tmdb.ts
+│   │   ├── actions
+│   │   │   └── tmdb.ts
+│   │   ├── agents
+│   │   │   ├── __tests__
+│   │   │   │   └── search-agent.test.ts
+│   │   │   └── search-agent.ts
+│   │   ├── env
+│   │   │   └── mcp.ts
+│   │   └── mcp
+│   │       └── client.ts
 │   ├── test
 │   │   └── setup.ts
 │   ├── types
@@ -92,16 +100,14 @@
 ├── tsconfig.json
 └── vitest.config.ts
 
-24 directories, 55 files
-
 ## TypeScript Path Aliases
 
-The project configuration defines a path alias in [tsconfig.json](file:///home/luis/Lm/projects/movie-explorer/tsconfig.json):
+The project configuration defines a path alias in [tsconfig.json](../tsconfig.json):
 - `@/*` -> `./src/*`
 
 Use this alias for importing components, contexts, types, utility libraries, actions, etc. from the `src/` directory.
 
-Note: By default, the path alias resolves within all source files and test files (including those in `__tests__` folders), as test exclusions have been removed from [tsconfig.json](file:///home/luis/Lm/projects/movie-explorer/tsconfig.json).
+Note: By default, the path alias resolves within all source files and test files (including those in `__tests__` folders), as test exclusions have been removed from [tsconfig.json](../tsconfig.json).
 
 Example:
 ```typescript

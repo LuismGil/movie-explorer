@@ -2,7 +2,7 @@
 
 Independent Node.js runtime exposing five TMDB tools through **Streamable HTTP**. It has its own dependencies, build, tests, Dockerfile, and deployment lifecycle; it is not embedded in Next.js.
 
-**Status:** Phase 6.1 foundation and 6.2 tools implemented. The Next.js server-only adapter (6.3) is available at `../../src/server/mcp/client.ts`, but existing movie pages still use their original Server Actions. Search, Quality/Safety, and Orchestrator agents are pending.
+**Status:** Phase 6.1 foundation, 6.2 tools, 6.3 Next.js server-only adapter, and deterministic 6.4 Search Agent are implemented. The executor is in `../../src/server/agents/search-agent.ts`; it accepts a validated tool plan and returns normalized results but does not use an LLM. Existing movie pages still use their original Server Actions. Quality/Safety, Orchestrator, and conversational UI are pending.
 
 ## Local Setup
 
@@ -118,7 +118,7 @@ The Dockerfile defines a non-root distroless runner with port 3001 and `MCP_HOST
 
 - Close production, hosting, AI credential, and model-selection gates in [the execution plan](../../.ai/PLAN.md).
 - Harden the Next.js adapter for redirect rejection, concurrent initialization, and failure recovery.
-- Implement Search → Quality/Safety → Orchestrator, validated streaming, limits, caching, and observability.
+- Implement Quality/Safety → Orchestrator, validated streaming, limits, caching, and observability; review the pending 6.0 gates before production integration.
 - Fix the Docker build context, then verify the image build/runtime and remote deployment.
 - Verify real Next.js-to-MCP tool execution.
 - Resolve UI contract coverage before retiring duplicate server-side TMDB access.

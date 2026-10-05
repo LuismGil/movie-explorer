@@ -1,25 +1,13 @@
 # Project Context
 
-## Session: 2026-07-16
-**Estado anterior:** Phase 6 in Progress, 6.1 Completed, 6.2 Not Started.
-**Archivos principales creados/modificados:** 
-- `packages/mcp-server/src/tmdb/client.ts`
-- `packages/mcp-server/src/tmdb/schemas.ts`
-- `packages/mcp-server/src/tmdb/mapper.ts`
-- `packages/mcp-server/src/tmdb/errors.ts`
-- `packages/mcp-server/src/tools/*.ts`
-- `packages/mcp-server/src/server/create-mcp-server.ts`
-- Tests added in `packages/mcp-server/tests/tmdb` and `mcp.integration.test.ts`.
-**Herramientas implementadas:** `search_movies`, `get_movie_details`, `get_recommendations`, `get_trending`, `get_credits`.
-**Contrato de schemas:** Zod schemas exact mapping to MCP_INTERFACE.md limits, no any, `z.infer`.
-**Estrategia del cliente TMDB:** Shared native fetch client, reads key from config, centralized error mapping, timeout logic, no axios.
-**Estrategia de errores:** Custom error classes (`TmdbApiError`, `TmdbNetworkError`, `TmdbValidationError`) translating to `McpError` securely.
-**Tests ejecutados:** Unit tests for schemas, mappers, client logic, tools, y client adapter SSR-only.
-**Resultados reales:** Root lint, typecheck, test, build, and a11y tests all pass. MCP Server tests pass.
-**Limitaciones:** Docker daemon required sudo password, so runtime check marked as pending.
-**Nuevas implementaciones:** Se implementó `src/server/mcp/client.ts` encapsulando `StreamableHTTPClientTransport`, garantizado exclusivo al backend gracias al paquete `server-only`. 
-**Gates pendientes:** Docker runtime verification.
-**Siguiente tarea exacta:** Phase 6.4 — Search Agent.
+## Session: 2026-10-05
+**Estado:** Phase 6.4 Search Agent implemented as a deterministic MCP tool executor.
+**Archivos principales:** `src/server/agents/search-agent.ts` and `src/server/agents/__tests__/search-agent.test.ts`.
+**Comportamiento:** Validates orchestrator-supplied tool plans and MCP responses with Zod; calls only `src/server/mcp/client.ts`; aggregates and deduplicates movies/details/credits by TMDB ID; rejects mismatched IDs; retains successful results on partial failure and returns sanitized per-call status.
+**Límites intencionales:** No LLM/provider/model, intent classification, direct TMDB access, UI rendering, global token budget, or production integration was added.
+**Verificación local:** root lint, typecheck, production build, and 15 tests pass; MCP lint, typecheck, build, and 42 tests pass. The Search Agent has 8 focused tests. Accessibility audit and live TMDB/MCP integration were not run for this task.
+**Gates pendientes:** Phase 5 production verification and all Phase 6.0 approval gates (including hosting, AI credentials/models, tool contracts, and final architecture approval).
+**Siguiente tarea:** Phase 6.5 — Quality/Safety Agent, after the unresolved gates are reviewed.
 
 ## Completed Phases
 - **Phase 1: Stabilization & Code Quality** (Completed on 2026-06-03)
@@ -82,10 +70,10 @@
   - **Verification**: Verified that all checks pass successfully, including: `npm run lint`, `npm run typecheck`, `npm run test -- --run` (3/3 pass), `npm run build`, and Playwright/axe-core accessibility audits (`npm run test:a11y`). Scanned codebase to ensure no deep relative imports or un-localized JSX strings remain.
 
 ## Current Status
-- **Active Phase**: Phase 6 — MCP Server + Multi-Agent System (Planned, not implemented).
-  - Phase 6 task structure was prepared.
-  - Implementation is gated by Phase 5 production verification and AI provider credentials.
-  - No runtime code or dependencies were changed.
+- **Active Work**: Phase 6 — MCP Server + Multi-Agent System.
+  - 6.1 standalone MCP foundation, 6.2 five MCP tools, 6.3 server-only client adapter, and 6.4 deterministic Search Agent are implemented.
+  - 6.4 executes a validated plan supplied by a future Orchestrator; it does not use an LLM or render UI.
+  - Phase 5 production deployment and Phase 6.0 approvals remain pending; they block production integration and unapproved AI-provider choices.
 - **ESLint**: 0 warnings, 0 errors (via `npm run lint`).
 - **TypeScript**: 0 compiler errors (via `npm run typecheck`).
 - **Tests**: All unit tests pass successfully (via `npm run test -- --run`).
@@ -94,8 +82,8 @@
 - **Docker**: Standalone multi-stage Distroless configuration. CSS asset serving fixed via Tailwind content path correction.
 - **Security**: No `NEXT_PUBLIC_` API keys, all TMDB fetching isolated server-side.
 - **i18n**: 100% compliant with SecureCoder JSX i18n portability checks; no hardcoded user-facing strings, labels, placeholders or titles exist.
-- **Phase 6.0: Architecture and Entry Gates** (Planned)
-  - Phase 6.0 architecture review performed.
+- **Phase 6.0: Architecture and Entry Gates** (Approval pending)
+  - Architecture draft/review exists; user approvals and production evidence have not been recorded.
   - **Current State versus Target State**: Currently, Next.js owns the existing server-side TMDB integration. The target state introduces an isolated, standalone Node.js MCP server (`packages/mcp-server/`) accessed via a Streamable HTTP transport and Bearer authentication, and a 3-agent orchestration pipeline.
   - **Decisions Frozen**:
     - Transport: Streamable HTTP exclusively.
@@ -104,7 +92,7 @@
     - Tools: `search_movies`, `get_movie_details`, `get_recommendations`, `get_trending`, `get_credits`.
     - Validation: Zod schemas at all boundaries.
     - Strict stream rules (no raw output).
-  - **Unresolved Approval Gates**: Standalone MCP hosting provider, default/fallback Gemini model identifiers, Phase 5 verification.
+  - **Unresolved Approval Gates**: Phase 5 production verification, standalone hosting provider, AI credentials/model identifiers, tool-contract review, and final architecture approval.
 
 ## 6. Recent Changes
 
@@ -112,4 +100,5 @@
 * **MCP Server Foundation:** Built the standalone `packages/mcp-server` with Streamable HTTP transport, Zod environment validation, constant-time bearer authentication, strict origin validation, vitest unit/integration tests, tsup builds, independent ESLint/TSConfig setup, and a separate Dockerfile. Integrated into the root CI workflow via `mcp-gate` job.
   - **Files Changed**: `.ai/ARCHITECTURE.md`, `.ai/MCP_INTERFACE.md`, `.ai/SECURITY.md`, `.ai/SPEC.md`, `.ai/PLAN.md`, `.ai/TASK.md`, `.ai/CONTEXT.md`.
   - **Confirmation**: No package, runtime, UI, or configuration code/dependencies were changed.
-  - **Exact Next Step**: Phase 6.1 implementation can begin only after the unresolved entry gates are explicitly approved by the user.
+* **Search Agent 6.4:** Added a server-only deterministic executor for validated MCP plans, with output schemas, stable ID-based merging, partial failures, and sanitized outcomes. No AI provider or direct TMDB access was added.
+  - **Exact Next Step**: Review/close the 6.0 gates before production AI integration; implementation work next is 6.5 Quality/Safety Agent.

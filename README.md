@@ -10,7 +10,7 @@
 
 **A movie discovery platform built on React 19, Next.js App Router Server Components, and Server Actions.**
 
-> **Current checkpoint: Phase 6.3 implemented.** The standalone MCP server, five TMDB tools, and server-only client adapter are available. AI agents and conversational streaming are not implemented yet; premium UI polish remains Phase 7 work.
+> **Current checkpoint: Phase 6.4 implemented.** The deterministic Search Agent executes validated plans through the standalone MCP server. LLM-based planning/Quality agents, conversational streaming, and production integration remain pending; premium UI polish is Phase 7 work.
 
 ---
 
@@ -27,8 +27,9 @@ Movie Explorer is a movie discovery application and an engineering case study in
 - **Accessibility baseline** with separate card links and watchlist buttons, keyboard focus styles, labels, semantic navigation state, and skip navigation.
 - **Build and CI infrastructure** with standalone Next.js output, Docker definitions, and separate application and MCP quality gates.
 - **MCP foundation (6.1–6.3)** with an independent HTTP server, Bearer authentication, origin validation, five TMDB tools, and a server-only Next.js adapter.
+- **Search Agent (6.4)** validates orchestrator-supplied tool plans and MCP outputs, deduplicates results by TMDB ID, and preserves partial results without exposing raw tool errors. It is deterministic; no LLM provider or user-facing AI flow is connected.
 
-Local verification on **2026-10-05**: application lint, typecheck, production build, and 7 unit tests passed; MCP lint, typecheck, build, and 42 tests passed. This checkpoint does not certify production deployment, Docker runtime, Lighthouse, or a fresh accessibility audit.
+Local verification on **2026-10-05**: application lint, typecheck, production build, and 15 unit tests passed; MCP lint, typecheck, build, and 42 tests passed. This checkpoint does not certify production deployment, Docker runtime, Lighthouse, or a fresh accessibility audit.
 
 The historical local TestSprite report (2026-07-19) contains 13 failures out of 24 scenarios, including conflicting results for similar flows. These need reproduction before being classified as current application defects.
 
@@ -67,7 +68,7 @@ flowchart LR
   Quality --> Result["Validated UI result"]
 ```
 
-Only the MCP client/server foundation is implemented in this flow. Final user-visible AI data must pass Quality/Safety validation; raw model output must not reach the UI.
+The MCP client/server foundation and deterministic Search Agent are implemented. Orchestration, Quality/Safety validation, and UI streaming are still planned. Final user-visible AI data must pass Quality/Safety validation; raw model output must not reach the UI.
 
 Execution tracking: [`.ai/PLAN.md`](.ai/PLAN.md). Architecture: [`.ai/ARCHITECTURE.md`](.ai/ARCHITECTURE.md). Standalone setup: [`packages/mcp-server/README.md`](packages/mcp-server/README.md).
 
@@ -95,7 +96,8 @@ Execution tracking: [`.ai/PLAN.md`](.ai/PLAN.md). Architecture: [`.ai/ARCHITECTU
 - **Similar Movies**: Horizontally swipeable recommendations on every detail page.
 - **Skeleton Loaders**: Animated `MovieCardSkeleton` components during list fetching.
 - **MCP tools**: `search_movies`, `get_movie_details`, `get_recommendations`, `get_trending`, and `get_credits` in a separate server package.
-- **AI-native Movie Discovery (Planned)**: Conversational semantic search via Orchestrator → Search → Quality/Safety. Gemini model identifiers and fallback policy still require approval.
+- **Search Agent foundation**: Deterministic execution of validated MCP tool plans, with aggregation, ID deduplication, schema validation, and partial-failure handling. It is not an LLM-powered search planner.
+- **Conversational Movie Discovery (Planned)**: Orchestrator → Search → Quality/Safety with validated streaming. Gemini model identifiers and fallback policy still require approval.
 
 ---
 
@@ -361,14 +363,14 @@ Generated TestSprite scripts/reports are local artifacts, not part of the commit
 - [x] **6.1** Standalone Streamable HTTP MCP foundation with authentication, health endpoints, and independent tooling.
 - [x] **6.2** Five TMDB tools with Zod validation and mocked tests.
 - [x] **6.3** Server-only Next.js MCP client adapter.
-- [ ] **6.4** Search Agent: execute MCP tools, normalize/deduplicate results, and handle partial failures.
+- [x] **6.4** Deterministic Search Agent: execute MCP plans, validate/normalize results, deduplicate by TMDB ID, and handle partial failures.
 - [ ] **6.5** Quality/Safety Agent: fact-check and approve validated presentation data.
 - [ ] **6.6** Orchestrator: intent planning, agent sequencing, and execution budgets.
 - [ ] **6.7** Accessible streaming UI for validated data and controlled progress events.
 - [ ] **6.8** Cache, limits, and token/latency observability.
 - [ ] **6.9** Hardening, integration verification, deployment checks, and documentation closure.
 
-Before removing the existing TMDB actions, resolve MCP contract coverage for popular movies, trailers, and trending pagination. The current five tools do not replace every existing UI request. Synchronize stale status sections in `.ai/CONTEXT.md` and `.ai/TASK.md` when closing the entry gates; approvals must not be inferred from implemented code.
+Before removing the existing TMDB actions, resolve MCP contract coverage for popular movies, trailers, and trending pagination. The current five tools do not replace every existing UI request. Phase 5 production verification and Phase 6.0 approvals are still open; approvals must not be inferred from implemented code. Synchronize `.ai/CONTEXT.md` and `.ai/TASK.md` as work proceeds.
 
 ### Phase 7 — Premium UI Polish 🔄
 - [ ] Apply Immersive Minimalism design system — fluid grid, glassmorphic cards, micro-animations.

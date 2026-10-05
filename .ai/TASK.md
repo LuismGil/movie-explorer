@@ -1,7 +1,8 @@
-# Phase 5 — Next.js App Router Migration
+# Phase 6 — MCP Server + Multi-Agent System
 
 ## Active Phase
-- Phase 5 — Next.js App Router Migration
+- Phase 6 implementation — 6.4 Search Agent
+- Phase 5 production verification and Phase 6.0 approval gates remain open.
 
 ## Previous Completed Phases
 - [x] Phase 1 — Stabilization & Code Quality
@@ -10,7 +11,7 @@
 - [x] Phase 4 — DevOps Baseline
 
 ## Current Goal
-- Migrate the current Vite SPA to Next.js App Router while preserving Phases 1–4: accessibility, server-side TMDB security, tests, Docker, and CI.
+- Execute validated, orchestrator-supplied MCP tool plans server-side without adding direct TMDB calls or selecting an unapproved AI provider/model.
 
 ## Tasks
 
@@ -153,10 +154,13 @@ docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:lat
 
 ## 6.4 Search Agent
 
-- [ ] Execute MCP tool calls via the MCP Client.
-- [ ] Aggregate, normalize, and deduplicate results.
-- [ ] Preserve TMDB identifiers and handle partial failures.
-- [ ] Ensure agent does not call TMDB directly.
+- [x] Execute MCP tool calls via the server-only MCP Client.
+- [x] Validate and normalize results; deduplicate by TMDB movie ID.
+- [x] Preserve IDs and scoped details/credits; reject mismatched IDs.
+- [x] Keep successful tool data when another call fails and sanitize failure metadata.
+- [x] Ensure the Search Agent calls only MCP and receives its tool plan as input.
+
+**Implementation boundary:** `src/server/agents/search-agent.ts` is a deterministic MCP executor, not an LLM-powered query planner or user-facing agent. The user explicitly requested this 6.4 work; the 6.0 gates above still block production AI integration and deployment decisions.
 
 ## 6.5 Quality/Safety Agent
 
