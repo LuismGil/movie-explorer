@@ -19,3 +19,11 @@ logs
 .DS_Store
 .vscode
 .idea
+
+# Local tooling, credentials, and generated reports
+opencode.json
+testsprite_tests
+.lighthouseci
+playwright-report
+test-results
+*.tsbuildinfo

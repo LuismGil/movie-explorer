@@ -24,12 +24,21 @@ dist-server
 *.sln
 *.sw?
 .env
-.env.*.local
-.env.local
+.env.*
+!.env.example
 .lighthouseci
 
 # Next.js build output
 .next
 
 
-tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# Generated test reports and coverage
+coverage/
+playwright-report/
+test-results/
+testsprite_tests/
+
+# Local agent configuration (may contain credentials)
+/opencode.json
