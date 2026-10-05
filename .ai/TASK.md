@@ -116,7 +116,7 @@ docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:lat
 - [ ] Streamable HTTP approved as the only MCP transport.
 - [ ] `packages/mcp-server` approved as the standalone server boundary.
 - [ ] Vercel approved as the Next.js deployment boundary.
-- [ ] Standalone MCP hosting provider approved by the user.
+- [x] Standalone MCP hosting provider selected: Render Free; evaluate free-tier cold starts before production use.
 - [ ] Bearer authentication using `MCP_INTERNAL_API_KEY` approved.
 - [ ] `GOOGLE_GENERATIVE_AI_API_KEY` available locally and in Vercel.
 - [ ] Default and fallback Gemini model identifiers approved.

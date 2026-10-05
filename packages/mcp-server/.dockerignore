@@ -5,8 +5,5 @@ node_modules
 dist
 coverage
 tests
-src
-tsconfig.json
 eslint.config.mjs
-tsup.config.ts
 vitest.config.ts

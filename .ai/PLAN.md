@@ -248,7 +248,7 @@ npm run lint        # exit 0
 - [ ] Streamable HTTP approved as the only MCP transport.
 - [ ] `packages/mcp-server` approved as the standalone server boundary.
 - [ ] Vercel approved as the Next.js deployment boundary.
-- [ ] Standalone MCP hosting provider approved by the user.
+- [x] Standalone MCP hosting provider selected: Render Free (cold-start limitation documented; verify suitability before production use).
 - [ ] Bearer authentication using `MCP_INTERNAL_API_KEY` approved.
 - [ ] `GOOGLE_GENERATIVE_AI_API_KEY` available locally and in Vercel.
 - [ ] Default and fallback Gemini model identifiers approved.
@@ -264,7 +264,7 @@ npm run lint        # exit 0
 - [x] Keep successful results when other tool calls fail; return sanitized per-call outcomes.
 - [x] Keep the executor deterministic: no direct TMDB access, model provider, or user-facing rendering.
 
-**Gate note:** This deterministic 6.4 implementation was explicitly requested, but it does not approve or close the 6.0 production, hosting, credential, model, contract, or architecture gates. Do not wire a production AI flow or make those decisions by inference.
+**Gate note:** This deterministic 6.4 implementation was explicitly requested, but it does not close the remaining 6.0 production, credential, model, contract, or architecture gates. Render Free has been selected as the MCP host; evaluate its cold starts before production use. Do not make other decisions by inference.
 
 ### Phase 6 Verification
 ```bash

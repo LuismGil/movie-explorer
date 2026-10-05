@@ -40,7 +40,8 @@ Alternatively, `npm run dev` works when the variables are already exported or in
 | `MCP_INTERNAL_API_KEY` | Required, shared Bearer secret of at least 32 characters. |
 | `NODE_ENV` | `development` by default; supports `production` and `test`. |
 | `MCP_HOST` | `127.0.0.1` locally; Docker sets `0.0.0.0`. |
-| `MCP_PORT` | `3001` by default. |
+| `MCP_PORT` | Optional explicit port; overrides the platform `PORT`. Defaults to `PORT` when supplied, otherwise `3001` locally. |
+| `PORT` | Optional platform-assigned port (Render supplies this for web services). |
 | `MCP_ALLOWED_ORIGINS` | Optional comma-separated exact origins, without paths, query strings, fragments, or credentials. |
 
 If a request supplies an `Origin` header, it must match the allowlist; an empty allowlist rejects such requests. Server-to-server requests without an Origin header are permitted after authentication. This is not a browser integration or a substitute for authentication.
@@ -91,7 +92,7 @@ This runs lint → typecheck → tests → build. Individual scripts are `lint`,
 
 From the repository root, use `npm run mcp:verify` or the `mcp:lint`, `mcp:typecheck`, `mcp:test`, and `mcp:build` wrappers.
 
-Local verification on **2026-10-05**: lint, typecheck, all **42 tests**, and build passed. Docker runtime and production deployment were not verified in that run.
+Local verification on **2026-10-05**: lint, typecheck, all **45 tests**, and build passed. A Docker build was attempted but could not access the local Docker daemon (`/var/run/docker.sock` permission denied); image/runtime and Render deployment remain unverified.
 
 To start the compiled server from this package:
 
@@ -102,24 +103,54 @@ node --env-file=.env dist/index.js
 
 `npm run start` runs the same built entry point when environment variables are already supplied.
 
-## Docker (Build Context Fix Pending)
+## Docker and Render Deployment
 
-The intended build context is this package directory, not the repository root:
+The intended Docker build context is this package directory, not the repository root:
 
 ```bash
+cd packages/mcp-server
 docker build -t movie-explorer-mcp:latest .
 ```
 
-**Known blocker:** the current `.dockerignore` excludes `src`, `tsconfig.json`, and `tsup.config.ts`, while the Dockerfile runs `npm run build` inside its builder stage. Align the build context before expecting this command to succeed; a host-side build alone does not fix the missing source/configuration inside Docker.
+The `.dockerignore` omits generated/development files but keeps `src`, `tsconfig.json`, and `tsup.config.ts`, which the builder needs. The container listens on `MCP_PORT`, or Render's assigned `PORT`; local default remains `3001`. It binds to `0.0.0.0` in Docker and exposes port `10000` for Render.
 
-The Dockerfile defines a non-root distroless runner with port 3001 and `MCP_HOST=0.0.0.0`. Inject `TMDB_API_KEY` and `MCP_INTERNAL_API_KEY` at runtime. Keep the endpoint private where possible and use HTTPS for remote connections. MCP must be deployed separately from the Next.js Vercel application; the container hosting provider is still awaiting approval. Root CI checks this package's lint/types/tests/build, but does not build or run its Docker image.
+### Render Dashboard Settings
+
+Create a **Web Service** from the repository with:
+
+| Setting | Value |
+|---|---|
+| Runtime | Docker |
+| Root Directory | `packages/mcp-server` |
+| Dockerfile Path | `Dockerfile` (relative to the root directory) |
+| Docker Build Context | `.` (the package root) |
+| Health Check Path | `/health` |
+| Plan | Free for a demo; see cold-start caveat below |
+
+Add these environment variables to the Render service. Enter secrets directly in its dashboard; do not commit them:
+
+| Variable | Value |
+|---|---|
+| `NODE_ENV` | `production` |
+| `TMDB_API_KEY` | TMDB key |
+| `MCP_INTERNAL_API_KEY` | At least 32 random characters; use the exact same value in Vercel |
+| `MCP_HOST` | `0.0.0.0` |
+| `MCP_ALLOWED_ORIGINS` | Exact Vercel origin, e.g. `https://your-app.vercel.app`; no wildcard |
+
+Render supplies `PORT` automatically. Do not set `MCP_PORT` unless you intentionally want to override it. After deployment, test `https://<render-service>.onrender.com/health` and `/ready`; the MCP endpoint is `https://<render-service>.onrender.com/mcp`.
+
+Then, in Vercel → Project → Settings → Environment Variables, set `MCP_SERVER_URL` to the HTTPS `/mcp` URL and `MCP_INTERNAL_API_KEY` to the same secret configured in Render. These values prepare the server-only adapter; the current movie UI does not yet call the MCP/Search Agent.
+
+**Free plan caveat:** Render spins down a free web service after 15 minutes without inbound traffic; waking it can take about a minute. This is suitable for a demo, but the first Vercel-to-MCP call after idle may time out. Verify this before treating the free deployment as production-ready.
+
+The image uses a non-root distroless runner. Keep remote traffic on HTTPS and never expose the bearer key to browser code. Root CI checks this package's lint/types/tests/build but does not build or run its Docker image.
 
 ## Remaining Work
 
-- Close production, hosting, AI credential, and model-selection gates in [the execution plan](../../.ai/PLAN.md).
+- Close production, AI credential, and model-selection gates in [the execution plan](../../.ai/PLAN.md).
 - Harden the Next.js adapter for redirect rejection, concurrent initialization, and failure recovery.
 - Implement Quality/Safety → Orchestrator, validated streaming, limits, caching, and observability; review the pending 6.0 gates before production integration.
-- Fix the Docker build context, then verify the image build/runtime and remote deployment.
+- Verify the Render Docker build/runtime and remote deployment, including free-tier cold starts.
 - Verify real Next.js-to-MCP tool execution.
 - Resolve UI contract coverage before retiring duplicate server-side TMDB access.
 

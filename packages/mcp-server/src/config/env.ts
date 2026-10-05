@@ -5,7 +5,8 @@ export const envSchema = z.object({
   TMDB_API_KEY: z.string().trim().min(1),
   MCP_INTERNAL_API_KEY: z.string().min(32),
   MCP_HOST: z.string().default('127.0.0.1'),
-  MCP_PORT: z.coerce.number().int().min(1).max(65535).default(3001),
+  PORT: z.coerce.number().int().min(1).max(65535).optional(),
+  MCP_PORT: z.coerce.number().int().min(1).max(65535).optional(),
   MCP_ALLOWED_ORIGINS: z.string().optional().superRefine((str, ctx) => {
     if (!str) return;
     str.split(',').forEach((s) => {
@@ -28,7 +29,11 @@ export const envSchema = z.object({
     if (!str) return [];
     return str.split(',').map((s) => new URL(s.trim()).origin);
   }),
-});
+}).transform(({ PORT, MCP_PORT, ...config }) => ({
+  ...config,
+  // Respect a hosting platform's assigned port; keep 3001 for local development.
+  MCP_PORT: MCP_PORT ?? PORT ?? 3001,
+}));
 
 export type Env = z.infer<typeof envSchema>;
 

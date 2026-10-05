@@ -5,8 +5,8 @@
 **Archivos principales:** `src/server/agents/search-agent.ts` and `src/server/agents/__tests__/search-agent.test.ts`.
 **Comportamiento:** Validates orchestrator-supplied tool plans and MCP responses with Zod; calls only `src/server/mcp/client.ts`; aggregates and deduplicates movies/details/credits by TMDB ID; rejects mismatched IDs; retains successful results on partial failure and returns sanitized per-call status.
 **Límites intencionales:** No LLM/provider/model, intent classification, direct TMDB access, UI rendering, global token budget, or production integration was added.
-**Verificación local:** root lint, typecheck, production build, and 15 tests pass; MCP lint, typecheck, build, and 42 tests pass. The Search Agent has 8 focused tests. Accessibility audit and live TMDB/MCP integration were not run for this task.
-**Gates pendientes:** Phase 5 production verification and all Phase 6.0 approval gates (including hosting, AI credentials/models, tool contracts, and final architecture approval).
+**Verificación local:** root lint, typecheck, production build, and 15 tests pass; MCP lint, typecheck, build, and 45 tests pass. The Docker build could not access the local daemon (`/var/run/docker.sock` permission denied), so image/runtime and Render deployment remain unverified. Accessibility audit and live TMDB/MCP integration were not run for this task.
+**Gates pendientes:** Phase 5 production verification and remaining Phase 6.0 approvals (AI credentials/models, tool contracts, and final architecture approval). Hosting selected: Render Free; its idle spin-down/cold start must be evaluated before production use.
 **Siguiente tarea:** Phase 6.5 — Quality/Safety Agent, after the unresolved gates are reviewed.
 
 ## Completed Phases
@@ -92,7 +92,8 @@
     - Tools: `search_movies`, `get_movie_details`, `get_recommendations`, `get_trending`, `get_credits`.
     - Validation: Zod schemas at all boundaries.
     - Strict stream rules (no raw output).
-  - **Unresolved Approval Gates**: Phase 5 production verification, standalone hosting provider, AI credentials/model identifiers, tool-contract review, and final architecture approval.
+  - **Selected MCP hosting**: Render Free. It spins down after inactivity and may have a cold start; production suitability remains unverified.
+  - **Unresolved Approval Gates**: Phase 5 production verification, AI credentials/model identifiers, tool-contract review, and final architecture approval.
 
 ## 6. Recent Changes
 

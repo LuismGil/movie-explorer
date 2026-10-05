@@ -14,7 +14,29 @@ describe('Environment validation', () => {
     
     const parsed = envSchema.parse(valid);
     expect(parsed.TMDB_API_KEY).toBe('valid-key');
+    expect(parsed.MCP_PORT).toBe(3001);
     expect(parsed.MCP_ALLOWED_ORIGINS).toEqual(['http://localhost:3000', 'https://example.com']);
+  });
+
+  it('uses the platform PORT when MCP_PORT is not set', () => {
+    const parsed = envSchema.parse({
+      TMDB_API_KEY: 'valid-key',
+      MCP_INTERNAL_API_KEY: 'this-is-a-valid-internal-key-with-32-chars!',
+      PORT: '10000',
+    });
+
+    expect(parsed.MCP_PORT).toBe(10000);
+  });
+
+  it('prefers an explicitly configured MCP_PORT over the platform PORT', () => {
+    const parsed = envSchema.parse({
+      TMDB_API_KEY: 'valid-key',
+      MCP_INTERNAL_API_KEY: 'this-is-a-valid-internal-key-with-32-chars!',
+      PORT: '10000',
+      MCP_PORT: '3001',
+    });
+
+    expect(parsed.MCP_PORT).toBe(3001);
   });
 
   it('fails if TMDB_API_KEY is missing', () => {
@@ -43,6 +65,16 @@ describe('Environment validation', () => {
     };
     const result = envSchema.safeParse(invalidPort);
     expect(result.success).toBe(false);
+  });
+
+  it('fails with an invalid platform PORT', () => {
+    const invalid = {
+      TMDB_API_KEY: 'valid-key',
+      MCP_INTERNAL_API_KEY: 'this-is-a-valid-internal-key-with-32-chars!',
+      PORT: 'not-a-port',
+    };
+
+    expect(envSchema.safeParse(invalid).success).toBe(false);
   });
 
   it('rejects origins with paths, query strings, or fragments', () => {
