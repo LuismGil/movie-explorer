@@ -1,7 +1,7 @@
 # Phase 6 — MCP Server + Multi-Agent System
 
 ## Active Phase
-- Phase 6.0 gate review and remote MCP verification; 6.4 Search Agent is implemented.
+- Phase 6.0 gate review; remote Inspector tool listing/search now pass, and 6.4 Search Agent is implemented.
 - Phase 5 production verification is closed: the deployed hydration fix passes user and agent live browser checks without React errors.
 - Next agent implementation: 6.5 Quality/Safety, after entry-gate approval.
 
@@ -13,7 +13,7 @@
 - [x] Phase 5 — Next.js App Router Migration and core-flow production verification (2026-10-22)
 
 ## Current Goal
-- Confirm authenticated remote MCP tools and close the remaining Phase 6.0 approval gates before 6.5. Do not infer AI provider/model or architecture approvals from deployed infrastructure or successful browser checks.
+- Close the remaining Phase 6.0 approval gates before 6.5: transport/boundaries/authentication, Google credentials/models, tool contracts, and final architecture. Remote Inspector success does not prove Next.js-to-MCP integration or imply these approvals.
 
 ## Tasks
 
@@ -136,7 +136,7 @@ docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:lat
 - [x] Record user-reported MCP deployment to Render Free: `https://movie-explorer-ppc2.onrender.com/mcp`.
 - [x] Agent checks: `/health` and `/ready` return 200; unauthenticated `POST /mcp` returns 401.
 - [x] Record user-reported local Inspector tool listing/TMDB search success and Vercel MCP environment configuration/redeployment; no secret values inspected.
-- [ ] Confirm authenticated tool listing and TMDB search against Render.
+- [x] Confirm authenticated remote tools via user-provided Inspector 1.0.3 output: all five tools listed; `search_movies(query=Inception, page=1)` returned real TMDB data including movie 27205 without an MCP error.
 - [ ] Verify Next.js-to-Render MCP execution; the current UI does not invoke the MCP adapter.
 - [ ] Evaluate free-tier cold starts against request timeouts.
 

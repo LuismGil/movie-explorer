@@ -271,11 +271,11 @@ npm run lint        # exit 0
 - [x] Record the user-reported Render Free deployment from `packages/mcp-server` at `https://movie-explorer-ppc2.onrender.com/mcp`.
 - [x] Verify remote `/health` and `/ready` return HTTP 200 and unauthenticated `POST /mcp` returns HTTP 401.
 - [x] Record user-reported Vercel MCP environment configuration and redeployment; no secrets inspected or committed.
-- [ ] Confirm authenticated tool listing and a real TMDB search against Render (only local protocol/tool success has been reported).
+- [x] Confirm authenticated tool listing and a real TMDB search against Render: user-provided Inspector 1.0.3 output lists all five tools and `search_movies(query=Inception, page=1)` returns TMDB data including movie 27205 (`A Origem`), without an MCP error.
 - [ ] Verify actual Next.js-to-Render MCP execution; no current page invokes the adapter.
 - [ ] Evaluate Render Free wake-up latency and its interaction with request timeouts.
 
-Phase 5 production verification is closed. Next, confirm authenticated MCP tool execution against Render and review the remaining 6.0 approvals; **6.5 Quality/Safety** remains the next agent implementation task. The current movie UI does not exercise the MCP adapter, so successful browser checks cannot establish that connection.
+Phase 5 production verification and the remote Inspector listing/search smoke test are complete. Next, review the remaining 6.0 transport/boundary/authentication, Google credential/model, tool-contract, and final architecture approvals before **6.5 Quality/Safety**. Inspector success is not Next.js-to-Render integration evidence; the current UI still does not use MCP.
 
 ### 6.4 Search Agent
 
@@ -286,7 +286,7 @@ Phase 5 production verification is closed. Next, confirm authenticated MCP tool 
 - [x] Keep successful results when other tool calls fail; return sanitized per-call outcomes.
 - [x] Keep the executor deterministic: no direct TMDB access, model provider, or user-facing rendering.
 
-**Gate note:** This deterministic 6.4 implementation was explicitly requested, but it does not close the remaining 6.0 production, credential, model, contract, or architecture gates. Render Free has been selected as the MCP host; evaluate its cold starts before production use. Do not make other decisions by inference.
+**Gate note:** This deterministic 6.4 implementation was explicitly requested; the separate Phase 5 verification and remote MCP smoke test are now complete. Neither implementation nor test success closes the remaining 6.0 transport/boundary/authentication, credential, model, contract, or final architecture approvals. Render Free cold-start suitability remains unverified. Do not make other decisions by inference.
 
 ### 6.5 Quality/Safety Agent — Pending Entry Gates
 

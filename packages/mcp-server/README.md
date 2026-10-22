@@ -94,7 +94,7 @@ From the repository root, use `npm run mcp:verify` or the `mcp:lint`, `mcp:typec
 
 Local verification on **2026-10-05**: lint, typecheck, all **45 tests**, and build passed. A Docker build was attempted but could not access the local Docker daemon (`/var/run/docker.sock` permission denied).
 
-**Deployment checkpoint (2026-10-22):** The user deployed the service to Render Free at `https://movie-explorer-ppc2.onrender.com/mcp`. Agent checks confirm `/health` and `/ready` return 200 and unauthenticated `POST /mcp` returns 401. Local Inspector/TMDB success and Vercel MCP variable configuration were reported by the user; authenticated remote tool execution and actual Next.js-to-MCP execution remain unconfirmed. Build logs/image contents and free-tier wake-up latency were not inspected/tested. See [`docs/DEPLOYMENT.md`](../../docs/DEPLOYMENT.md) for evidence, remaining gates, and remote test commands.
+**Deployment checkpoint (2026-10-22):** The user deployed the service to Render Free at `https://movie-explorer-ppc2.onrender.com/mcp`. Agent checks confirm `/health` and `/ready` return 200 and unauthenticated `POST /mcp` returns 401. User-provided Inspector 1.0.3 output confirms authenticated listing of all five tools and a real `Inception` search returning TMDB movie 27205 (`A Origem`). Actual Next.js-to-MCP execution, calls to the other four tools, build/image inspection, and free-tier wake-up reliability remain unverified. See [`docs/DEPLOYMENT.md`](../../docs/DEPLOYMENT.md) for evidence, remaining gates, and the corrected CLI commands.
 
 To start the compiled server from this package:
 
@@ -149,10 +149,10 @@ The image uses a non-root distroless runner. Keep remote traffic on HTTPS and ne
 
 ## Remaining Work
 
-- Close production, AI credential, and model-selection gates in [the execution plan](../../.ai/PLAN.md).
+- Close the remaining architecture/contract, Google credential, and model-selection approvals in [the execution plan](../../.ai/PLAN.md); Phase 5 production and remote Inspector listing/search verification are complete.
 - Harden the Next.js adapter for redirect rejection, concurrent initialization, and failure recovery.
 - Implement Quality/Safety → Orchestrator, validated streaming, limits, caching, and observability; review the pending 6.0 gates before production integration.
-- Confirm authenticated remote tool execution and review Render build/image evidence and free-tier cold starts; public health checks already pass.
+- Test the other four tools remotely and review Render build/image evidence and free-tier reliability; public health checks, authenticated listing, and remote search already passed their smoke checks.
 - Verify real Next.js-to-MCP tool execution.
 - Resolve UI contract coverage before retiring duplicate server-side TMDB access.
 

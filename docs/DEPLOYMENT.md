@@ -19,7 +19,8 @@ Expected Render settings: allow origin `https://movie-explorer-luis.vercel.app`,
 - Agent authentication check: `POST /mcp` without credentials → `401 {"error":"Unauthorized"}`.
 - During the latest availability check, the first `/health` request returned 503; subsequent `/health` and `/ready` requests returned 200 with the expected JSON. The cause and wake-up duration were not established. Health success after recovery is not a cold-start/reliability certification.
 - User reported successful **local** health/readiness, authentication, Inspector tool listing, and a real TMDB search.
-- **Pending:** authenticated tool listing/search against Render, and actual Next.js-to-Render execution. Local success does not prove remote credentials or Vercel integration.
+- User-provided **remote** Inspector 1.0.3 output confirms authenticated `tools/list` with all five documented tools and `search_movies(query=Inception, page=1)` returning real TMDB data, including movie 27205 (`A Origem`), with no MCP error.
+- **Pending:** actual Next.js-to-Render execution, authenticated calls to the other four tools, and broader failure/reliability testing. Listing tools does not exercise every tool, and Inspector success does not prove Vercel integration.
 - Health/readiness do not test TMDB credentials or upstream availability.
 - Render deployment success was reported by the user; build logs and image contents were not inspected. The previous local Docker build attempt was blocked by daemon permissions.
 - Free-tier idle wake-up latency, load testing, and production suitability remain unverified.
@@ -74,32 +75,33 @@ curl --fail --max-time 120 https://movie-explorer-ppc2.onrender.com/health
 curl --fail --max-time 120 https://movie-explorer-ppc2.onrender.com/ready
 ```
 
-Enter the Render secret locally, without putting its literal value in shell history or chat:
+The commands below reproduce the user's successful **Inspector 1.0.3** test. This legacy release is deprecated and receives security fixes only; it is pinned here for reproducibility, not added as a project dependency. Upgrading the test client to v2 is separate work (v2 requires Node.js 22.19+); do not mix v2-only flags with the v1 client.
+
+Run the next command unchanged. When it prompts, paste the Render secret and press Enter; nothing will appear while pasting. Do not substitute the key into the command or share it in chat:
 
 ```bash
 read -rsp 'MCP_INTERNAL_API_KEY: ' MCP_KEY
-printf '\n'
+```
+
+Optionally verify only its length (at least 32 characters). A length of 0 means the variable is empty and will produce 401; a valid length alone does not prove the value is correct:
+
+```bash
+printf '\nCaracteres cargados: %s\n' "${#MCP_KEY}"
+```
+
+In that same terminal, copy each complete command, including `npx`:
+
+```bash
+npx --yes @modelcontextprotocol/inspector@1.0.3 --cli 'https://movie-explorer-ppc2.onrender.com/mcp' --transport http --method tools/list --header "Authorization: Bearer $MCP_KEY"
 ```
 
 ```bash
-npx --yes @modelcontextprotocol/inspector --cli \
-  --transport streamable-http \
-  --server-url 'https://movie-explorer-ppc2.onrender.com/mcp' \
-  --header "Authorization: Bearer $MCP_KEY" \
-  --method tools/list
+npx --yes @modelcontextprotocol/inspector@1.0.3 --cli 'https://movie-explorer-ppc2.onrender.com/mcp' --transport http --method tools/call --tool-name search_movies --tool-arg query=Inception --tool-arg page=1 --header "Authorization: Bearer $MCP_KEY"
 ```
 
-```bash
-npx --yes @modelcontextprotocol/inspector --cli \
-  --transport streamable-http \
-  --server-url 'https://movie-explorer-ppc2.onrender.com/mcp' \
-  --header "Authorization: Bearer $MCP_KEY" \
-  --method tools/call \
-  --tool-name search_movies \
-  --tool-args-json '{"query":"Inception","page":1}'
-```
+Expect the five documented tools and a successful movie payload without `isError: true`. Inspector 1.0.3 needs the URL as a positional target and uses `--tool-arg`; the earlier `--server-url`/`--tool-args-json` examples failed with this client version before authentication. The deprecation warning is separate from the test result.
 
-Expect the five documented tools and a successful movie payload without `isError: true`. Do not publish headers, shell traces, or secrets; the expanded header may be visible to local process-monitoring tools while the command runs. Clear the temporary variable afterward:
+Do not publish headers, shell traces, or secrets; the expanded header may be visible to local process-monitoring tools while the command runs. Clear the temporary variable **after both tests**, not between them:
 
 ```bash
 unset MCP_KEY
@@ -107,8 +109,8 @@ unset MCP_KEY
 
 ## Next Work, in Order
 
-1. Confirm remote authenticated MCP tool listing and a real TMDB search against Render, and record the result without secrets. Only local tool success has been reported so far.
-2. Review the remaining Phase 6.0 gates in [the execution plan](../.ai/PLAN.md): transport/boundaries/authentication, Google credential availability, model policy, MCP contracts, and final architecture approval. Successful web verification does not automatically approve these gates.
-3. Implement **6.5 Quality/Safety** after entry-gate approval: factual grounding in Search Agent results, rejection of unsupported/contradictory claims, sanitization, and a validated presentation DTO. No raw model output may reach the UI.
+1. Review the remaining Phase 6.0 gates in [the execution plan](../.ai/PLAN.md): transport/boundaries/authentication, Google credential availability, model policy, MCP contracts, and final architecture approval. Successful web/Inspector verification does not automatically approve these gates.
+2. Implement **6.5 Quality/Safety** after entry-gate approval: factual grounding in Search Agent results, rejection of unsupported/contradictory claims, sanitization, and a validated presentation DTO. No raw model output may reach the UI.
+3. Verify the actual Next.js-to-MCP path as integration proceeds; retain the remaining remote-tool and free-tier reliability checks for hardening.
 
 The current Vercel pages do not invoke MCP or the Search Agent. Do not add a public diagnostic endpoint or expose the shared secret to browser code just to test the connection.
