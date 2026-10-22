@@ -98,7 +98,7 @@ The MCP server must not be deployed inside the Next.js Vercel application.
 **Decision Record:**
 Comparing requirements (persistent Node.js HTTP process, Docker support, HTTPS, environment variables, health checks, predictable cold-start behavior, logs, Hobby/portfolio cost, deployment from GitHub), we recommend one deployment category: **Container-based managed service**.
 
-**Deployment checkpoint (2026-10-22):** The user deployed Next.js to `https://movie-explorer-luis.vercel.app` and MCP to `https://movie-explorer-ppc2.onrender.com/mcp`. Agent health/readiness and unauthenticated-request checks pass; user-provided Inspector output confirms authenticated listing of the five tools and a real TMDB search. No secret values were inspected. Current pages still use their server-side TMDB actions, so successful Inspector calls do not establish a Next.js-to-MCP flow. The deployed watchlist fix passes user/agent live browser retesting, closing Phase 5 core-flow production verification without React errors. Next.js integration, the other remote tool calls, cold-start suitability, and remaining architecture/model approvals are still pending. See [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md).
+**Deployment checkpoint (2026-10-22):** The user deployed Next.js to `https://movie-explorer-luis.vercel.app` and MCP to `https://movie-explorer-ppc2.onrender.com/mcp`. Agent health/readiness and unauthenticated-request checks pass; user-provided Inspector output confirms authenticated listing of the five tools and a real TMDB search. No secret values were inspected. Current pages still use their server-side TMDB actions, so successful Inspector calls do not establish a Next.js-to-MCP flow. The deployed watchlist fix passes user/agent live browser retesting, closing Phase 5 core-flow production verification without React errors. Current architecture/contracts are now explicitly approved (see the approval record below). Next.js integration, the other remote tool calls, cold-start suitability, Google credentials, and model policy remain pending. See [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md).
 
 ## 7. Canonical MCP Authentication
 
@@ -134,6 +134,8 @@ MCP_ALLOWED_ORIGINS=
 
 Target provider contract: Vercel AI SDK 6, `@ai-sdk/google`, Google Generative AI API.
 The future model policy must define: default low-latency model, higher-reasoning model, fallback behavior, timeout, retry limit, token budget, maximum tool calls, structured-output validation, and provider failure behavior.
+
+**Approval record (2026-10-22):** The user explicitly approved the current architecture and five MCP tool contracts, including Vercel/standalone Render boundaries, Streamable HTTP, and Bearer authentication. They confirmed no Google API key is configured yet. Google credential availability and model/default/fallback policy remain separate open gates; the approval does not authorize paid API usage or future contract changes. The root `.env.example` now uses `GOOGLE_GENERATIVE_AI_API_KEY`; no real key or Google provider runtime has been added. Secure setup: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md#google-gemini-credential-setup--pending).
 
 ## 10. Agent Responsibilities
 

@@ -2,6 +2,8 @@
 
 This document defines the interface, protocol structure, transport schemas, and tools exposed by the **Movie Explorer MCP Server**.
 
+**Approval (2026-10-22):** The user explicitly approved the current five tool contracts and the Vercel/standalone Render, Streamable HTTP, and Bearer-authenticated architecture. This does not approve new tools/contract changes, Google model policy, or paid API usage. Google credentials and model selection remain pending in [the execution plan](PLAN.md).
+
 ## 1. Server Configuration & Transport Protocols
 
 The MCP Server is implemented as a standalone Node.js package under the `packages/mcp-server/` directory (Phase 6 target).

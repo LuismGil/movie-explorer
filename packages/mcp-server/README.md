@@ -149,7 +149,7 @@ The image uses a non-root distroless runner. Keep remote traffic on HTTPS and ne
 
 ## Remaining Work
 
-- Close the remaining architecture/contract, Google credential, and model-selection approvals in [the execution plan](../../.ai/PLAN.md); Phase 5 production and remote Inspector listing/search verification are complete.
+- Configure Google credentials in Next.js (not Render) and approve model/default/fallback policy in [the execution plan](../../.ai/PLAN.md). Current architecture/contracts are explicitly approved; Phase 5 and remote Inspector listing/search verification are complete.
 - Harden the Next.js adapter for redirect rejection, concurrent initialization, and failure recovery.
 - Implement Quality/Safety → Orchestrator, validated streaming, limits, caching, and observability; review the pending 6.0 gates before production integration.
 - Test the other four tools remotely and review Render build/image evidence and free-tier reliability; public health checks, authenticated listing, and remote search already passed their smoke checks.

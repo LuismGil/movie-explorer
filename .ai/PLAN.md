@@ -242,7 +242,7 @@ npm run lint        # exit 0
 > **Goal**: Semantic, conversational movie search via a 3-agent pipeline backed by a standalone MCP Server.
 
 > ⚠️ **Phase 6 Implementation Order** (Do not start 6.1–6.9 until 6.0 is approved):
-6.0 Architecture and Entry Gates - [Pending approval gates]
+6.0 Architecture and Entry Gates - [Architecture/contracts approved; Google credentials/models pending]
 6.1 Standalone MCP Foundation - [Completed]
 6.2 TMDB MCP Tools - [Completed]
 6.3 Server-only MCP Client - [Completed]
@@ -256,15 +256,17 @@ npm run lint        # exit 0
 ### 6.0 Architecture and Entry Gates
 
 - [x] Phase 5 production deployment verified: user-confirmed watchlist retest and agent live browser smoke of core flows, without React errors.
-- [ ] Streamable HTTP approved as the only MCP transport.
-- [ ] `packages/mcp-server` approved as the standalone server boundary.
-- [ ] Vercel approved as the Next.js deployment boundary.
+- [x] Streamable HTTP approved as the only MCP transport.
+- [x] `packages/mcp-server` approved as the standalone server boundary.
+- [x] Vercel approved as the Next.js deployment boundary.
 - [x] Standalone MCP hosting provider selected: Render Free (cold-start limitation documented; verify suitability before production use).
-- [ ] Bearer authentication using `MCP_INTERNAL_API_KEY` approved.
-- [ ] `GOOGLE_GENERATIVE_AI_API_KEY` available locally and in Vercel.
+- [x] Bearer authentication using `MCP_INTERNAL_API_KEY` approved.
+- [ ] `GOOGLE_GENERATIVE_AI_API_KEY` available locally and in Vercel (user confirmed it is not yet configured).
 - [ ] Default and fallback Gemini model identifiers approved.
-- [ ] MCP tool contracts reviewed and approved.
-- [ ] Final Phase 6 architecture reviewed and approved.
+- [x] Current five MCP tool contracts reviewed and approved.
+- [x] Current Phase 6 architecture reviewed and approved; Google model/default/fallback policy remains a separate open gate.
+
+**Approval record (2026-10-22):** The user explicitly answered yes to the current architecture/contracts (Vercel, standalone Render MCP, Streamable HTTP, Bearer authentication, and the five listed tools), and no to Google credential availability. This does not approve model identifiers, fallback behavior, paid API usage, or future contract changes. The root `.env.example` now uses the canonical `GOOGLE_GENERATIVE_AI_API_KEY` name; no real credential was added.
 
 ### Deployment Evidence — 2026-10-22
 
@@ -275,7 +277,7 @@ npm run lint        # exit 0
 - [ ] Verify actual Next.js-to-Render MCP execution; no current page invokes the adapter.
 - [ ] Evaluate Render Free wake-up latency and its interaction with request timeouts.
 
-Phase 5 production verification and the remote Inspector listing/search smoke test are complete. Next, review the remaining 6.0 transport/boundary/authentication, Google credential/model, tool-contract, and final architecture approvals before **6.5 Quality/Safety**. Inspector success is not Next.js-to-Render integration evidence; the current UI still does not use MCP.
+Phase 5 production verification, the remote Inspector listing/search smoke test, and current architecture/contract approvals are complete. Next, configure Google credentials locally/in Vercel and approve the model/default/fallback policy before **6.5 Quality/Safety**. Inspector success is not Next.js-to-Render integration evidence; the current UI still does not use MCP. Setup instructions: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md#google-gemini-credential-setup--pending).
 
 ### 6.4 Search Agent
 
@@ -286,7 +288,7 @@ Phase 5 production verification and the remote Inspector listing/search smoke te
 - [x] Keep successful results when other tool calls fail; return sanitized per-call outcomes.
 - [x] Keep the executor deterministic: no direct TMDB access, model provider, or user-facing rendering.
 
-**Gate note:** This deterministic 6.4 implementation was explicitly requested; the separate Phase 5 verification and remote MCP smoke test are now complete. Neither implementation nor test success closes the remaining 6.0 transport/boundary/authentication, credential, model, contract, or final architecture approvals. Render Free cold-start suitability remains unverified. Do not make other decisions by inference.
+**Gate note:** This deterministic 6.4 implementation was explicitly requested. Phase 5 verification and remote MCP smoke testing are complete; the user separately approved the current architecture/contracts. Google credential availability and model policy remain open, and Render Free cold-start suitability is unverified. Do not infer those decisions from previous approvals or tests.
 
 ### 6.5 Quality/Safety Agent — Pending Entry Gates
 

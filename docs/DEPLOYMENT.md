@@ -107,9 +107,28 @@ Do not publish headers, shell traces, or secrets; the expanded header may be vis
 unset MCP_KEY
 ```
 
+## Google Gemini Credential Setup — Pending
+
+The user explicitly approved the current architecture and five tool contracts on 2026-10-22, but confirmed that no Google key is configured. This is a **third, separate credential**, not the TMDB key or MCP Bearer secret. Model/default/fallback policy and paid usage are not approved yet.
+
+1. Open [Google AI Studio → API keys](https://aistudio.google.com/api-keys), sign in, and accept the applicable terms. New users may already have a default project/key. Otherwise choose **Create API key** and follow the project/key dialog; create a dedicated Movie Explorer project if needed. Existing Google Cloud projects may need to be imported into AI Studio first.
+2. Copy the Gemini API key privately. If AI Studio labels it unrestricted and offers **Restrict to Gemini API only**, apply that restriction. Start with the Free Tier if available for the account/model; do not enable paid billing without a separate cost decision. Free availability and quotas are not guaranteed for every model/account.
+3. Add the following to **root `.env.local`**, preserving existing file contents. Replace only the placeholder to the right of `=` with the real Google key. If you already keep app secrets in root `.env`, you may add it there instead; avoid duplicate definitions of this key across files. Do not put it in `packages/mcp-server/.env` or Render:
+
+   ```dotenv
+   GOOGLE_GENERATIVE_AI_API_KEY=your_google_generative_ai_api_key_here
+   ```
+
+4. In Vercel → **Project → Settings → Environment Variables**, add the exact name `GOOGLE_GENERATIVE_AI_API_KEY`, paste the key as the value, and mark it **Secret/Sensitive**. Select **Production** and, if needed, **Preview**. Keep the key in your own secret store because sensitive values may not be readable after saving. Never use a `NEXT_PUBLIC_` or `VITE_` prefix.
+5. Restart the local dev server if running. Vercel environment changes apply to new deployments, so redeploy to apply the saved configuration. Only confirm that setup is complete; never send the value, a screenshot containing it, or an environment-file dump to chat/Git.
+
+These steps prepare configuration only. The Google provider is not wired into the runtime, no model has been selected, and adding the key alone does not enable AI/chat. Remaining entry gates are local/Vercel credential availability and explicit model/default/fallback policy approval.
+
+References: [Gemini API keys](https://ai.google.dev/gemini-api/docs/api-key), [Google provider environment variable](https://ai-sdk.dev/providers/ai-sdk-providers/google), [Vercel environment variables](https://vercel.com/docs/environment-variables).
+
 ## Next Work, in Order
 
-1. Review the remaining Phase 6.0 gates in [the execution plan](../.ai/PLAN.md): transport/boundaries/authentication, Google credential availability, model policy, MCP contracts, and final architecture approval. Successful web/Inspector verification does not automatically approve these gates.
+1. Configure the Google key locally/in Vercel and approve model/default/fallback policy in [the execution plan](../.ai/PLAN.md). Current architecture/contracts are explicitly approved, but credentials remain unavailable and no model or paid usage has been approved.
 2. Implement **6.5 Quality/Safety** after entry-gate approval: factual grounding in Search Agent results, rejection of unsupported/contradictory claims, sanitization, and a validated presentation DTO. No raw model output may reach the UI.
 3. Verify the actual Next.js-to-MCP path as integration proceeds; retain the remaining remote-tool and free-tier reliability checks for hardening.
 

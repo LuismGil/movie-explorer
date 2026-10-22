@@ -186,7 +186,7 @@ docker run --rm -p 3000:3000 \
 
 > **Security note**: No environment variables use the `NEXT_PUBLIC_` prefix. `TMDB_API_KEY` is inaccessible to client-side JavaScript.
 
-The root `.env.example` still contains the legacy `GOOGLE_AI_API_KEY` placeholder. Align it with the canonical provider name before implementing the AI layer. MCP-specific host, port, and origin settings are documented in its [README](packages/mcp-server/README.md#environment-variables).
+The root `.env.example` uses the canonical `GOOGLE_GENERATIVE_AI_API_KEY` placeholder. The current architecture/tool contracts are approved, but the user has not configured Google credentials and model policy remains pending. Follow the [secure Google setup guide](docs/DEPLOYMENT.md#google-gemini-credential-setup--pending); the current runtime does not yet consume this key. MCP-specific host, port, and origin settings are documented in its [README](packages/mcp-server/README.md#environment-variables).
 
 ---
 
@@ -361,7 +361,7 @@ Generated TestSprite scripts/reports are local artifacts, not part of the commit
 - [x] Complete core-flow production verification: deployed watchlist hydration fix passes user and agent live browser retesting without React errors.
 
 ### Phase 6 — AI-native Layer 🔄
-- [ ] **6.0** Close remaining gates: transport/boundaries/authentication review, Google credentials, model policy, MCP contracts, and final architecture approval. Phase 5 production verification is closed; Render Free hosting is selected and deployed.
+- [ ] **6.0** Close remaining gates: Google credential availability locally/in Vercel and model/default/fallback policy. The user explicitly approved the current architecture, transport/boundaries/authentication, and five MCP contracts; Phase 5 and remote listing/search smoke checks are complete.
 - [x] **6.1** Standalone Streamable HTTP MCP foundation with authentication, health endpoints, and independent tooling.
 - [x] **6.2** Five TMDB tools with Zod validation and mocked tests.
 - [x] **6.3** Server-only Next.js MCP client adapter.

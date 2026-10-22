@@ -1,7 +1,7 @@
 # Phase 6 — MCP Server + Multi-Agent System
 
 ## Active Phase
-- Phase 6.0 gate review; remote Inspector tool listing/search now pass, and 6.4 Search Agent is implemented.
+- Phase 6.0 Google credential/model setup; current architecture/contracts are explicitly approved, remote Inspector listing/search pass, and 6.4 Search Agent is implemented.
 - Phase 5 production verification is closed: the deployed hydration fix passes user and agent live browser checks without React errors.
 - Next agent implementation: 6.5 Quality/Safety, after entry-gate approval.
 
@@ -13,7 +13,7 @@
 - [x] Phase 5 — Next.js App Router Migration and core-flow production verification (2026-10-22)
 
 ## Current Goal
-- Close the remaining Phase 6.0 approval gates before 6.5: transport/boundaries/authentication, Google credentials/models, tool contracts, and final architecture. Remote Inspector success does not prove Next.js-to-MCP integration or imply these approvals.
+- Configure `GOOGLE_GENERATIVE_AI_API_KEY` locally/in Vercel and approve default/fallback models and policy before 6.5. The user approved current architecture/contracts but confirmed no Google key is configured. This does not authorize paid API usage or prove Next.js-to-MCP integration.
 
 ## Tasks
 
@@ -121,15 +121,17 @@ docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:lat
 ## Architecture and Entry Gates
 
 - [x] Phase 5 production deployment verified: user-confirmed watchlist retest and agent live core-flow smoke without React errors.
-- [ ] Streamable HTTP approved as the only MCP transport.
-- [ ] `packages/mcp-server` approved as the standalone server boundary.
-- [ ] Vercel approved as the Next.js deployment boundary.
+- [x] Streamable HTTP approved as the only MCP transport.
+- [x] `packages/mcp-server` approved as the standalone server boundary.
+- [x] Vercel approved as the Next.js deployment boundary.
 - [x] Standalone MCP hosting provider selected: Render Free; evaluate free-tier cold starts before production use.
-- [ ] Bearer authentication using `MCP_INTERNAL_API_KEY` approved.
-- [ ] `GOOGLE_GENERATIVE_AI_API_KEY` available locally and in Vercel.
+- [x] Bearer authentication using `MCP_INTERNAL_API_KEY` approved.
+- [ ] `GOOGLE_GENERATIVE_AI_API_KEY` available locally and in Vercel (user confirmed not yet configured).
 - [ ] Default and fallback Gemini model identifiers approved.
-- [ ] MCP tool contracts reviewed and approved.
-- [ ] Final Phase 6 architecture reviewed and approved.
+- [x] Current five MCP tool contracts reviewed and approved.
+- [x] Current Phase 6 architecture reviewed and approved; model/default/fallback policy remains separate.
+
+Explicit user approval recorded on 2026-10-22. No model selection, paid usage, or future contract changes were approved. The root `.env.example` uses the canonical Google provider key name; actual secrets must be entered by the user, not committed or shared in chat.
 
 ### Deployment Checkpoint — 2026-10-22
 
