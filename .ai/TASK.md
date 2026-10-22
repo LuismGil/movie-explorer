@@ -2,7 +2,7 @@
 
 ## Active Phase
 - Deployment verification and Phase 6.0 gate review; 6.4 Search Agent is implemented.
-- Phase 5 production verification is blocked by persisted-watchlist hydration error #418.
+- Persisted-watchlist hydration error #418 is fixed and verified locally; Phase 5 production verification awaits Vercel redeployment/retest.
 - Next agent implementation: 6.5 Quality/Safety, after entry-gate approval.
 
 ## Previous Completed Phases
@@ -12,7 +12,7 @@
 - [x] Phase 4 — DevOps Baseline
 
 ## Current Goal
-- Record deployment evidence, resolve the Phase 5 hydration regression, and close the remaining verification/approval gates before 6.5. Do not infer AI provider/model or architecture approvals from deployed infrastructure.
+- Deploy/retest the locally verified Phase 5 hydration fix and close the remaining verification/approval gates before 6.5. Do not infer AI provider/model or architecture approvals from deployed infrastructure.
 
 ## Tasks
 
@@ -85,10 +85,11 @@
 
 - [x] Record the user-reported Vercel deployment at `https://movie-explorer-luis.vercel.app`.
 - [x] Browser smoke: Home/SSR, search, daily/weekly trending, movie details, pagination, watchlist add/remove/persistence; no direct browser TMDB data API/MCP requests or `api_key` query parameters observed.
-- [ ] Add an SSR/hydration regression test and fix React error #418 when reloading a persisted watchlist.
+- [x] Add an SSR/hydration regression test and fix React error #418 when reloading a persisted watchlist.
+- [x] Local verification: lint, typecheck, 22 tests, production build; browser smoke without page errors; axe with no critical/serious violations on Home and empty/saved Watchlist.
 - [ ] Redeploy and repeat production checks without hydration errors before marking the Vercel production gate verified.
 
-Details and reproduction: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md). The UI recovers, but the current deployment is not a clean production-verification pass.
+Details and reproduction: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md). Local production checks pass; the deployed Vercel version must still receive the fix and be retested.
 
 ## Verification Checklist
 
@@ -118,7 +119,7 @@ docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:lat
 
 ## Architecture and Entry Gates
 
-- [ ] Phase 5 production deployment verified (persisted-watchlist hydration error #418 remains open).
+- [ ] Phase 5 production deployment verified (local hydration fix passes; Vercel redeployment/retest pending).
 - [ ] Streamable HTTP approved as the only MCP transport.
 - [ ] `packages/mcp-server` approved as the standalone server boundary.
 - [ ] Vercel approved as the Next.js deployment boundary.

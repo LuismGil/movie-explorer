@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { type MovieListItem } from '@/types/movie';
 import { WatchlistContext } from './WatchlistContext';
 
@@ -9,9 +9,13 @@ type WatchlistProviderProps = {
 };
 
 const WATCHLIST_STORAGE_KEY = 'movie-explorer:watchlist';
+const EMPTY_WATCHLIST: MovieListItem[] = [];
+const subscribeToHydration = () => () => {};
 
 export function WatchlistProvider({ children }: WatchlistProviderProps) {
-  const [watchlist, setWatchlist] = useState<MovieListItem[]>(() => {
+  // Match SSR during hydration before exposing the browser's saved movies.
+  const isHydrated = useSyncExternalStore(subscribeToHydration, () => true, () => false);
+  const [savedWatchlist, setWatchlist] = useState<MovieListItem[]>(() => {
     if (typeof window === 'undefined') return [];
     try {
       const stored = window.localStorage.getItem(WATCHLIST_STORAGE_KEY);
@@ -26,10 +30,13 @@ export function WatchlistProvider({ children }: WatchlistProviderProps) {
     }
     return [];
   });
+  const watchlist = isHydrated ? savedWatchlist : EMPTY_WATCHLIST;
 
   useEffect(() => {
-    localStorage.setItem(WATCHLIST_STORAGE_KEY, JSON.stringify(watchlist));
-  }, [watchlist]);
+    if (isHydrated) {
+      localStorage.setItem(WATCHLIST_STORAGE_KEY, JSON.stringify(savedWatchlist));
+    }
+  }, [isHydrated, savedWatchlist]);
 
   const isInWatchlist = (id: number) => watchlist.some((movie) => movie.id === id);
 

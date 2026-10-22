@@ -31,7 +31,7 @@ Movie Explorer is a movie discovery application and an engineering case study in
 
 Local verification on **2026-10-05**: application lint, typecheck, production build, and 15 unit tests passed; MCP lint, typecheck, build, and 42 tests passed. This checkpoint does not certify production deployment, Docker runtime, Lighthouse, or a fresh accessibility audit.
 
-**Deployment checkpoint (2026-10-22):** [The Vercel app](https://movie-explorer-luis.vercel.app) and standalone [Render MCP service](https://movie-explorer-ppc2.onrender.com/health) are deployed. Render health/readiness and unauthenticated-request rejection pass. Production browser smoke checks passed the core flows, but reproduced React hydration error #418 on a persisted watchlist, so Phase 5 verification is still open. Authenticated remote MCP tools and real Next.js-to-MCP execution remain unconfirmed; the current UI does not use MCP. The subsequent MCP port/deployment fix passed 45 local tests. Evidence and next steps: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
+**Deployment checkpoint (2026-10-22):** [The Vercel app](https://movie-explorer-luis.vercel.app) and standalone [Render MCP service](https://movie-explorer-ppc2.onrender.com/health) are deployed. Render health/readiness and unauthenticated-request rejection pass. The persisted-watchlist hydration error found in live smoke checks is now fixed locally: lint, types, all **22 app tests**, production build, browser smoke without page errors, and scoped axe checks pass. **Vercel redeployment/retest is still required** to close Phase 5 verification. Authenticated remote MCP tools and real Next.js-to-MCP execution remain unconfirmed; the current UI does not use MCP. The MCP port/deployment fix previously passed 45 local tests. Evidence and next steps: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
 The historical local TestSprite report (2026-07-19) contains 13 failures out of 24 scenarios, including conflicting results for similar flows. These need reproduction before being classified as current application defects.
 
@@ -358,7 +358,7 @@ Generated TestSprite scripts/reports are local artifacts, not part of the commit
 - [x] File-based routing under `/app`.
 - [x] React Server Components for all data-heavy pages.
 - [x] Enable standalone server builds and distroless deployment.
-- [ ] Complete production verification: core flows pass smoke checks, but persisted-watchlist hydration error #418 must be fixed and retested.
+- [ ] Complete production verification: the persisted-watchlist hydration fix passes local checks but still needs Vercel redeployment/retest.
 
 ### Phase 6 — AI-native Layer 🔄
 - [ ] **6.0** Close remaining gates: clean production verification, transport/boundaries/authentication review, Google credentials, model policy, MCP contracts, and final architecture approval. Render Free hosting is selected and deployed.

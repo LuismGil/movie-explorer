@@ -1,6 +1,15 @@
 # Project Context
 
-## Session: 2026-10-22 — Deployment Checkpoint
+## Session: 2026-10-22 — Watchlist Hydration Fix
+
+**Estado:** Persisted-watchlist hydration error #418 is fixed locally. No push/deployment has been performed; Phase 5 production verification remains open until Vercel is redeployed and retested.
+**Cambio:** `src/context/WatchlistProvider.tsx` uses a `useSyncExternalStore` hydration snapshot to expose the same empty list during SSR and initial hydration, then exposes the lazily loaded browser state. Persistence waits for hydration and never writes the temporary empty snapshot over saved movies. Context API and UI copy/styles are unchanged.
+**Pruebas:** `src/context/__tests__/WatchlistContext.test.tsx` now has 8 tests covering add/remove, saved client mounts, SSR without storage, empty/persisted hydration under StrictMode, storage preservation, and malformed storage. The persisted-hydration regression failed before the fix and passed afterward.
+**Verificación local:** lint, typecheck, all 22 app tests, and production build pass. A standalone production server on port 3100 passed browser smoke for search, pagination, daily/weekly trending, details, watchlist save/remove, full navigation, and reload with no page errors or direct browser TMDB data API/MCP traffic. Axe found no critical/serious violations on Home and empty/saved Watchlist. The temporary server was stopped after verification.
+**Límites:** No new dependencies, secrets, MCP behavior, model selection, or agent implementation. MCP suite, Docker, Lighthouse, and remote MCP authenticated calls were not rerun for this fix.
+**Siguiente acción:** Push the reviewed commits, deploy to Vercel, and repeat the saved-watchlist reload and core-flow checks. Then confirm remote authenticated MCP tools and close remaining 6.0 approvals before 6.5 Quality/Safety.
+
+## Earlier Checkpoint: 2026-10-22 — Deployment Verification
 
 **Estado:** Next.js is deployed to `https://movie-explorer-luis.vercel.app`; standalone MCP is deployed to Render Free at `https://movie-explorer-ppc2.onrender.com/mcp`. The user reported configuring the shared Render-generated secret and MCP URL in Vercel and redeploying; dashboard values were not inspected.
 **Evidencia MCP:** Agent checks confirm `/health` → 200/ok, `/ready` → 200/ready, and unauthenticated `POST /mcp` → 401. Local Inspector tool listing and real TMDB search passed according to the user. Remote authenticated tool execution and actual Next.js-to-Render execution are still unconfirmed.
@@ -81,16 +90,16 @@
 
 ## Current Status
 
-The lint/types/tests/a11y/Lighthouse entries below describe previous local verification, not new runs or production certification for the documentation-only deployment checkpoint.
+Lint/types/tests and the scoped axe checks below were rerun for the hydration fix. Lighthouse and Docker entries describe earlier local verification, not fresh runs or production certification.
 
 - **Active Work**: Phase 6 — MCP Server + Multi-Agent System.
   - 6.1 standalone MCP foundation, 6.2 five MCP tools, 6.3 server-only client adapter, and 6.4 deterministic Search Agent are implemented.
   - 6.4 executes a validated plan supplied by a future Orchestrator; it does not use an LLM or render UI.
-  - Vercel and Render are deployed. Phase 5 verification remains open because of reproduced watchlist hydration error #418; remaining Phase 6.0 approvals block production AI integration and unapproved model choices.
+  - Vercel and Render are deployed. The watchlist hydration fix passes local production checks, but Vercel redeployment/retest and remaining Phase 6.0 approvals still block production AI integration.
 - **ESLint**: 0 warnings, 0 errors (via `npm run lint`).
 - **TypeScript**: 0 compiler errors (via `npm run typecheck`).
-- **Tests**: All unit tests pass successfully (via `npm run test -- --run`).
-- **A11y**: 0 critical/serious violations verified by automated axe-core Playwright audit script (`npm run test:a11y`).
+- **Tests**: All 22 app unit tests pass (via `npm run test -- --run`), including 8 watchlist tests.
+- **A11y**: Latest scoped Playwright/axe run against local production on port 3100 found 0 critical/serious violations on Home and empty/saved Watchlist. The hardcoded-port `npm run test:a11y` script was not used in this run.
 - **Lighthouse**: Assertions validated via Lighthouse CI local runs (`npx lhci autorun`). All budgets for Performance, Accessibility, and CLS met.
 - **Docker**: Standalone multi-stage Distroless configuration. CSS asset serving fixed via Tailwind content path correction.
 - **Security**: No `NEXT_PUBLIC_` API keys, all TMDB fetching isolated server-side.
@@ -115,5 +124,6 @@ The lint/types/tests/a11y/Lighthouse entries below describe previous local verif
   - **Files Changed**: `.ai/ARCHITECTURE.md`, `.ai/MCP_INTERFACE.md`, `.ai/SECURITY.md`, `.ai/SPEC.md`, `.ai/PLAN.md`, `.ai/TASK.md`, `.ai/CONTEXT.md`.
   - **Confirmation**: No package, runtime, UI, or configuration code/dependencies were changed.
 * **Search Agent 6.4:** Added a server-only deterministic executor for validated MCP plans, with output schemas, stable ID-based merging, partial failures, and sanitized outcomes. No AI provider or direct TMDB access was added.
-  - **Exact Next Step**: Resolve the persisted-watchlist hydration regression and repeat production verification, then close the remaining 6.0 gates. The next agent task is 6.5 Quality/Safety.
+  - **Exact Next Step**: Deploy the locally verified hydration fix, repeat Vercel production verification, and close the remaining 6.0 gates. The next agent task is 6.5 Quality/Safety.
 * **Deployment Checkpoint 2026-10-22:** Recorded the user-reported Vercel/Render deployments, verified public health/auth rejection and browser flows, and reproduced the persisted-watchlist hydration error. No runtime changes or new approvals were inferred.
+* **Watchlist Hydration Fix 2026-10-22:** Added the failing SSR/hydration regression, corrected the provider's initial visible snapshot/persistence timing, and verified the fix with unit tests, local production browser smoke, and scoped axe checks. Vercel redeployment/retest is still pending.

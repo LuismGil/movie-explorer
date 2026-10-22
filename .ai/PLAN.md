@@ -217,10 +217,11 @@ docker run --rm -p 3000:3000 movie-explorer:latest  # must serve app on :3000
 - [x] Record the user-reported Vercel deployment at `https://movie-explorer-luis.vercel.app`.
 - [x] Run production browser smoke checks for Home/SSR, search, pagination, daily/weekly trending, movie details, and watchlist add/remove/persistence.
 - [x] Observe no direct browser TMDB data API/MCP requests or `api_key` query parameters in the tested flows.
-- [ ] Add a regression test and fix React hydration error #418 when a saved watchlist is loaded through full navigation/reload.
+- [x] Add a regression test and fix React hydration error #418 when a saved watchlist is loaded through full navigation/reload.
+- [x] Verify the fix locally: lint, typecheck, 22 unit tests, production build, browser smoke with no page errors, and no critical/serious axe violations on Home and empty/saved Watchlist.
 - [ ] Redeploy the fix and repeat production checks without hydration errors before closing the Phase 5 verification gate.
 
-Evidence, reproduction, and verification limits: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md). Functional smoke checks passed, but React recovered from a hydration mismatch; this is not a production-verification pass.
+Evidence, reproduction, and verification limits: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md). The original live smoke found a hydration mismatch; the fix now passes local production checks, but Vercel redeployment/retest is still required.
 
 ### Verification
 
@@ -254,7 +255,7 @@ npm run lint        # exit 0
 
 ### 6.0 Architecture and Entry Gates
 
-- [ ] Phase 5 production deployment verified (deployed; smoke checks found persisted-watchlist hydration error #418).
+- [ ] Phase 5 production deployment verified (hydration fix verified locally; Vercel redeployment/retest pending).
 - [ ] Streamable HTTP approved as the only MCP transport.
 - [ ] `packages/mcp-server` approved as the standalone server boundary.
 - [ ] Vercel approved as the Next.js deployment boundary.
@@ -274,7 +275,7 @@ npm run lint        # exit 0
 - [ ] Verify actual Next.js-to-Render MCP execution; no current page invokes the adapter.
 - [ ] Evaluate Render Free wake-up latency and its interaction with request timeouts.
 
-Deployments and health checks do not close the remaining 6.0 approvals. Immediate work is the Phase 5 hydration regression, then the remaining verification/approval gates; **6.5 Quality/Safety** remains the next agent implementation task.
+Deployments and health checks do not close the remaining 6.0 approvals. Immediate work is deploying/retesting the locally verified Phase 5 hydration fix, then the remaining verification/approval gates; **6.5 Quality/Safety** remains the next agent implementation task.
 
 ### 6.4 Search Agent
 

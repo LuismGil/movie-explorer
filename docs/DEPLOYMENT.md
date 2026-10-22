@@ -35,7 +35,7 @@ A headless Chromium smoke test verified:
 - Watchlist add/remove, navigation, and persistence across reload work functionally.
 - No direct browser requests to the TMDB data API or MCP, or `api_key` query parameters, were observed in these flows. Poster/trailer provider traffic is expected.
 
-**Blocking finding:** a persisted watchlist causes React hydration error **#418** on a full page load. The UI recovers, but production verification is not complete. A clean browser context with an empty watchlist did not produce this error.
+**Original live finding:** a persisted watchlist caused React hydration error **#418** on a full page load. The UI recovered, but production verification was not complete. A clean browser context with an empty watchlist did not produce this error. The fix below is verified locally; Vercel redeployment/retest is still pending.
 
 Reproduction:
 
@@ -44,9 +44,19 @@ Reproduction:
 3. Open `/watchlist` through a full navigation or reload.
 4. Observe React error #418 in the browser console; the saved movie still appears after recovery.
 
-`src/context/WatchlistProvider.tsx` initializes from `localStorage` only in the browser, whereas SSR starts with an empty list. This is the suspected source of the initial-render mismatch; confirm with a regression test before fixing it.
+`src/context/WatchlistProvider.tsx` initialized from `localStorage` only in the browser, whereas SSR started with an empty list. A regression test confirmed that this caused the initial-render mismatch before the fix.
 
 This smoke test is not a fresh axe/Lighthouse audit, a client-bundle secret audit, or end-to-end AI validation.
+
+### Local Hydration Fix Verification — 2026-10-22
+
+- The provider now exposes an empty watchlist during SSR/initial hydration using a `useSyncExternalStore` server snapshot, then reveals the lazily loaded browser state. Persistence waits for hydration so the empty snapshot cannot erase saved movies.
+- The watchlist suite grew from 1 to 8 tests: saved client mounts, SSR without storage access, empty/persisted StrictMode hydration, preserved storage, add/remove, and malformed storage. The persisted-hydration test failed on the old provider and passes with the fix.
+- `npm run lint`, `npm run typecheck`, all **22 app tests**, and `npm run build` pass.
+- Browser checks against the local standalone production build on port 3100 passed search, pagination, daily/weekly trending, details, and watchlist save/remove/full navigation/reload. Saved state was preserved with **no page errors**, including no hydration recovery.
+- Scoped Playwright/axe checks found **zero critical/serious violations** on Home and both saved/empty Watchlist. No direct browser TMDB data API/MCP requests or `api_key` query parameters were observed in the tested flows.
+- The temporary verification server was stopped. No push/deployment, fresh Lighthouse run, Docker rebuild, or MCP suite rerun was performed for this change.
+- **Still pending:** deploy this revision to Vercel and repeat the original reload reproduction and core flows before closing Phase 5 production verification.
 
 ## Remote MCP Verification
 
@@ -90,7 +100,7 @@ unset MCP_KEY
 
 ## Next Work, in Order
 
-1. Add an SSR/hydration regression test, fix persisted-watchlist initialization, then redeploy and rerun production checks with no React hydration errors.
+1. Push/deploy the locally verified hydration fix to Vercel, confirm the deployed revision, and repeat saved-watchlist reload and core-flow checks with no React hydration errors.
 2. Confirm remote authenticated MCP tool execution and record the result, without secrets.
 3. Review the remaining Phase 6.0 gates in [the execution plan](../.ai/PLAN.md): transport/boundaries/authentication, Google credential availability, model policy, MCP contracts, and final architecture approval. Deployment evidence does not automatically approve these gates.
 4. Implement **6.5 Quality/Safety** after entry-gate approval: factual grounding in Search Agent results, rejection of unsupported/contradictory claims, sanitization, and a validated presentation DTO. No raw model output may reach the UI.
