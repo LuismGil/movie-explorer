@@ -67,7 +67,7 @@ src/
 
 ## 4. MCP Server Boundary
 
-* **Current State:** Next.js owns the existing server-side TMDB integration used by movie pages. The standalone MCP server/client and server-only Orchestrator→Search→Quality pipeline exist. Planning has a disabled-by-default Google adapter; local tests use mocked provider/MCP dependencies. Existing pages are not migrated and no public AI route/UI is connected.
+* **Current State:** Next.js owns the existing server-side TMDB integration used by movie pages. The standalone MCP server/client and server-only Orchestrator→Search→Quality pipeline exist. `/discover` and `/api/ai/search` provide the 6.7 UI/strict NDJSON boundary, but public availability and Google activation are disabled pending eligibility/privacy/abuse/security gates. Enabled data flows are mocked; existing movie pages are not migrated.
 * **Target State:** The MCP server is a standalone Node.js process. It has an independent package, build, test, start, Docker, and deployment lifecycle. It is not embedded in the Next.js application.
 * React components must never import MCP server modules. Next.js must communicate with MCP through a server-only network client. The browser must never call the MCP server directly.
 * The MCP server becomes the canonical owner of TMDB integration by the Phase 6 Definition of Done. Duplicate TMDB HTTP implementations must not remain in the final architecture. Existing server-side TMDB code must have an explicit migration and removal task. `TMDB_API_KEY` belongs only to the standalone MCP server after the migration is completed.
@@ -156,6 +156,8 @@ Every boundary must use explicit Zod schemas:
 TypeScript types must be inferred from schemas where applicable. Do not maintain duplicated manual interfaces and Zod schemas for the same contract. Unknown properties must be rejected or stripped according to one documented global policy. Raw provider text must never be treated as trusted structured data. MCP responses must not be passed directly to React components.
 
 **Implemented boundary policy:** existing MCP/Search source schemas strip unknown fields; Quality adds evidence size/status/provenance-consistency checks. Model proposals and final presentation DTOs reject unknown keys at every object level. Quality reconstructs only allowlisted evidence facts, never proposal prose, tool envelopes, or raw error details. Its plain-text values must be rendered as escaped text nodes, not HTML/Markdown. Evidence must be obtained through the server-side Search Agent, never accepted from a browser/model as purported TMDB truth.
+
+**6.7 public boundary:** only public presentation/event schemas are shared under `src/lib/ai`; evidence, proposals, agents, provider/MCP code and configuration remain server-only. Ordered static progress and one Quality-approved terminal use NDJSON with request/response byte caps, deadlines/cancellation, and clean-EOF client validation. The public route is same-origin and currently returns controlled disabled status without invoking agents; it is not authenticated/rate-limited production generation. See [`docs/STREAMING_UI.md`](../docs/STREAMING_UI.md).
 
 ## 12. Canonical MCP Tools
 

@@ -1,6 +1,6 @@
 # Orchestrator — Phase 6.6
 
-`src/server/agents/orchestrator.ts` coordinates the server-only **Planner → Search → Quality/Safety** pipeline. It is not a public API, Server Action, chat UI, or stream. Existing movie pages still use their TMDB actions. No live Google call was made to implement or verify this phase.
+`src/server/agents/orchestrator.ts` coordinates the server-only **Planner → Search → Quality/Safety** pipeline. Existing movie pages still use their TMDB actions. The subsequent [6.7 route/UI](STREAMING_UI.md) adds a disabled-by-default public entry and only static stage notifications/Quality presentation, never model text. No live Google call was made to implement or verify these phases.
 
 ## Request and trust boundaries
 
@@ -68,6 +68,6 @@ Local verification (2026-10-22): app lint/types/build and **213 tests** pass: 67
 
 **Security follow-up before recommending deployment:** dependency installation reported 59 audit findings (4 low, 12 moderate, 40 high, 3 critical); `npm audit --omit=dev` reports 16 (5 moderate, 9 high, 2 critical), including Next.js, Axios, and MCP SDK. All production-reported package names existed in the previous lockfile; these three direct versions were unchanged. No broad audit fix or dependency-major upgrade was attempted. Audit counts alone are not a reachability assessment; triage and targeted fixes remain required.
 
-Next work: 6.7 validated UI/stream contracts and localized states; confirm the gates above before live generation; verify actual Next.js→MCP and Render Free cold starts. A Render wake-up can exceed these deliberately bounded deadlines; no paid hosting change or unbounded retry is authorized. Rate limiting/cache/observability and remaining TMDB-action migration are still later work.
+Subsequent checkpoint: 6.7 validated UI/stream contracts and localized states are implemented with production generation still disabled; see [`STREAMING_UI.md`](STREAMING_UI.md). Next is 6.8 rate limiting/cache/observability. Confirm the gates above before live generation and verify actual Next.js→MCP/Render cold starts. A Render wake-up can exceed these deliberately bounded deadlines; no paid hosting change or unbounded retry is authorized. Remaining TMDB-action migration is still later work.
 
 References: [AI SDK structured output](https://ai-sdk.dev/docs/ai-sdk-core/generating-structured-data), [Google token counting](https://ai.google.dev/gemini-api/docs/tokens), [approved deployment/model policy](DEPLOYMENT.md#approved-model-policy).

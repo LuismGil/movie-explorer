@@ -1,5 +1,16 @@
 # Project Context
 
+## Session: 2026-10-22 — Validated Streaming UI 6.7 Implemented
+
+**Estado:** After committing 6.6 as `eae2697`, continued into 6.7 at the user's request. `/discover`, leaf `AIChatPanel`, and bounded same-origin `POST /api/ai/search` now exist locally. No push/redeploy was performed. Existing movie pages/actions remain unchanged; navigation includes the new gated page.
+**Contrato:** NDJSON contains only three ordered static progress stages and one Quality presentation/unsupported/allowlisted-error terminal. The handler revalidates the Orchestrator result and omits usage/plans/raw envelopes. The client validates incremental UTF-8, event order/shape, 2 MiB total bytes and clean EOF before returning presentation; unknown/truncated/trailing data never renders a partial-looking result. Request bytes are capped at 8 KiB with a 35s outer bound including body reading; cancellation and stale/unmount cleanup propagate.
+**Fronteras:** Public DTO/text/event schemas live under `src/lib/ai`; existing Quality server exports remain compatible. Evidence/proposals/agents/provider/MCP/env stay server-only. UI copy is centralized pt-BR; scoped styles import shared tokens, with visible focus, reduced-motion-safe transitions, controlled live status and responsive stage layout. No HTML/Markdown rendering, persisted prompts, fake demo data, or new dependencies.
+**Activación bloqueada:** `src/server/ai/availability.ts` deliberately exports false. The actual public route returns `503` plus only `error/disabled`, without invoking agents or reading Google keys; the form discloses unavailability and is disabled. The separate Google operator assertion is also off. Do not activate before eligibility/privacy/live-test approval, abuse/rate limits and dependency triage; a key or client flag cannot enable it. No Google/live MCP request, paid usage, environment change or secret exposure occurred.
+**Pruebas:** All 281 app tests, lint/types/build and MCP verify/45 tests pass. The 68 new tests cover 24 stream reader/contract, 29 request/handler, and 15 UI cases; all 77 Quality regressions pass after schema extraction. Enabled data/stream states are mocked only.
+**Navegador:** Local production standalone Chromium `/discover` HTTP 200; same-origin POST correctly returns disabled 503/no-store; desktop 1440px and mobile 320px axe report zero violations, no overflow/page errors/external requests, and visible keyboard outline. Initial browser run exposed Request.url normalization causing 403; Origin checking now uses actual Host and has a regression test, with forwarded-host spoofing rejected. Screenshots remain under `/tmp/opencode`; the temporary server was stopped. Targeted client-bundle markers show no Google endpoint/model or MCP runtime error strings, not a comprehensive secret/security audit.
+**Pendientes:** 6.8 cache/rate limits/observability is next. Real Google/billing/privacy and Next.js→MCP/Render cold-start verification, dependency advisories, final TMDB-action migration and broader hardening remain pending. No fresh Docker/Lighthouse, enabled browser/live generation or production certification is claimed.
+**Detalle:** [`docs/STREAMING_UI.md`](../docs/STREAMING_UI.md).
+
 ## Session: 2026-10-22 — Orchestrator 6.6 Implemented
 
 **Estado:** 6.6 is implemented and tested locally with mocks. `runOrchestrator` validates requests/strict intent, compiles approved MCP plans, sequences Search→Quality, and returns only Quality-approved presentation or controlled statuses. The user requested committing this unit, then proceeding to 6.7.
@@ -118,15 +129,15 @@
 
 ## Current Status
 
-App/MCP lint/types/tests/build were rerun for 6.6. Browser/axe/Lighthouse/Docker entries below describe earlier verification, not fresh 6.6 runs or production AI certification.
+App/MCP lint/types/tests/build were rerun for 6.7, with scoped disabled-discovery standalone Chromium/axe checks. Other browser/axe/Lighthouse/Docker entries below describe earlier verification, not production AI certification.
 
 - **Active Work**: Phase 6 — MCP Server + Multi-Agent System.
-  - 6.1 foundation, 6.2 MCP tools, 6.3 adapter, 6.4 deterministic Search, 6.5 deterministic Quality/Safety, and 6.6 Orchestrator are implemented.
-  - Orchestrator compiles strict plans and sequences Search→Quality with time/tool/token budgets and a disabled-by-default Google adapter. No UI/public AI route is connected; production activation/integration remain unverified.
+  - 6.1 foundation, 6.2 MCP tools, 6.3 adapter, 6.4 deterministic Search, 6.5 deterministic Quality/Safety, 6.6 Orchestrator and 6.7 validated UI/stream boundary are implemented.
+  - Orchestrator compiles strict plans and sequences Search→Quality with time/tool/token budgets. `/discover` and its public NDJSON handler remain disabled, as does real Google planning; production activation/integration remain unverified.
   - Vercel/Render, Phase 5 core-flow verification, remote Inspector listing/search, and 6.0 entry approvals are complete. Actual Next.js/provider integration and billing eligibility remain unverified.
 - **ESLint**: 0 warnings, 0 errors (via `npm run lint`).
 - **TypeScript**: 0 compiler errors (via `npm run typecheck`).
-- **Tests**: All 213 app tests pass, including 67 Orchestrator, 32 Google-adapter, 77 Quality/Safety, 17 Search, 7 MCP-client, and 8 watchlist tests; all 45 MCP tests pass.
+- **Tests**: All 281 app tests pass, including 68 stream/handler/UI, 67 Orchestrator, 32 Google-adapter, 77 Quality/Safety, 17 Search, 7 MCP-client, and 8 watchlist tests; all 45 MCP tests pass.
 - **A11y**: Latest scoped Playwright/axe run against local production on port 3100 found 0 critical/serious violations on Home and empty/saved Watchlist. The hardcoded-port `npm run test:a11y` script was not used in this run.
 - **Lighthouse**: Assertions validated via Lighthouse CI local runs (`npx lhci autorun`). All budgets for Performance, Accessibility, and CLS met.
 - **Docker**: Standalone multi-stage Distroless configuration. CSS asset serving fixed via Tailwind content path correction.

@@ -249,7 +249,7 @@ npm run lint        # exit 0
 6.4 Search Agent - [Completed]
 6.5 Quality/Safety Agent - [Completed]
 6.6 Orchestrator Agent - [Completed locally with mocks; live activation gated]
-6.7 Validated Streaming UI
+6.7 Validated Streaming UI - [Completed locally; production generation disabled]
 6.8 Cache, Limits, and Observability
 6.9 Hardening and Phase Closure
 
@@ -314,7 +314,18 @@ Contract and limitations: [`docs/QUALITY_GATE.md`](../docs/QUALITY_GATE.md). The
 - [x] Bound/share MCP initialization, reject redirects, and clear failed/disconnected clients; add cancellation/tool-budget regression tests.
 - [x] Verify app lint/types/build and 213 tests, including 67 Orchestrator and 32 mock-HTTP Google adapter tests; MCP lint/types/build and 45 tests pass.
 
-Contract: [`docs/ORCHESTRATOR.md`](../docs/ORCHESTRATOR.md). Live provider access/billing/privacy, actual Next.js→MCP, cold-start suitability, and dependency-audit remediation remain unverified/pending. Next implementation unit is 6.7 validated streaming UI; no production AI certification is implied.
+Contract: [`docs/ORCHESTRATOR.md`](../docs/ORCHESTRATOR.md). Live provider access/billing/privacy, actual Next.js→MCP, cold-start suitability, and dependency-audit remediation remain unverified/pending. No production AI certification is implied.
+
+### 6.7 Validated Streaming UI
+
+- [x] Add `/discover` with token-based styling, centralized pt-BR copy, loading/progress, approved/partial/empty, unsupported/error, cancellation/retry, and explicit movie-selection states.
+- [x] Add bounded same-origin JSON→NDJSON entry point; stream only static stage codes and revalidated Quality DTOs, never provider tokens/prompts/raw MCP/Markdown.
+- [x] Share only public presentation schemas with the browser; keep evidence, agents, MCP, provider configuration and credentials server-only.
+- [x] Validate UTF-8, byte limits, event ordering and clean EOF before rendering any result; discard invalid/truncated/trailing data and stale cancelled responses.
+- [x] Keep the public server gate and real Google activation disabled; UI discloses unavailability, with no fake results or network generation.
+- [x] Verify lint/types/build, 281 app tests (68 new streaming/handler/UI cases), MCP checks/45 tests, and local standalone Chromium/axe on desktop/mobile with zero violations, page errors or external requests.
+
+Contract and verification scope: [`docs/STREAMING_UI.md`](../docs/STREAMING_UI.md). Live activation still requires eligibility/privacy approval, abuse/rate-limit review, dependency remediation and actual Next.js→MCP testing. Next implementation unit: 6.8 cache, limits, and observability.
 
 ### Phase 6 Verification
 ```bash

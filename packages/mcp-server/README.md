@@ -2,7 +2,7 @@
 
 Independent Node.js runtime exposing five TMDB tools through **Streamable HTTP**. It has its own dependencies, build, tests, Dockerfile, and deployment lifecycle; it is not embedded in Next.js.
 
-**Status:** MCP foundation/tools, the Next.js adapter, deterministic 6.4 Search, 6.5 Quality/Safety, and 6.6 Orchestrator are implemented. Orchestrator compiles tools and sequences Search→Quality with runtime budgets; its Google adapter is disabled by default and tested only with HTTP mocks. See [`docs/ORCHESTRATOR.md`](../../docs/ORCHESTRATOR.md) and [`docs/QUALITY_GATE.md`](../../docs/QUALITY_GATE.md). Existing movie pages still use their original Server Actions. Live integration and conversational UI are pending.
+**Status:** MCP foundation/tools, the Next.js adapter, deterministic 6.4 Search, 6.5 Quality/Safety, 6.6 Orchestrator, and [6.7 gated UI](../../docs/STREAMING_UI.md) are implemented. Orchestrator compiles tools and sequences Search→Quality with runtime budgets; its Google adapter and public availability remain disabled. Enabled data flows are tested only with mocks. Existing movie pages still use their original Server Actions; real provider/Next.js→MCP integration remains unverified.
 
 ## Local Setup
 
@@ -92,7 +92,7 @@ This runs lint → typecheck → tests → build. Individual scripts are `lint`,
 
 From the repository root, use `npm run mcp:verify` or the `mcp:lint`, `mcp:typecheck`, `mcp:test`, and `mcp:build` wrappers.
 
-Latest local verification on **2026-10-22**: lint, typecheck, all **45 MCP tests**, and build passed during 6.6 work; the app's 213 tests/lint/types/build also pass. No live provider/MCP calls were used for 6.6. The earlier local Docker build could not access the daemon (`/var/run/docker.sock` permission denied); no Docker rerun was performed for 6.6.
+Latest local verification on **2026-10-22**: lint, typecheck, all **45 MCP tests**, and build passed during 6.7 work; the app's 281 tests/lint/types/build also pass. Local Chromium/axe checks on disabled `/discover` pass at desktop/mobile. No live provider/MCP calls were used. The earlier local Docker build could not access the daemon (`/var/run/docker.sock` permission denied); no Docker rerun was performed for 6.7.
 
 **Deployment checkpoint (2026-10-22):** The user deployed the service to Render Free at `https://movie-explorer-ppc2.onrender.com/mcp`. Agent checks confirm `/health` and `/ready` return 200 and unauthenticated `POST /mcp` returns 401. User-provided Inspector 1.0.3 output confirms authenticated listing of all five tools and a real `Inception` search returning TMDB movie 27205 (`A Origem`). Actual Next.js-to-MCP execution, calls to the other four tools, build/image inspection, and free-tier wake-up reliability remain unverified. See [`docs/DEPLOYMENT.md`](../../docs/DEPLOYMENT.md) for evidence, remaining gates, and the corrected CLI commands.
 
@@ -151,7 +151,7 @@ The image uses a non-root distroless runner. Keep remote traffic on HTTPS and ne
 
 - Confirm Google account/Free Tier eligibility before live generation. All 6.0 entry approvals, including the default model/no-alternate-fallback policy, are complete; provider access/billing remain unverified.
 - Verify the Next.js adapter's redirect rejection, bounded/shared initialization, cancellation, and reconnect behavior remotely; unit regression tests pass. Triage dependency security advisories before recommending deployment.
-- Implement 6.7 validated streaming, then rate limits, caching, and observability. Do not bypass Quality's strict presentation gate or treat mocked 6.6 tests as production AI integration evidence.
+- Implement 6.8 rate limits, caching, and observability before public activation. Do not bypass Quality's strict presentation gate or treat mocked tests/disabled-UI browser checks as production AI integration evidence.
 - Test the other four tools remotely and review Render build/image evidence and free-tier reliability; public health checks, authenticated listing, and remote search already passed their smoke checks.
 - Verify real Next.js-to-MCP tool execution.
 - Resolve UI contract coverage before retiring duplicate server-side TMDB access.

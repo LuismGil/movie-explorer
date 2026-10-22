@@ -124,7 +124,7 @@ Setup reference (already completed according to the evidence above):
 4. In Vercel → **Project → Settings → Environment Variables**, add the exact name `GOOGLE_GENERATIVE_AI_API_KEY`, paste the key as the value, and mark it **Secret/Sensitive**. Select **Production** and, if needed, **Preview**. Keep the key in your own secret store because sensitive values may not be readable after saving. Never use a `NEXT_PUBLIC_` or `VITE_` prefix.
 5. Restart the local dev server if running. Vercel environment changes apply to new deployments, so redeploy to apply the saved configuration. Only confirm that setup is complete; never send the value, a screenshot containing it, or an environment-file dump to chat/Git.
 
-These steps prepare configuration only. The 6.6 Google adapter now exists but is disabled without trusted server/operator Free Tier confirmation; adding a key alone does not enable generation or AI/chat. No public AI route/UI is connected. Search/Quality are deterministic and make no model calls. The successful redeploy does not prove Google access or a Next.js-to-MCP call works.
+These steps prepare configuration only. The 6.6 Google adapter remains disabled without trusted server/operator Free Tier confirmation; adding a key alone does not enable generation. The 6.7 `/discover` UI/route now exists locally with public availability deliberately false; it was not redeployed during this work. Search/Quality are deterministic and make no model calls. A successful redeploy does not prove Google access or a Next.js-to-MCP call works.
 
 References: [Gemini API keys](https://ai.google.dev/gemini-api/docs/api-key), [Google provider environment variable](https://ai-sdk.dev/providers/ai-sdk-providers/google), [Vercel environment variables](https://vercel.com/docs/environment-variables).
 
@@ -139,8 +139,8 @@ Sources checked on 2026-10-22: [model capabilities/status](https://ai.google.dev
 
 ## Next Work, in Order
 
-1. Continue with **6.7 validated streaming UI**. 6.6 is locally implemented/tested with mocks only: app lint/types/build and 213 tests, MCP lint/types/build and 45 tests pass. No public AI route or UI is connected; see [`ORCHESTRATOR.md`](ORCHESTRATOR.md).
+1. Continue with **6.8 cache, rate limits, and observability**. 6.7 is locally implemented with generation disabled: app lint/types/build and 281 tests, MCP lint/types/build and 45 tests pass. Disabled-UI standalone Chromium/axe desktop/mobile checks pass; enabled streams/results remain mocked. See [`STREAMING_UI.md`](STREAMING_UI.md).
 2. Confirm Google account/model access, Free Tier billing eligibility, and end-user privacy conditions before any live generation/activation; no paid usage is authorized. No provider calls were made during 6.6. Triage dependency-audit findings before recommending deployment (root production audit: 16 findings, including 2 critical; no automatic broad updates attempted).
 3. Verify the actual Next.js-to-MCP path as integration proceeds; retain the remaining remote-tool and free-tier reliability checks for hardening.
 
-The current Vercel pages do not invoke MCP or the Search Agent. Do not add a public diagnostic endpoint or expose the shared secret to browser code just to test the connection.
+The existing Vercel movie pages do not invoke MCP or Search; 6.7 was not pushed/deployed here. Its new public route also stays disabled and performs no provider/agent calls. Do not add a public diagnostic endpoint or expose the shared secret to browser code just to test the connection.

@@ -32,7 +32,7 @@ The system freezes exactly three agents with strictly isolated responsibilities:
 
 The gate checks exact canonical facts, movie-scoped metadata, available summary/detail contradictions, and source status/outcome consistency. It reconstructs a strict, sanitized DTO from evidence rather than forwarding proposal values, raw MCP envelopes, provider messages, or tool outcomes. Valid movies survive rejected selections/partial source failures. Unavailable searches are distinct from successful empty searches. Data remains text-only: it must never be rendered as HTML or Markdown.
 
-See [`docs/QUALITY_GATE.md`](../docs/QUALITY_GATE.md) for schemas, limits, statuses, evidence-trust assumptions, and known limitations. The gate makes no network/provider calls; Orchestrator integration is implemented in 6.6 and UI integration remains 6.7.
+See [`docs/QUALITY_GATE.md`](../docs/QUALITY_GATE.md) for schemas, limits, statuses, evidence-trust assumptions, and known limitations. The gate makes no network/provider calls; Orchestrator integration is implemented in 6.6 and gated UI integration in 6.7.
 
 ### 6.6 Orchestrator Contract
 
@@ -45,3 +45,7 @@ Ceilings: 30s global deadline, 10s shared MCP initialization and per-tool timeou
 ## 3. Streaming Response Contracts
 * **Allowed**: Progress events may be streamed only when they contain controlled application-defined status data.
 * **Forbidden**: Never stream raw model output, raw MCP responses, private prompts, chain-of-thought, tool arguments containing secrets, or unvalidated Markdown or HTML.
+
+### 6.7 Implemented Boundary
+
+`/discover` and same-origin `POST /api/ai/search` use strict NDJSON events: ordered static `progress` stages, then one Quality-approved `result`, `unsupported`, or sanitized `error`. The public gate is deliberately false; the current route returns controlled disabled status without invoking agents/provider. Actual request bytes are capped at 8 KiB and total response bytes at 2 MiB; an outer 35s bound includes body reading. The client validates the full stream and clean EOF before returning a result. Public DTO definitions are shared under `src/lib/ai`; evidence/execution/configuration remain server-only. See [`docs/STREAMING_UI.md`](../docs/STREAMING_UI.md). This is not production generation approval; live eligibility, privacy, abuse/rate limits and integration verification remain pending.

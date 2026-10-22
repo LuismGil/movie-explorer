@@ -1,4 +1,5 @@
 import 'server-only';
+import type { AiStage } from '@/lib/ai/stream-contract';
 import { createDeadline, awaitWithSignal } from '../runtime/abort';
 import { createGooglePlanner, type GooglePlannerOptions } from './google-planner';
 import { compileOrchestratorPlan } from './orchestrator.plan';
@@ -16,6 +17,7 @@ export { orchestratorRequestSchema, orchestratorResultSchema, type OrchestratorR
 type Options = {
   // Server-owned configuration/dependencies only; never deserialize options from the browser.
   signal?: AbortSignal;
+  onProgress?: (stage: AiStage) => void;
   limits?: unknown;
   planner?: OrchestratorPlanner;
   google?: GooglePlannerOptions;
@@ -34,6 +36,7 @@ export async function runOrchestrator(input: unknown, options: Options = {}): Pr
   const deadline = createDeadline(limits.timeoutMs, options.signal);
   try {
     deadline.check();
+    options.onProgress?.('planning');
     usage.plannerCalls = 1;
     const planned = await awaitWithSignal(() => (options.planner ?? createGooglePlanner(options.google))(
       request.data, { signal: deadline.signal, limits },
@@ -51,11 +54,13 @@ export async function runOrchestrator(input: unknown, options: Options = {}): Pr
     if (plan.calls.length > limits.maxToolCalls) return fail('tool_budget_exceeded');
     usage.toolCallsReserved = plan.calls.length;
     deadline.check();
+    options.onProgress?.('searching');
     const searchResult = await awaitWithSignal(() => (options.searchAgent ?? runSearchAgent)(plan, {
       signal: deadline.signal, timeoutMs: limits.toolTimeoutMs, maxToolCalls: limits.maxToolCalls,
     }), deadline.signal);
     deadline.check();
     // Build selections only from server Search evidence; model-authored prose/IDs are not presentation authority.
+    options.onProgress?.('validating');
     const candidates = Array.isArray(searchResult?.movies) ? searchResult.movies.slice(0, 20).map(movie => ({ movieId: movie.id })) : [];
     const presentation = qualityAgentResultSchema.safeParse((options.qualityAgent ?? runQualityAgent)(searchResult, { movies: candidates }));
     deadline.check();

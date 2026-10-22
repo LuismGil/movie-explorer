@@ -205,9 +205,14 @@ Contract/limits: [`docs/ORCHESTRATOR.md`](../docs/ORCHESTRATOR.md). No public ro
 
 ## 6.7 Validated Streaming UI
 
-- [ ] Stream only validated progress and structured data.
-- [ ] Add loading, error, and empty states.
-- [ ] Prevent streaming of private prompts, chain-of-thought, or unvalidated Markdown.
+- [x] Stream only allowlisted stage codes and revalidated Quality presentation DTOs via a bounded same-origin NDJSON handler.
+- [x] Add localized disabled/loading/partial/error/empty/unsupported/cancel/retry/movie-selection states at `/discover`.
+- [x] Reject malformed UTF-8, oversized/truncated/trailing/out-of-order data; wait for clean EOF before showing results and discard cancelled/stale responses.
+- [x] Share public DTO schemas only; prevent raw prompts/thoughts/provider text, MCP envelopes, usage/private errors or Markdown/HTML rendering.
+- [x] Keep server availability false and Google activation disabled pending eligibility/privacy/abuse/security gates; no live generation or fake demo results.
+- [x] Verify 281 app tests, app/MCP lint/types/build and 45 MCP tests; scoped local production Chromium/axe desktop/mobile checks pass with zero violations, overflow or page errors.
+
+Contract/limits: [`docs/STREAMING_UI.md`](../docs/STREAMING_UI.md). Enabled data flows are mocked only; no live provider/MCP, production redeploy, Docker or Lighthouse run was performed for 6.7.
 
 ## 6.8 Cache, Limits, and Observability
 

@@ -8,14 +8,15 @@ export function Header() {
   const pathname = usePathname();
   const isHomeActive = pathname === '/';
   const isWatchlistActive = pathname === '/watchlist';
+  const isDiscoverActive = pathname === '/discover';
 
   return (
     <header className="sticky top-0 z-20 border-b border-slate-800 bg-slate-950/80 backdrop-blur">
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-3">
+      <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-3">
         <Link href="/" className="text-lg font-semibold text-slate-100 transition hover:text-sky-400">
           <span aria-hidden="true">🎬</span> {messages.navigation.appTitle}
         </Link>
-        <nav className="flex items-center gap-3">
+        <nav className="flex flex-wrap items-center gap-3">
           <Link
             href="/"
             aria-current={isHomeActive ? 'page' : undefined}
@@ -24,6 +25,10 @@ export function Header() {
             }`}
           >
             {messages.navigation.home}
+          </Link>
+          <Link href="/discover" aria-current={isDiscoverActive ? 'page' : undefined}
+            className={`text-sm font-medium hover:text-sky-400 focus-visible:ring-2 ${isDiscoverActive ? 'font-semibold text-sky-400' : 'text-slate-300'}`}>
+            {messages.navigation.discover}
           </Link>
           <Link
             href="/watchlist"

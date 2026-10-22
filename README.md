@@ -10,7 +10,7 @@
 
 **A movie discovery platform built on React 19, Next.js App Router Server Components, and Server Actions.**
 
-> **Current checkpoint: Phase 6.6 implemented with mocks.** Orchestrator plans approved MCP tools and sequences Search→Quality with time/tool/token budgets. The Google adapter is disabled by default; live provider/billing verification, conversational streaming, and production AI wiring remain pending. Premium UI polish is Phase 7 work.
+> **Current checkpoint: Phase 6.7 implemented; generation disabled.** `/discover` adds controlled progress and Quality-only results, with honest unavailable/loading/error/empty/selection states. Orchestrator/provider data flows are tested with mocks; live provider/billing/privacy and actual Next.js→MCP verification remain pending. Premium UI polish is Phase 7 work.
 
 ---
 
@@ -29,9 +29,10 @@ Movie Explorer is a movie discovery application and an engineering case study in
 - **MCP foundation (6.1–6.3)** with an independent HTTP server, Bearer authentication, origin validation, five TMDB tools, and a server-only Next.js adapter.
 - **Search Agent (6.4)** validates orchestrator-supplied tool plans and MCP outputs, deduplicates results by TMDB ID, and preserves partial results without exposing raw tool errors. It is deterministic and makes no model calls.
 - **Quality/Safety (6.5)** verifies typed claims against Search evidence, rejects unsupported/contradictory selections, and reconstructs strict plain-text DTOs without raw model/tool data. It is deterministic and makes no network calls. [Contract and limits](docs/QUALITY_GATE.md).
-- **Orchestrator (6.6)** validates requests/structured intent, compiles allowlisted tools, and sequences Search→Quality. Fixed-model Google planning is disabled until trusted Free Tier confirmation, with exact-request token preflight, bounded deadlines, controlled failures, no retries/fallback, and no public route/UI. [Contract and activation gate](docs/ORCHESTRATOR.md).
+- **Orchestrator (6.6)** validates requests/structured intent, compiles allowlisted tools, and sequences Search→Quality. Fixed-model Google planning is disabled until trusted Free Tier confirmation, with exact-request token preflight, bounded deadlines, controlled failures, and no retries/fallback. [Contract and activation gate](docs/ORCHESTRATOR.md).
+- **Validated streaming UI (6.7)** adds `/discover` and a bounded same-origin NDJSON entry point. Only static stage codes and Quality DTOs can pass, with clean-EOF validation before presentation; production availability stays false with no provider/agent invocation. [Contract and activation blockers](docs/STREAMING_UI.md).
 
-Local verification on **2026-10-22**: application lint, typecheck, production build, and **213 tests** (including **67 Orchestrator**, **32 Google-adapter**, and **77 Quality/Safety** tests) pass; MCP lint, typecheck, build, and **45 tests** pass. Provider tests use the real AI SDK with synthetic HTTP responses, not live Google. Docker, live AI/MCP integration, and fresh browser/axe/Lighthouse audits were not run for 6.6; the UI was not changed.
+Local verification on **2026-10-22**: app lint/types/build and **281 tests** pass (including 68 streaming/handler/UI cases); MCP checks and **45 tests** pass. A local production Chromium smoke/axe run on disabled `/discover` passed at desktop/320 px mobile with zero violations, page errors, external requests or horizontal overflow. Enabled flows use synthetic/mocked data, not live Google/MCP. No fresh Docker/Lighthouse or production redeploy was performed for 6.7.
 
 **Deployment checkpoint (2026-10-22):** [The Vercel app](https://movie-explorer-luis.vercel.app) and [Render MCP service](https://movie-explorer-ppc2.onrender.com/health) are deployed. Health/auth-rejection and user-provided Inspector listing/search smoke checks pass. Live browser retesting of the watchlist fix closed Phase 5 production verification. All 6.0 entry approvals, including model policy, are complete, and Google/MCP Production variables/redeployment are user-confirmed. Actual Next.js-to-MCP and Google integration/billing remain unverified; the current UI does not use Search/Quality. Evidence and policy: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
@@ -57,7 +58,7 @@ flowchart TD
   TMDBProxy --> TMDB
 ```
 
-Existing movie pages still call `src/server/actions/tmdb.ts` directly. The server-only AI pipeline uses the MCP adapter but has no public route or UI integration. Browsers do not call the TMDB data API or MCP endpoint; poster images and embedded trailers still load from their external providers.
+Existing movie pages still call `src/server/actions/tmdb.ts` directly. `/discover` connects to a server-owned gated AI route; both public availability and Google activation remain disabled. Browsers never call the TMDB data API or MCP endpoint; poster images and embedded trailers still load from their external providers.
 
 ### 3.2 Planned AI Flow
 
@@ -72,7 +73,7 @@ flowchart LR
   Quality --> Result["Validated UI result"]
 ```
 
-The MCP client/server and Orchestrator→Search→Quality pipeline are implemented. Google activation is gated and tested only with mocks; UI streaming remains planned. Final user-visible AI data must pass Quality/Safety; its canonical plain-text DTOs, not raw model/MCP output, are the presentation boundary.
+The MCP client/server, Orchestrator→Search→Quality pipeline, and validated streaming UI are implemented. Production generation remains gated and enabled data paths are tested only with mocks. Final user-visible AI data must pass Quality/Safety; its canonical plain-text DTOs, not raw model/MCP output, are the presentation boundary.
 
 Execution tracking: [`.ai/PLAN.md`](.ai/PLAN.md). Architecture: [`.ai/ARCHITECTURE.md`](.ai/ARCHITECTURE.md). Standalone setup: [`packages/mcp-server/README.md`](packages/mcp-server/README.md).
 
@@ -104,7 +105,7 @@ Execution tracking: [`.ai/PLAN.md`](.ai/PLAN.md). Architecture: [`.ai/ARCHITECTU
 - **Search Agent foundation**: Deterministic execution of validated MCP tool plans, with aggregation, ID deduplication, schema validation, and partial-failure handling. It is not an LLM-powered search planner.
 - **Quality/Safety gate**: Exact structured-fact validation, movie-scoped metadata, source contradiction/status checks, bounded plain-text DTOs, and valid partial-result preservation. Arbitrary narrative is rejected, not semantically judged.
 - **Orchestrator foundation**: Request/intent validation, allowlisted planning, Search→Quality sequencing, deadline/cancellation and tool/token budgets. Google adapter defaults to disabled; no retries, automatic alternate-model fallback, or paid escalation.
-- **Conversational Movie Discovery (Planned)**: Validated streaming UI over the implemented pipeline. Provider access, Free Tier billing eligibility, privacy conditions, and real Next.js→MCP execution still need verification.
+- **Validated discovery UI (gated)**: Structured streaming over the implemented pipeline, with controlled progress, loading/error/empty/partial/cancellation and movie-selection flows. Provider access, Free Tier eligibility, privacy/abuse protection, security remediation, and real Next.js→MCP execution must be reviewed before activation. No conversation memory is implemented.
 
 ---
 

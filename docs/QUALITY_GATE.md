@@ -1,6 +1,6 @@
 # Quality/Safety Gate — Phase 6.5
 
-`src/server/agents/quality-agent.ts` implements a deterministic, server-only gate. It makes **no Google, TMDB, or MCP calls**, reads no credentials, and is not connected to an API route or UI. The [6.6 Orchestrator](ORCHESTRATOR.md) now sequences Search→Quality; streaming remains Phase 6.7.
+`src/server/agents/quality-agent.ts` implements a deterministic, server-only gate. It makes **no Google, TMDB, or MCP calls** and reads no credentials. The [6.6 Orchestrator](ORCHESTRATOR.md) sequences Search→Quality; the [6.7 entry/UI](STREAMING_UI.md) shares only public presentation schemas under `src/lib/ai/presentation.ts` and remains disabled for live generation. Evidence/proposals/execution stay server-only, with existing server exports preserved.
 
 ## API and Trust Boundary
 
