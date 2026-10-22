@@ -1,7 +1,7 @@
 # Phase 6 — MCP Server + Multi-Agent System
 
 ## Active Phase
-- Phase 6.0 Google credential/model setup; current architecture/contracts are explicitly approved, remote Inspector listing/search pass, and 6.4 Search Agent is implemented.
+- Phase 6.0 model-policy approval; architecture/contracts and credential availability are complete, remote Inspector listing/search pass, and 6.4 Search Agent is implemented.
 - Phase 5 production verification is closed: the deployed hydration fix passes user and agent live browser checks without React errors.
 - Next agent implementation: 6.5 Quality/Safety, after entry-gate approval.
 
@@ -13,7 +13,7 @@
 - [x] Phase 5 — Next.js App Router Migration and core-flow production verification (2026-10-22)
 
 ## Current Goal
-- Configure `GOOGLE_GENERATIVE_AI_API_KEY` locally/in Vercel and approve default/fallback models and policy before 6.5. The user approved current architecture/contracts but confirmed no Google key is configured. This does not authorize paid API usage or prove Next.js-to-MCP integration.
+- Obtain explicit model/default/fallback policy approval before 6.5. Local Google key presence is verified without exposing its value; the user confirmed all variables in Vercel Production and redeployed. Credential availability does not validate provider access, authorize paid usage, or prove Next.js-to-MCP integration. The proposed stable `gemini-3.1-flash-lite` with no automatic model fallback remains unapproved.
 
 ## Tasks
 
@@ -126,7 +126,7 @@ docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:lat
 - [x] Vercel approved as the Next.js deployment boundary.
 - [x] Standalone MCP hosting provider selected: Render Free; evaluate free-tier cold starts before production use.
 - [x] Bearer authentication using `MCP_INTERNAL_API_KEY` approved.
-- [ ] `GOOGLE_GENERATIVE_AI_API_KEY` available locally and in Vercel (user confirmed not yet configured).
+- [x] `GOOGLE_GENERATIVE_AI_API_KEY` available locally/in Vercel: non-placeholder presence checked in root `.env`; user confirmed Production scope and successful redeploy. No credential value or provider request was exposed/sent.
 - [ ] Default and fallback Gemini model identifiers approved.
 - [x] Current five MCP tool contracts reviewed and approved.
 - [x] Current Phase 6 architecture reviewed and approved; model/default/fallback policy remains separate.
@@ -138,6 +138,7 @@ Explicit user approval recorded on 2026-10-22. No model selection, paid usage, o
 - [x] Record user-reported MCP deployment to Render Free: `https://movie-explorer-ppc2.onrender.com/mcp`.
 - [x] Agent checks: `/health` and `/ready` return 200; unauthenticated `POST /mcp` returns 401.
 - [x] Record user-reported local Inspector tool listing/TMDB search success and Vercel MCP environment configuration/redeployment; no secret values inspected.
+- [x] Record corrected Vercel environment scope and redeploy: MCP variables are now in Production, not only Development; Google Production configuration is also user-confirmed.
 - [x] Confirm authenticated remote tools via user-provided Inspector 1.0.3 output: all five tools listed; `search_movies(query=Inception, page=1)` returned real TMDB data including movie 27205 without an MCP error.
 - [ ] Verify Next.js-to-Render MCP execution; the current UI does not invoke the MCP adapter.
 - [ ] Evaluate free-tier cold starts against request timeouts.

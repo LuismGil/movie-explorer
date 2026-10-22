@@ -149,7 +149,7 @@ The image uses a non-root distroless runner. Keep remote traffic on HTTPS and ne
 
 ## Remaining Work
 
-- Configure Google credentials in Next.js (not Render) and approve model/default/fallback policy in [the execution plan](../../.ai/PLAN.md). Current architecture/contracts are explicitly approved; Phase 5 and remote Inspector listing/search verification are complete.
+- Approve model/default/fallback policy in [the execution plan](../../.ai/PLAN.md). Google credential availability in Next.js/local and Vercel Production is recorded; provider access/billing are unverified. Current architecture/contracts, Phase 5, and remote Inspector listing/search verification are complete.
 - Harden the Next.js adapter for redirect rejection, concurrent initialization, and failure recovery.
 - Implement Quality/Safety → Orchestrator, validated streaming, limits, caching, and observability; review the pending 6.0 gates before production integration.
 - Test the other four tools remotely and review Render build/image evidence and free-tier reliability; public health checks, authenticated listing, and remote search already passed their smoke checks.

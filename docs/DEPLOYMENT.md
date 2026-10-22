@@ -107,9 +107,11 @@ Do not publish headers, shell traces, or secrets; the expanded header may be vis
 unset MCP_KEY
 ```
 
-## Google Gemini Credential Setup — Pending
+## Google Gemini Credential Setup
 
-The user explicitly approved the current architecture and five tool contracts on 2026-10-22, but confirmed that no Google key is configured. This is a **third, separate credential**, not the TMDB key or MCP Bearer secret. Model/default/fallback policy and paid usage are not approved yet.
+**Availability complete (2026-10-22):** The user confirmed all environment variables are now in Vercel **Production** and a redeploy succeeded. This includes correcting MCP variables that were previously Development-only and configuring `GOOGLE_GENERATIVE_AI_API_KEY`. A local presence-only check confirmed a non-placeholder Google value in root `.env`; no value was printed/transmitted. Provider authentication, account/model access, quotas, and billing tier were not verified. This is a **third, separate credential**, not the TMDB key or MCP Bearer secret. Model/default/fallback policy and paid usage are not approved yet.
+
+Setup reference (already completed according to the evidence above):
 
 1. Open [Google AI Studio → API keys](https://aistudio.google.com/api-keys), sign in, and accept the applicable terms. New users may already have a default project/key. Otherwise choose **Create API key** and follow the project/key dialog; create a dedicated Movie Explorer project if needed. Existing Google Cloud projects may need to be imported into AI Studio first.
 2. Copy the Gemini API key privately. If AI Studio labels it unrestricted and offers **Restrict to Gemini API only**, apply that restriction. Start with the Free Tier if available for the account/model; do not enable paid billing without a separate cost decision. Free availability and quotas are not guaranteed for every model/account.
@@ -122,13 +124,22 @@ The user explicitly approved the current architecture and five tool contracts on
 4. In Vercel → **Project → Settings → Environment Variables**, add the exact name `GOOGLE_GENERATIVE_AI_API_KEY`, paste the key as the value, and mark it **Secret/Sensitive**. Select **Production** and, if needed, **Preview**. Keep the key in your own secret store because sensitive values may not be readable after saving. Never use a `NEXT_PUBLIC_` or `VITE_` prefix.
 5. Restart the local dev server if running. Vercel environment changes apply to new deployments, so redeploy to apply the saved configuration. Only confirm that setup is complete; never send the value, a screenshot containing it, or an environment-file dump to chat/Git.
 
-These steps prepare configuration only. The Google provider is not wired into the runtime, no model has been selected, and adding the key alone does not enable AI/chat. Remaining entry gates are local/Vercel credential availability and explicit model/default/fallback policy approval.
+These steps prepare configuration only. The Google provider is not wired into the runtime, no model has been approved/activated, and adding the key alone does not enable AI/chat. Credential availability is complete; explicit model/default/fallback policy approval remains open. The successful redeploy does not prove a Google or Next.js-to-MCP call works.
 
 References: [Gemini API keys](https://ai.google.dev/gemini-api/docs/api-key), [Google provider environment variable](https://ai-sdk.dev/providers/ai-sdk-providers/google), [Vercel environment variables](https://vercel.com/docs/environment-variables).
 
+## Proposed Model Policy — Awaiting Approval
+
+- **Candidate default:** `gemini-3.1-flash-lite`. Google's current model page labels it stable and supports structured outputs/function calling; the published pricing page lists Free Tier text input/output. Availability and quotas depend on the user's account/project and may change.
+- **Fallback proposal:** no automatic switch to a second model. On quota/provider failure, return a controlled failure instead of escalating to paid models or retrying without limits. Existing schema/Quality validation must never be bypassed. Detailed timeout/tool/token enforcement remains part of the planned Orchestrator work.
+- **Cost/privacy condition:** do not enable billing or make live generative calls without confirming the project's Free Tier status. Model selection does not force free billing on a paid project. The published Free Tier table also allows submitted data to be used to improve Google's products; do not submit secrets/private data. Broader end-user privacy requirements must be reviewed before a public AI flow.
+- This is a **proposal only**, not a runtime setting or user approval. No provider authentication/generation test has been run. Model labels/cost estimates elsewhere in older roadmap notes are not evidence that those identifiers or budgets are approved/current.
+
+Sources checked on 2026-10-22: [model capabilities/status](https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-lite), [Free Tier/pricing](https://ai.google.dev/gemini-api/docs/pricing).
+
 ## Next Work, in Order
 
-1. Configure the Google key locally/in Vercel and approve model/default/fallback policy in [the execution plan](../.ai/PLAN.md). Current architecture/contracts are explicitly approved, but credentials remain unavailable and no model or paid usage has been approved.
+1. Explicitly approve model/default/fallback policy in [the execution plan](../.ai/PLAN.md). Architecture/contracts and credential availability are complete; no model or paid usage has been approved. Confirm account/billing eligibility before any live generative test.
 2. Implement **6.5 Quality/Safety** after entry-gate approval: factual grounding in Search Agent results, rejection of unsupported/contradictory claims, sanitization, and a validated presentation DTO. No raw model output may reach the UI.
 3. Verify the actual Next.js-to-MCP path as integration proceeds; retain the remaining remote-tool and free-tier reliability checks for hardening.
 

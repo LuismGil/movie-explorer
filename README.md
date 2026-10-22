@@ -186,7 +186,7 @@ docker run --rm -p 3000:3000 \
 
 > **Security note**: No environment variables use the `NEXT_PUBLIC_` prefix. `TMDB_API_KEY` is inaccessible to client-side JavaScript.
 
-The root `.env.example` uses the canonical `GOOGLE_GENERATIVE_AI_API_KEY` placeholder. The current architecture/tool contracts are approved, but the user has not configured Google credentials and model policy remains pending. Follow the [secure Google setup guide](docs/DEPLOYMENT.md#google-gemini-credential-setup--pending); the current runtime does not yet consume this key. MCP-specific host, port, and origin settings are documented in its [README](packages/mcp-server/README.md#environment-variables).
+The root `.env.example` uses canonical `GOOGLE_GENERATIVE_AI_API_KEY`. Current architecture/tool contracts are approved; local key presence and user-reported Vercel Production configuration/redeployment are recorded. Model/default/fallback approval remains pending, and provider authentication/billing have not been tested. See the [Google setup/status guide](docs/DEPLOYMENT.md#google-gemini-credential-setup); the current runtime does not consume this key. MCP-specific settings are documented in its [README](packages/mcp-server/README.md#environment-variables).
 
 ---
 
@@ -361,7 +361,7 @@ Generated TestSprite scripts/reports are local artifacts, not part of the commit
 - [x] Complete core-flow production verification: deployed watchlist hydration fix passes user and agent live browser retesting without React errors.
 
 ### Phase 6 — AI-native Layer 🔄
-- [ ] **6.0** Close remaining gates: Google credential availability locally/in Vercel and model/default/fallback policy. The user explicitly approved the current architecture, transport/boundaries/authentication, and five MCP contracts; Phase 5 and remote listing/search smoke checks are complete.
+- [ ] **6.0** Approve model/default/fallback policy. Architecture/contracts and local/Vercel credential availability are complete; Phase 5 and remote MCP listing/search smoke checks pass. Provider authentication/billing and actual Next.js-to-MCP integration remain unverified.
 - [x] **6.1** Standalone Streamable HTTP MCP foundation with authentication, health endpoints, and independent tooling.
 - [x] **6.2** Five TMDB tools with Zod validation and mocked tests.
 - [x] **6.3** Server-only Next.js MCP client adapter.
