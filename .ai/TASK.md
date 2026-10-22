@@ -1,8 +1,9 @@
 # Phase 6 — MCP Server + Multi-Agent System
 
 ## Active Phase
-- Phase 6 implementation — 6.4 Search Agent
-- Phase 5 production verification and Phase 6.0 approval gates remain open.
+- Deployment verification and Phase 6.0 gate review; 6.4 Search Agent is implemented.
+- Phase 5 production verification is blocked by persisted-watchlist hydration error #418.
+- Next agent implementation: 6.5 Quality/Safety, after entry-gate approval.
 
 ## Previous Completed Phases
 - [x] Phase 1 — Stabilization & Code Quality
@@ -11,7 +12,7 @@
 - [x] Phase 4 — DevOps Baseline
 
 ## Current Goal
-- Execute validated, orchestrator-supplied MCP tool plans server-side without adding direct TMDB calls or selecting an unapproved AI provider/model.
+- Record deployment evidence, resolve the Phase 5 hydration regression, and close the remaining verification/approval gates before 6.5. Do not infer AI provider/model or architecture approvals from deployed infrastructure.
 
 ## Tasks
 
@@ -82,7 +83,12 @@
 
 ### Production Verification
 
-- [ ] Vercel production deployment successfully verified (Next.js preset, Home, search, movie details, pagination, watchlist work; TMDB_API_KEY server-side only; no direct browser TMDB access).
+- [x] Record the user-reported Vercel deployment at `https://movie-explorer-luis.vercel.app`.
+- [x] Browser smoke: Home/SSR, search, daily/weekly trending, movie details, pagination, watchlist add/remove/persistence; no direct browser TMDB data API/MCP requests or `api_key` query parameters observed.
+- [ ] Add an SSR/hydration regression test and fix React error #418 when reloading a persisted watchlist.
+- [ ] Redeploy and repeat production checks without hydration errors before marking the Vercel production gate verified.
+
+Details and reproduction: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md). The UI recovers, but the current deployment is not a clean production-verification pass.
 
 ## Verification Checklist
 
@@ -112,7 +118,7 @@ docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:lat
 
 ## Architecture and Entry Gates
 
-- [ ] Phase 5 production deployment verified.
+- [ ] Phase 5 production deployment verified (persisted-watchlist hydration error #418 remains open).
 - [ ] Streamable HTTP approved as the only MCP transport.
 - [ ] `packages/mcp-server` approved as the standalone server boundary.
 - [ ] Vercel approved as the Next.js deployment boundary.
@@ -122,6 +128,15 @@ docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:lat
 - [ ] Default and fallback Gemini model identifiers approved.
 - [ ] MCP tool contracts reviewed and approved.
 - [ ] Final Phase 6 architecture reviewed and approved.
+
+### Deployment Checkpoint — 2026-10-22
+
+- [x] Record user-reported MCP deployment to Render Free: `https://movie-explorer-ppc2.onrender.com/mcp`.
+- [x] Agent checks: `/health` and `/ready` return 200; unauthenticated `POST /mcp` returns 401.
+- [x] Record user-reported local Inspector tool listing/TMDB search success and Vercel MCP environment configuration/redeployment; no secret values inspected.
+- [ ] Confirm authenticated tool listing and TMDB search against Render.
+- [ ] Verify Next.js-to-Render MCP execution; the current UI does not invoke the MCP adapter.
+- [ ] Evaluate free-tier cold starts against request timeouts.
 
 #### Standalone MCP Server Foundation
 **Status**: `Complete`
@@ -160,7 +175,7 @@ docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:lat
 - [x] Keep successful tool data when another call fails and sanitize failure metadata.
 - [x] Ensure the Search Agent calls only MCP and receives its tool plan as input.
 
-**Implementation boundary:** `src/server/agents/search-agent.ts` is a deterministic MCP executor, not an LLM-powered query planner or user-facing agent. The user explicitly requested this 6.4 work; the 6.0 gates above still block production AI integration and deployment decisions.
+**Implementation boundary:** `src/server/agents/search-agent.ts` is a deterministic MCP executor, not an LLM-powered query planner or user-facing agent. Vercel and Render deployments are recorded separately from the unresolved 6.0 architecture, credential, model, and contract approvals. The current pages still use their existing TMDB actions.
 
 ## 6.5 Quality/Safety Agent
 

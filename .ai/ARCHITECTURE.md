@@ -91,12 +91,14 @@ Use exactly one MCP transport: **Streamable HTTP**.
 ## 6. Deployment Boundary
 
 * **Next.js application** → Vercel
-* **Standalone MCP server** → Container-based managed service (separate container-capable Node.js hosting provider)
+* **Standalone MCP server** → Render Free (separate Docker web service)
 
 The MCP server must not be deployed inside the Next.js Vercel application.
 
 **Decision Record:**
 Comparing requirements (persistent Node.js HTTP process, Docker support, HTTPS, environment variables, health checks, predictable cold-start behavior, logs, Hobby/portfolio cost, deployment from GitHub), we recommend one deployment category: **Container-based managed service**.
+
+**Deployment checkpoint (2026-10-22):** The user deployed Next.js to `https://movie-explorer-luis.vercel.app` and MCP to `https://movie-explorer-ppc2.onrender.com/mcp`. Render health/readiness checks pass and unauthenticated MCP POST requests return 401. Vercel MCP variables/redeployment were reported by the user; no secret values were inspected. Current pages still use their server-side TMDB actions, so these deployments do not establish an active Next.js-to-MCP flow. Production smoke checks found a persisted-watchlist hydration error; authenticated remote MCP tools, cold-start suitability, and remaining architecture approvals are still pending. See [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md).
 
 ## 7. Canonical MCP Authentication
 

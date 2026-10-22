@@ -92,7 +92,9 @@ This runs lint → typecheck → tests → build. Individual scripts are `lint`,
 
 From the repository root, use `npm run mcp:verify` or the `mcp:lint`, `mcp:typecheck`, `mcp:test`, and `mcp:build` wrappers.
 
-Local verification on **2026-10-05**: lint, typecheck, all **45 tests**, and build passed. A Docker build was attempted but could not access the local Docker daemon (`/var/run/docker.sock` permission denied); image/runtime and Render deployment remain unverified.
+Local verification on **2026-10-05**: lint, typecheck, all **45 tests**, and build passed. A Docker build was attempted but could not access the local Docker daemon (`/var/run/docker.sock` permission denied).
+
+**Deployment checkpoint (2026-10-22):** The user deployed the service to Render Free at `https://movie-explorer-ppc2.onrender.com/mcp`. Agent checks confirm `/health` and `/ready` return 200 and unauthenticated `POST /mcp` returns 401. Local Inspector/TMDB success and Vercel MCP variable configuration were reported by the user; authenticated remote tool execution and actual Next.js-to-MCP execution remain unconfirmed. Build logs/image contents and free-tier wake-up latency were not inspected/tested. See [`docs/DEPLOYMENT.md`](../../docs/DEPLOYMENT.md) for evidence, remaining gates, and remote test commands.
 
 To start the compiled server from this package:
 
@@ -150,7 +152,7 @@ The image uses a non-root distroless runner. Keep remote traffic on HTTPS and ne
 - Close production, AI credential, and model-selection gates in [the execution plan](../../.ai/PLAN.md).
 - Harden the Next.js adapter for redirect rejection, concurrent initialization, and failure recovery.
 - Implement Quality/Safety → Orchestrator, validated streaming, limits, caching, and observability; review the pending 6.0 gates before production integration.
-- Verify the Render Docker build/runtime and remote deployment, including free-tier cold starts.
+- Confirm authenticated remote tool execution and review Render build/image evidence and free-tier cold starts; public health checks already pass.
 - Verify real Next.js-to-MCP tool execution.
 - Resolve UI contract coverage before retiring duplicate server-side TMDB access.
 

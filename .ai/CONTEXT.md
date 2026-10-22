@@ -1,13 +1,23 @@
 # Project Context
 
-## Session: 2026-10-05
+## Session: 2026-10-22 — Deployment Checkpoint
+
+**Estado:** Next.js is deployed to `https://movie-explorer-luis.vercel.app`; standalone MCP is deployed to Render Free at `https://movie-explorer-ppc2.onrender.com/mcp`. The user reported configuring the shared Render-generated secret and MCP URL in Vercel and redeploying; dashboard values were not inspected.
+**Evidencia MCP:** Agent checks confirm `/health` → 200/ok, `/ready` → 200/ready, and unauthenticated `POST /mcp` → 401. Local Inspector tool listing and real TMDB search passed according to the user. Remote authenticated tool execution and actual Next.js-to-Render execution are still unconfirmed.
+**Evidencia Vercel:** Browser smoke passed Home/SSR, search, pagination, daily/weekly trending, movie details, and functional watchlist add/remove/persistence. No direct browser TMDB data API/MCP requests or `api_key` query parameters were observed in these flows.
+**Bloqueo reproducido:** Save a movie, then fully navigate/reload `/watchlist`: React hydration error #418 occurs before recovery. Empty storage does not reproduce it. Suspected source: browser-only `localStorage` initialization in `src/context/WatchlistProvider.tsx` differs from the server's empty initial state. Phase 5 production verification remains open.
+**Alcance:** Documentation/evidence update only; no runtime, UI, dependencies, credentials, or AI model selections changed. Public health checks do not validate TMDB credentials. No fresh a11y/Lighthouse or client-bundle secret audit was run.
+**Siguiente acción:** Add a hydration regression test, fix initialization, redeploy, and repeat production checks. Confirm remote MCP tool execution and review the remaining 6.0 approvals before implementing 6.5 Quality/Safety.
+**Detalle:** [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md). Free-tier wake-up latency remains unverified. No public MCP diagnostic endpoint or browser access should be added.
+
+## Previous Implementation Checkpoint: 2026-10-05
 **Estado:** Phase 6.4 Search Agent implemented as a deterministic MCP tool executor.
 **Archivos principales:** `src/server/agents/search-agent.ts` and `src/server/agents/__tests__/search-agent.test.ts`.
 **Comportamiento:** Validates orchestrator-supplied tool plans and MCP responses with Zod; calls only `src/server/mcp/client.ts`; aggregates and deduplicates movies/details/credits by TMDB ID; rejects mismatched IDs; retains successful results on partial failure and returns sanitized per-call status.
 **Límites intencionales:** No LLM/provider/model, intent classification, direct TMDB access, UI rendering, global token budget, or production integration was added.
-**Verificación local:** root lint, typecheck, production build, and 15 tests pass; MCP lint, typecheck, build, and 45 tests pass. The Docker build could not access the local daemon (`/var/run/docker.sock` permission denied), so image/runtime and Render deployment remain unverified. Accessibility audit and live TMDB/MCP integration were not run for this task.
+**Verificación local en ese checkpoint:** root lint, typecheck, production build, and 15 tests passed; MCP lint, typecheck, build, and 45 tests passed. The local Docker build could not access the daemon (`/var/run/docker.sock` permission denied). See the 2026-10-22 checkpoint above for subsequent deployment evidence; no image inspection or local Docker rerun has been recorded.
 **Gates pendientes:** Phase 5 production verification and remaining Phase 6.0 approvals (AI credentials/models, tool contracts, and final architecture approval). Hosting selected: Render Free; its idle spin-down/cold start must be evaluated before production use.
-**Siguiente tarea:** Phase 6.5 — Quality/Safety Agent, after the unresolved gates are reviewed.
+**Siguiente tarea de agentes:** Phase 6.5 — Quality/Safety Agent, after production verification and unresolved approval gates are closed.
 
 ## Completed Phases
 - **Phase 1: Stabilization & Code Quality** (Completed on 2026-06-03)
@@ -70,10 +80,13 @@
   - **Verification**: Verified that all checks pass successfully, including: `npm run lint`, `npm run typecheck`, `npm run test -- --run` (3/3 pass), `npm run build`, and Playwright/axe-core accessibility audits (`npm run test:a11y`). Scanned codebase to ensure no deep relative imports or un-localized JSX strings remain.
 
 ## Current Status
+
+The lint/types/tests/a11y/Lighthouse entries below describe previous local verification, not new runs or production certification for the documentation-only deployment checkpoint.
+
 - **Active Work**: Phase 6 — MCP Server + Multi-Agent System.
   - 6.1 standalone MCP foundation, 6.2 five MCP tools, 6.3 server-only client adapter, and 6.4 deterministic Search Agent are implemented.
   - 6.4 executes a validated plan supplied by a future Orchestrator; it does not use an LLM or render UI.
-  - Phase 5 production deployment and Phase 6.0 approvals remain pending; they block production integration and unapproved AI-provider choices.
+  - Vercel and Render are deployed. Phase 5 verification remains open because of reproduced watchlist hydration error #418; remaining Phase 6.0 approvals block production AI integration and unapproved model choices.
 - **ESLint**: 0 warnings, 0 errors (via `npm run lint`).
 - **TypeScript**: 0 compiler errors (via `npm run typecheck`).
 - **Tests**: All unit tests pass successfully (via `npm run test -- --run`).
@@ -83,16 +96,16 @@
 - **Security**: No `NEXT_PUBLIC_` API keys, all TMDB fetching isolated server-side.
 - **i18n**: 100% compliant with SecureCoder JSX i18n portability checks; no hardcoded user-facing strings, labels, placeholders or titles exist.
 - **Phase 6.0: Architecture and Entry Gates** (Approval pending)
-  - Architecture draft/review exists; user approvals and production evidence have not been recorded.
+  - Architecture draft/review exists; deployment and limited smoke evidence are recorded in `docs/DEPLOYMENT.md`, but final architecture/contract/model approvals remain open.
   - **Current State versus Target State**: Currently, Next.js owns the existing server-side TMDB integration. The target state introduces an isolated, standalone Node.js MCP server (`packages/mcp-server/`) accessed via a Streamable HTTP transport and Bearer authentication, and a 3-agent orchestration pipeline.
-  - **Decisions Frozen**:
+  - **Target contracts (final approval still pending)**:
     - Transport: Streamable HTTP exclusively.
     - Boundaries: `packages/mcp-server` for MCP; Vercel for Next.js app; Container-based service for MCP.
     - Agents: Orchestrator, Search, and Quality/Safety.
     - Tools: `search_movies`, `get_movie_details`, `get_recommendations`, `get_trending`, `get_credits`.
     - Validation: Zod schemas at all boundaries.
     - Strict stream rules (no raw output).
-  - **Selected MCP hosting**: Render Free. It spins down after inactivity and may have a cold start; production suitability remains unverified.
+  - **Selected MCP hosting**: Render Free, deployed with passing health/readiness checks and rejection of unauthenticated MCP POST requests. Authenticated remote tools, idle wake-up latency, and production suitability remain unverified.
   - **Unresolved Approval Gates**: Phase 5 production verification, AI credentials/model identifiers, tool-contract review, and final architecture approval.
 
 ## 6. Recent Changes
@@ -102,4 +115,5 @@
   - **Files Changed**: `.ai/ARCHITECTURE.md`, `.ai/MCP_INTERFACE.md`, `.ai/SECURITY.md`, `.ai/SPEC.md`, `.ai/PLAN.md`, `.ai/TASK.md`, `.ai/CONTEXT.md`.
   - **Confirmation**: No package, runtime, UI, or configuration code/dependencies were changed.
 * **Search Agent 6.4:** Added a server-only deterministic executor for validated MCP plans, with output schemas, stable ID-based merging, partial failures, and sanitized outcomes. No AI provider or direct TMDB access was added.
-  - **Exact Next Step**: Review/close the 6.0 gates before production AI integration; implementation work next is 6.5 Quality/Safety Agent.
+  - **Exact Next Step**: Resolve the persisted-watchlist hydration regression and repeat production verification, then close the remaining 6.0 gates. The next agent task is 6.5 Quality/Safety.
+* **Deployment Checkpoint 2026-10-22:** Recorded the user-reported Vercel/Render deployments, verified public health/auth rejection and browser flows, and reproduced the persisted-watchlist hydration error. No runtime changes or new approvals were inferred.

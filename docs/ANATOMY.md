@@ -18,6 +18,7 @@
 │       └── page.tsx
 ├── docs
 │   ├── ANATOMY.md
+│   ├── DEPLOYMENT.md        # Deployment evidence, verification limits, and next steps
 │   └── ui_ux_principles_design_guide.html
 ├── .github
 │   └── workflows
