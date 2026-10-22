@@ -4,103 +4,29 @@ import {
   CallToolResultSchema,
   type CallToolResult,
 } from '@modelcontextprotocol/sdk/types.js';
-import { z } from 'zod';
+import type { z } from 'zod';
 import { getMcpClient } from '../mcp/client';
 
-const movieSummarySchema = z.object({
-  id: z.number().int().positive(),
-  title: z.string().min(1),
-  overview: z.string(),
-  poster_path: z.string().nullable(),
-  release_date: z.string().optional(),
-  vote_average: z.number().optional(),
-});
+import {
+  creditsSchema,
+  movieDetailsSchema,
+  movieListSchema,
+  movieSearchSchema,
+  movieSummarySchema,
+  searchAgentPlanSchema,
+  searchAgentResultSchema,
+  type SearchAgentCall,
+  type SearchAgentResult,
+} from './search-agent.schemas';
 
-const movieDetailsSchema = movieSummarySchema.extend({
-  genres: z.array(z.object({ id: z.number().int(), name: z.string() })).optional(),
-  runtime: z.number().nullable().optional(),
-});
-
-const castMemberSchema = z.object({
-  id: z.number().int().positive(),
-  name: z.string(),
-  character: z.string(),
-  profile_path: z.string().nullable(),
-});
-
-const crewMemberSchema = z.object({
-  id: z.number().int().positive(),
-  name: z.string(),
-  job: z.string(),
-  department: z.string(),
-});
-
-const creditsSchema = z.object({
-  id: z.number().int().positive(),
-  cast: z.array(castMemberSchema),
-  director: crewMemberSchema.nullable(),
-});
-
-const movieListSchema = z.object({ results: z.array(movieSummarySchema) });
-const movieSearchSchema = movieListSchema.extend({ total_pages: z.number().int().min(0) });
-
-const movieIdSchema = z.string()
-  .regex(/^\d+$/)
-  .refine((value) => Number.isSafeInteger(Number(value)));
-
-export const searchAgentCallSchema = z.discriminatedUnion('tool', [
-  z.object({
-    tool: z.literal('search_movies'),
-    query: z.string().trim().min(1).max(100),
-    page: z.number().int().min(1).max(500).optional(),
-  }),
-  z.object({ tool: z.literal('get_movie_details'), movieId: movieIdSchema }),
-  z.object({ tool: z.literal('get_recommendations'), movieId: movieIdSchema }),
-  z.object({
-    tool: z.literal('get_trending'),
-    window: z.enum(['day', 'week']).optional(),
-  }),
-  z.object({ tool: z.literal('get_credits'), movieId: movieIdSchema }),
-]);
-
-export const searchAgentPlanSchema = z.object({
-  calls: z.array(searchAgentCallSchema).min(1).max(5),
-});
-
-const toolNameSchema = z.enum([
-  'search_movies',
-  'get_movie_details',
-  'get_recommendations',
-  'get_trending',
-  'get_credits',
-]);
-
-const callOutcomeSchema = z.discriminatedUnion('status', [
-  z.object({
-    callIndex: z.number().int().nonnegative(),
-    tool: toolNameSchema,
-    status: z.literal('succeeded'),
-    itemCount: z.number().int().nonnegative(),
-  }),
-  z.object({
-    callIndex: z.number().int().nonnegative(),
-    tool: toolNameSchema,
-    status: z.literal('failed'),
-    reason: z.enum(['mcp_unavailable', 'tool_error', 'invalid_output', 'request_failed']),
-  }),
-]);
-
-export const searchAgentResultSchema = z.object({
-  status: z.enum(['complete', 'partial', 'failed']),
-  movies: z.array(movieSummarySchema),
-  details: z.array(movieDetailsSchema),
-  credits: z.array(creditsSchema),
-  outcomes: z.array(callOutcomeSchema),
-});
-
-export type SearchAgentPlan = z.infer<typeof searchAgentPlanSchema>;
-export type SearchAgentResult = z.infer<typeof searchAgentResultSchema>;
-export type SearchAgentCall = z.infer<typeof searchAgentCallSchema>;
+export {
+  searchAgentCallSchema,
+  searchAgentPlanSchema,
+  searchAgentResultSchema,
+  type SearchAgentCall,
+  type SearchAgentPlan,
+  type SearchAgentResult,
+} from './search-agent.schemas';
 
 type SuccessfulPayload = {
   movies: z.infer<typeof movieSummarySchema>[];
@@ -247,7 +173,7 @@ function buildResult(executions: CallExecution[]): SearchAgentResult {
   const movieById = new Map<number, z.infer<typeof movieSummarySchema>>();
   const detailsById = new Map<number, z.infer<typeof movieDetailsSchema>>();
   const creditsById = new Map<number, z.infer<typeof creditsSchema>>();
-  const outcomes: z.infer<typeof callOutcomeSchema>[] = [];
+  const outcomes: SearchAgentResult['outcomes'] = [];
 
   for (const execution of executions) {
     if ('reason' in execution) {

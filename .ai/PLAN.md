@@ -242,12 +242,12 @@ npm run lint        # exit 0
 > **Goal**: Semantic, conversational movie search via a 3-agent pipeline backed by a standalone MCP Server.
 
 > ⚠️ **Phase 6 Implementation Order** (Do not start 6.1–6.9 until 6.0 is approved):
-6.0 Architecture and Entry Gates - [Architecture/contracts and credential availability complete; model policy pending]
+6.0 Architecture and Entry Gates - [Complete; model policy explicitly approved]
 6.1 Standalone MCP Foundation - [Completed]
 6.2 TMDB MCP Tools - [Completed]
 6.3 Server-only MCP Client - [Completed]
-6.4 Search Agent - [Implemented; entry gates still open]
-6.5 Quality/Safety Agent
+6.4 Search Agent - [Completed]
+6.5 Quality/Safety Agent - [Completed]
 6.6 Orchestrator Agent
 6.7 Validated Streaming UI
 6.8 Cache, Limits, and Observability
@@ -262,13 +262,13 @@ npm run lint        # exit 0
 - [x] Standalone MCP hosting provider selected: Render Free (cold-start limitation documented; verify suitability before production use).
 - [x] Bearer authentication using `MCP_INTERNAL_API_KEY` approved.
 - [x] `GOOGLE_GENERATIVE_AI_API_KEY` available locally and in Vercel: non-placeholder presence checked in root `.env` without exposing the value; user confirmed all variables in Production and a successful redeploy. Provider authentication/quota were not tested.
-- [ ] Default and fallback Gemini model identifiers approved.
+- [x] Default model/fallback policy approved: `gemini-3.1-flash-lite`, no automatic switch to another model, controlled quota/provider errors, and no paid usage authorized.
 - [x] Current five MCP tool contracts reviewed and approved.
-- [x] Current Phase 6 architecture reviewed and approved; Google model/default/fallback policy remains a separate open gate.
+- [x] Current Phase 6 architecture reviewed and approved; default model/no-alternate-fallback policy was approved separately.
 
 **Approval/configuration record (2026-10-22):** The user explicitly approved the current architecture/contracts (Vercel, standalone Render MCP, Streamable HTTP, Bearer authentication, and five tools). After Google setup, they confirmed all variables in Vercel Production and a successful redeploy; local Google key presence was checked without revealing or transmitting the value. This does not approve model identifiers, fallback behavior, paid API usage, or future contract changes, and is not a provider-authentication test.
 
-**Model proposal — not approved:** Start with stable `gemini-3.1-flash-lite`, whose published pricing includes a Free Tier, subject to account eligibility/quotas. Do not switch automatically to another model; quota/provider failures should produce controlled errors rather than paid fallback or unbounded retries. Keep the Google project on Free Tier and confirm billing status before live generative tests; choosing a model alone does not prevent charges on a paid project. See [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md#proposed-model-policy--awaiting-approval). No runtime model setting or provider request was added.
+**Model approval (2026-10-22):** The user explicitly approved `gemini-3.1-flash-lite`, no automatic alternate-model fallback, and controlled failure on quota/provider errors. No paid usage is authorized. Account/model access, actual Free Tier billing status, provider integration, and runtime timeout/token enforcement remain to be verified/implemented before live generation. Choosing a model does not prevent charges on a paid project. See [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md#approved-model-policy). Phase 6.5 is deterministic and makes no provider calls.
 
 ### Deployment Evidence — 2026-10-22
 
@@ -280,7 +280,7 @@ npm run lint        # exit 0
 - [ ] Verify actual Next.js-to-Render MCP execution; no current page invokes the adapter.
 - [ ] Evaluate Render Free wake-up latency and its interaction with request timeouts.
 
-Phase 5 production verification, remote Inspector listing/search, architecture/contract approval, and credential availability are complete. Next, explicitly approve the model/default/fallback policy before **6.5 Quality/Safety**. Inspector success and saved environment variables are not Next.js-to-Render or Google-provider integration evidence; the current UI still does not use these paths. Setup/status: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md#google-gemini-credential-setup).
+All 6.0 entry approvals and **6.5 Quality/Safety** are complete; **6.6 Orchestrator** is next. Inspector success and saved environment variables still do not prove Next.js-to-Render or Google-provider integration; the current UI does not use these paths. Billing/Free Tier eligibility must be confirmed before live generation. Setup/status: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md#google-gemini-credential-setup).
 
 ### 6.4 Search Agent
 
@@ -291,14 +291,18 @@ Phase 5 production verification, remote Inspector listing/search, architecture/c
 - [x] Keep successful results when other tool calls fail; return sanitized per-call outcomes.
 - [x] Keep the executor deterministic: no direct TMDB access, model provider, or user-facing rendering.
 
-**Gate note:** This deterministic 6.4 implementation was explicitly requested. Phase 5/remote MCP smoke testing and current architecture/contract approval are complete; Google credential availability is recorded separately. Model policy remains unapproved and Render Free cold-start suitability is unverified. Do not infer those decisions or working provider integration from saved credentials.
+**Gate note:** Entry approvals are complete, including the explicit model/no-alternate-fallback policy. Actual provider/Next.js-to-MCP integration, Google billing eligibility, and Render Free cold-start suitability are not certified by those approvals.
 
-### 6.5 Quality/Safety Agent — Pending Entry Gates
+### 6.5 Quality/Safety Agent
 
-- [ ] Ground factual claims in validated Search Agent results and preserve TMDB identifiers.
-- [ ] Reject unsupported claims and detect contradictory data.
-- [ ] Define and validate sanitized presentation DTOs with Zod.
-- [ ] Test grounded, unsupported, contradictory, partial-failure, and empty-result cases; prevent raw model/MCP output from reaching the UI.
+- [x] Ground structured factual claims in validated Search Agent results and preserve TMDB identifiers.
+- [x] Reject unsupported claims and detect available summary/detail, duplicate, status/outcome, and movie-scoped metadata contradictions.
+- [x] Rebuild a strict Zod presentation DTO from evidence, with plain-text normalization, image-path restrictions, bounded inputs, and sanitized issue codes.
+- [x] Preserve valid movies on rejected selections/partial Search failures; distinguish successful empty, rejected, and unavailable results.
+- [x] Add 77 Quality/Safety tests covering every claim kind, source/proposal limits, unsafe/unknown content, immutable inputs, no-network execution, and mocked Search→Quality integration.
+- [x] Verify app lint/types/build and all 99 tests, plus MCP lint/types/build and all 45 tests. No live provider calls, public AI route, or UI wiring added.
+
+Contract and limitations: [`docs/QUALITY_GATE.md`](../docs/QUALITY_GATE.md). The gate is deterministic: free-form narrative is rejected rather than semantically judged, and source provenance must come from server-side Search execution. Conflicts already discarded by Search deduplication cannot be recovered here. Next is 6.6 intent planning, sequencing, and runtime budgets; do not bypass this gate when integrating.
 
 ### Phase 6 Verification
 ```bash
@@ -389,10 +393,11 @@ After all 7 phases pass:
 
 | Agent | Model | Hard Limit | Cache |
 |---|---|---|---|
-| Orchestrator | `gemini-2.0-pro` | 4,096 input tokens | None |
-| Search Agent | `gemini-2.0-flash` | 2,048 input tokens | Semantic ≥ 0.95 |
-| Quality Agent | `gemini-2.0-flash` | 1,024 input tokens | Result-hash dedup |
-| **Est. total** | | | **~$0.62 / 1K queries** |
+| Orchestrator | `gemini-3.1-flash-lite` (approved; not integrated) | 4,096 input tokens per future call | Planned in 6.8 |
+| Search Agent | None; deterministic MCP executor | 0 current model tokens | Planned in 6.8 |
+| Quality/Safety Agent | None; deterministic evidence gate | 0 current model tokens | Planned in 6.8 |
+
+No automatic alternate-model fallback or paid escalation is approved. Global timeouts, output-token/tool budgets, retry limits, and provider-error mapping are 6.6 implementation work; Free Tier eligibility must be confirmed before live generation. The previous model names/cost estimate are superseded, not a verified current price/budget. A future explicitly introduced model-assisted Quality check would retain the 1,024-input-token ceiling and could not replace deterministic checks.
 
 ---
 

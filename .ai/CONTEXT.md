@@ -1,6 +1,16 @@
 # Project Context
 
-## Session: 2026-10-22 — Credentials Configured; Model Approval Pending
+## Session: 2026-10-22 — Quality/Safety 6.5 Implemented
+
+**Estado:** All 6.0 entry approvals are complete. The user explicitly approved `gemini-3.1-flash-lite`, no automatic alternate-model fallback, controlled provider/quota failures, and no paid usage. Phase 6.5 is implemented as a deterministic server-only gate, with no provider/network calls or UI/API integration.
+**Archivos:** `src/server/agents/quality-agent.ts`, `quality-agent.schemas.ts`, `quality-agent.evidence.ts`, and `__tests__/quality-agent.test.ts`. Shared Search contracts moved to `search-agent.schemas.ts`; existing Search exports/behavior remain compatible and Quality does not import the MCP executor/client.
+**Contrato:** `runQualityAgent(evidence, proposal)` checks trusted Search output and strict typed selections/claims, preserves TMDB IDs and movie-scoped metadata, rejects unsupported/contradictory facts, checks source status/count/ID consistency, and reconstructs an allowlisted plain-text DTO. Valid partial results survive. Unknown proposal/DTO keys and raw prose are rejected; known credential-like text/unsafe image paths cannot flow through as presentation data.
+**Límites:** Evidence provenance must come from server-side Search, never a browser/model. Exact structured facts are checked, not arbitrary prose/toxicity or conflicts already lost in Search deduplication. Text is not safe for HTML/Markdown insertion; render escaped text nodes. No Google SDK, live provider calls, token usage, route, UI, or MCP contract changes were added. Billing/Free Tier account status and actual provider/Next.js-to-MCP integration remain unverified.
+**Verificación:** App lint, typecheck, build, and all 99 tests pass, including 77 focused Quality/Safety cases and mocked Search→Quality integration. MCP lint/typecheck/build and 45 tests pass. No fresh browser/axe/Lighthouse, Docker, or live MCP/Google checks were run for this server-only feature.
+**Siguiente tarea:** 6.6 Orchestrator — intent planning, tool selection, Search→Quality sequencing, runtime timeout/tool/token budgets, and controlled provider failures. Confirm Google account/model access, Free Tier billing eligibility, and privacy conditions before live generation. No paid usage is authorized.
+**Detalle:** [`docs/QUALITY_GATE.md`](../docs/QUALITY_GATE.md), [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md#approved-model-policy).
+
+## Previous Readiness Checkpoint: 2026-10-22 — Credentials Configured
 
 **Estado:** Phase 5 core-flow verification, remote Inspector listing/search, current architecture/contracts, and credential availability are complete. The user confirmed all variables are now scoped to Vercel Production and that redeployment succeeded. Non-placeholder Google key presence was checked in root `.env` without showing its value or sending it to a provider. Only model/default/fallback policy remains an open 6.0 entry gate.
 **Aprobación:** Transport/boundary/authentication, current five tool contracts, and current Phase 6 architecture are approved as of 2026-10-22. Model identifiers, fallback policy, costs/paid usage, and future contract changes are not included.
@@ -96,22 +106,22 @@
 
 ## Current Status
 
-Lint/types/tests and the scoped axe checks below were rerun for the hydration fix. Lighthouse and Docker entries describe earlier local verification, not fresh runs or production certification.
+App/MCP lint/types/tests/build were rerun for 6.5. Browser/axe/Lighthouse/Docker entries below describe earlier verification, not fresh 6.5 runs or production AI certification.
 
 - **Active Work**: Phase 6 — MCP Server + Multi-Agent System.
-  - 6.1 standalone MCP foundation, 6.2 five MCP tools, 6.3 server-only client adapter, and 6.4 deterministic Search Agent are implemented.
-  - 6.4 executes a validated plan supplied by a future Orchestrator; it does not use an LLM or render UI.
-  - Vercel and Render are deployed. Phase 5 core-flow production verification and remote Inspector listing/search are complete. Actual Next.js-to-MCP integration and remaining Phase 6.0 approvals still precede production AI integration.
+  - 6.1 foundation, 6.2 MCP tools, 6.3 adapter, 6.4 deterministic Search, and 6.5 deterministic Quality/Safety are implemented.
+  - Search accepts validated tool plans; Quality grounds typed selections/claims and rebuilds strict DTOs. Both await the future Orchestrator and are not connected to UI/public AI routes.
+  - Vercel/Render, Phase 5 core-flow verification, remote Inspector listing/search, and 6.0 entry approvals are complete. Actual Next.js/provider integration and billing eligibility remain unverified.
 - **ESLint**: 0 warnings, 0 errors (via `npm run lint`).
 - **TypeScript**: 0 compiler errors (via `npm run typecheck`).
-- **Tests**: All 22 app unit tests pass (via `npm run test -- --run`), including 8 watchlist tests.
+- **Tests**: All 99 app tests pass, including 77 Quality/Safety, 8 Search, and 8 watchlist tests; all 45 MCP tests pass.
 - **A11y**: Latest scoped Playwright/axe run against local production on port 3100 found 0 critical/serious violations on Home and empty/saved Watchlist. The hardcoded-port `npm run test:a11y` script was not used in this run.
 - **Lighthouse**: Assertions validated via Lighthouse CI local runs (`npx lhci autorun`). All budgets for Performance, Accessibility, and CLS met.
 - **Docker**: Standalone multi-stage Distroless configuration. CSS asset serving fixed via Tailwind content path correction.
 - **Security**: No `NEXT_PUBLIC_` API keys, all TMDB fetching isolated server-side.
 - **i18n**: 100% compliant with SecureCoder JSX i18n portability checks; no hardcoded user-facing strings, labels, placeholders or titles exist.
-- **Phase 6.0: Architecture and Entry Gates** (Architecture/contracts and credential availability complete; model policy pending)
-  - The user explicitly approved current architecture/contracts on 2026-10-22 and later confirmed Production configuration/redeployment. Local Google key presence is verified without revealing its value; model policy remains unapproved. See `docs/DEPLOYMENT.md`.
+- **Phase 6.0: Architecture and Entry Gates** (Complete)
+  - The user approved current architecture/contracts and model/no-alternate-fallback policy, and confirmed Production configuration/redeployment. Local Google key presence is verified without revealing its value. No paid usage is authorized; provider/billing remain unverified. See `docs/DEPLOYMENT.md`.
   - **Current State versus Target State**: Currently, Next.js owns the existing server-side TMDB integration. The target state introduces an isolated, standalone Node.js MCP server (`packages/mcp-server/`) accessed via a Streamable HTTP transport and Bearer authentication, and a 3-agent orchestration pipeline.
   - **Current architecture/contracts (approved)**:
     - Transport: Streamable HTTP exclusively.
@@ -121,7 +131,7 @@ Lint/types/tests and the scoped axe checks below were rerun for the hydration fi
     - Validation: Zod schemas at all boundaries.
     - Strict stream rules (no raw output).
   - **Selected MCP hosting**: Render Free, with health/readiness and unauthenticated-request rejection verified by the agent and authenticated listing/search verified through user-provided Inspector output. Idle wake-up latency and production suitability remain unverified.
-  - **Unresolved Entry Gate**: Model/default/fallback approval. Credential presence is not provider authentication or billing verification; no paid usage is authorized. Next.js-to-MCP integration and cold-start hardening remain implementation/verification work.
+  - **Remaining verification, not entry approval**: Google access/Free Tier billing eligibility, actual Next.js-to-MCP/provider integration, privacy conditions before public generation, and Render cold-start hardening. Approvals and credential presence do not certify these behaviors.
 
 ## 6. Recent Changes
 
@@ -130,9 +140,10 @@ Lint/types/tests and the scoped axe checks below were rerun for the hydration fi
   - **Files Changed**: `.ai/ARCHITECTURE.md`, `.ai/MCP_INTERFACE.md`, `.ai/SECURITY.md`, `.ai/SPEC.md`, `.ai/PLAN.md`, `.ai/TASK.md`, `.ai/CONTEXT.md`.
   - **Confirmation**: No package, runtime, UI, or configuration code/dependencies were changed.
 * **Search Agent 6.4:** Added a server-only deterministic executor for validated MCP plans, with output schemas, stable ID-based merging, partial failures, and sanitized outcomes. No AI provider or direct TMDB access was added.
-  - **Exact Next Step**: Obtain explicit approval for model/default/fallback policy before 6.5 Quality/Safety. The proposed Free Tier model/no-automatic-model-fallback policy is not yet approved or active.
+  - **Exact Next Step**: 6.5 is now implemented; proceed with 6.6 Orchestrator while enforcing the approved no-alternate-fallback/no-paid-usage constraints and the Search→Quality presentation boundary.
 * **Deployment Checkpoint 2026-10-22:** Recorded the user-reported Vercel/Render deployments, verified public health/auth rejection and browser flows, and reproduced the persisted-watchlist hydration error. No runtime changes or new approvals were inferred.
 * **Watchlist Hydration Fix 2026-10-22:** Added the failing SSR/hydration regression, corrected the provider's initial visible snapshot/persistence timing, and verified the fix with unit tests, local production browser smoke, and scoped axe checks. The user subsequently redeployed and confirmed success; agent live browser retesting also passed, closing Phase 5 core-flow verification.
 * **Remote MCP Smoke 2026-10-22:** User-provided Inspector output confirms all five remote tools and a successful `Inception` search returning movie 27205. Corrected the guide to the tested positional-URL/`--tool-arg` syntax for Inspector 1.0.3; its deprecation and remaining integration/approval limits are explicit.
 * **Architecture Approval / Google Setup 2026-10-22:** Recorded explicit approval of current architecture/contracts and the user's lack of a Google API key. Aligned the root environment template with `GOOGLE_GENERATIVE_AI_API_KEY` and documented secure setup; no credential or model was selected/configured by the agent.
 * **Credential Availability 2026-10-22:** User confirmed corrected Vercel Production scope and successful redeployment. Checked non-placeholder Google key presence in root `.env` without printing/sending its value. Recorded `gemini-3.1-flash-lite`/no automatic model fallback as a proposal only; model approval, provider access, and billing eligibility are not established.
+* **Quality/Safety 6.5 / Model Approval 2026-10-22:** The user subsequently approved the model/no-alternate-fallback policy. Added the deterministic gate, shared Search schemas, strict DTOs, bounded evidence/claims, plain-text/path checks, and 77 tests. All 99 app and 45 MCP tests/lint/types/build pass. Orchestrator/provider/UI integration is still pending; no live provider request or paid usage occurred.

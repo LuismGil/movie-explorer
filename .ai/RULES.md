@@ -6,9 +6,10 @@ This document establishes the strict execution, architecture, and design rules f
 
 Agents must strictly operate under their assigned roles and respect finops (cost) limits.
 
-* **Orchestrator Agent (Gemini 3 Pro):** Responsible for intent classification and query planning. Strict limit: 4,096 input tokens per call.
-* **Search Agent (Gemini 3 Flash):** Responsible for execution, tool calling (MCP), and context window management. Strict limit: 2,048 input tokens per call. Must respect the semantic cache if embedding similarity is ≥ 0.95.
-* **Quality & Safety Agent (Gemini 3 Flash):** Responsible for output validation. Strict limit: 1,024 input tokens. Must validate data consistency and detect hallucinations before rendering the UI. NEVER send raw LLM output to the user interface!
+* **Approved model policy (2026-10-22):** `gemini-3.1-flash-lite` is the default for future model calls. No automatic switch to another model or paid escalation is allowed. Quota/provider failures must produce controlled application errors, not unbounded retries. Verify account/model access and Free Tier billing eligibility before live generation; selecting this model alone does not prevent charges on a paid project.
+* **Orchestrator Agent:** Responsible for intent classification and query planning. Strict limit: 4,096 input tokens per future model call. Provider integration and global timeout/tool/token enforcement are Phase 6.6 work.
+* **Search Agent:** The current executor is deterministic and uses no model tokens. It owns MCP execution/aggregation, not planning. The earlier 2,048-input-token ceiling applies only if model assistance is explicitly introduced later. Semantic caching is deferred to 6.8.
+* **Quality & Safety Agent:** The 6.5 gate is deterministic and uses no model tokens. It validates structured claims against trusted Search Agent evidence and reconstructs strict plain-text presentation DTOs; it does not approve free-form narrative claims. A future model-assisted check would remain subject to the 1,024-input-token ceiling and cannot replace deterministic schema/factual checks. NEVER send raw LLM output to the user interface!
 
 ## 2. Data Access & MCP Protocol
 

@@ -10,7 +10,7 @@
 
 **A movie discovery platform built on React 19, Next.js App Router Server Components, and Server Actions.**
 
-> **Current checkpoint: Phase 6.4 implemented.** The deterministic Search Agent executes validated plans through the standalone MCP server. LLM-based planning/Quality agents, conversational streaming, and production integration remain pending; premium UI polish is Phase 7 work.
+> **Current checkpoint: Phase 6.5 implemented.** The deterministic Search Agent executes MCP plans; Quality/Safety grounds structured claims and rebuilds validated presentation data. Orchestrator/provider integration, conversational streaming, and production AI wiring remain pending; premium UI polish is Phase 7 work.
 
 ---
 
@@ -28,10 +28,11 @@ Movie Explorer is a movie discovery application and an engineering case study in
 - **Build and CI infrastructure** with standalone Next.js output, Docker definitions, and separate application and MCP quality gates.
 - **MCP foundation (6.1–6.3)** with an independent HTTP server, Bearer authentication, origin validation, five TMDB tools, and a server-only Next.js adapter.
 - **Search Agent (6.4)** validates orchestrator-supplied tool plans and MCP outputs, deduplicates results by TMDB ID, and preserves partial results without exposing raw tool errors. It is deterministic; no LLM provider or user-facing AI flow is connected.
+- **Quality/Safety (6.5)** verifies typed claims against Search evidence, rejects unsupported/contradictory selections, and reconstructs strict plain-text DTOs without raw model/tool data. It is deterministic and makes no network calls. [Contract and limits](docs/QUALITY_GATE.md).
 
-Local verification on **2026-10-05**: application lint, typecheck, production build, and 15 unit tests passed; MCP lint, typecheck, build, and 42 tests passed. This checkpoint does not certify production deployment, Docker runtime, Lighthouse, or a fresh accessibility audit.
+Local verification on **2026-10-22**: application lint, typecheck, production build, and **99 tests** (including **77 Quality/Safety tests**) pass; MCP lint, typecheck, build, and **45 tests** pass. These runs use synthetic/mocked evidence and make no Google calls. Docker, live AI/provider integration, and fresh axe/Lighthouse audits were not run for 6.5; the UI was not changed.
 
-**Deployment checkpoint (2026-10-22):** [The Vercel app](https://movie-explorer-luis.vercel.app) and standalone [Render MCP service](https://movie-explorer-ppc2.onrender.com/health) are deployed. Render health/readiness and unauthenticated-request rejection pass. The persisted-watchlist hydration fix passes lint, types, all **22 app tests**, build, and local browser/axe checks. After user redeployment, manual confirmation and agent live browser checks closed **Phase 5 production verification** without React errors. User-provided Inspector output also confirms authenticated listing of all five tools and a real `Inception` search against Render. Actual Next.js-to-MCP execution remains unverified; the current UI does not use MCP. The MCP port/deployment fix previously passed 45 local tests. Evidence, corrected CLI commands, and remaining 6.0 approvals: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
+**Deployment checkpoint (2026-10-22):** [The Vercel app](https://movie-explorer-luis.vercel.app) and [Render MCP service](https://movie-explorer-ppc2.onrender.com/health) are deployed. Health/auth-rejection and user-provided Inspector listing/search smoke checks pass. Live browser retesting of the watchlist fix closed Phase 5 production verification. All 6.0 entry approvals, including model policy, are complete, and Google/MCP Production variables/redeployment are user-confirmed. Actual Next.js-to-MCP and Google integration/billing remain unverified; the current UI does not use Search/Quality. Evidence and policy: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
 The historical local TestSprite report (2026-07-19) contains 13 failures out of 24 scenarios, including conflicting results for similar flows. These need reproduction before being classified as current application defects.
 
@@ -70,7 +71,7 @@ flowchart LR
   Quality --> Result["Validated UI result"]
 ```
 
-The MCP client/server foundation and deterministic Search Agent are implemented. Orchestration, Quality/Safety validation, and UI streaming are still planned. Final user-visible AI data must pass Quality/Safety validation; raw model output must not reach the UI.
+The MCP client/server, deterministic Search executor, and deterministic Quality/Safety gate are implemented. Orchestration/provider integration and UI streaming are still planned. Final user-visible AI data must pass Quality/Safety; its canonical plain-text DTOs, not raw model/MCP output, are the presentation boundary.
 
 Execution tracking: [`.ai/PLAN.md`](.ai/PLAN.md). Architecture: [`.ai/ARCHITECTURE.md`](.ai/ARCHITECTURE.md). Standalone setup: [`packages/mcp-server/README.md`](packages/mcp-server/README.md).
 
@@ -99,7 +100,8 @@ Execution tracking: [`.ai/PLAN.md`](.ai/PLAN.md). Architecture: [`.ai/ARCHITECTU
 - **Skeleton Loaders**: Animated `MovieCardSkeleton` components during list fetching.
 - **MCP tools**: `search_movies`, `get_movie_details`, `get_recommendations`, `get_trending`, and `get_credits` in a separate server package.
 - **Search Agent foundation**: Deterministic execution of validated MCP tool plans, with aggregation, ID deduplication, schema validation, and partial-failure handling. It is not an LLM-powered search planner.
-- **Conversational Movie Discovery (Planned)**: Orchestrator → Search → Quality/Safety with validated streaming. Gemini model identifiers and fallback policy still require approval.
+- **Quality/Safety gate**: Exact structured-fact validation, movie-scoped metadata, source contradiction/status checks, bounded plain-text DTOs, and valid partial-result preservation. Arbitrary narrative is rejected, not semantically judged.
+- **Conversational Movie Discovery (Planned)**: Orchestrator → Search → Quality/Safety with validated streaming. Approved future model: `gemini-3.1-flash-lite`, with controlled failures and no automatic alternate-model fallback/paid escalation. Provider access and Free Tier billing eligibility are not yet verified.
 
 ---
 
@@ -186,7 +188,7 @@ docker run --rm -p 3000:3000 \
 
 > **Security note**: No environment variables use the `NEXT_PUBLIC_` prefix. `TMDB_API_KEY` is inaccessible to client-side JavaScript.
 
-The root `.env.example` uses canonical `GOOGLE_GENERATIVE_AI_API_KEY`. Current architecture/tool contracts are approved; local key presence and user-reported Vercel Production configuration/redeployment are recorded. Model/default/fallback approval remains pending, and provider authentication/billing have not been tested. See the [Google setup/status guide](docs/DEPLOYMENT.md#google-gemini-credential-setup); the current runtime does not consume this key. MCP-specific settings are documented in its [README](packages/mcp-server/README.md#environment-variables).
+The root `.env.example` uses canonical `GOOGLE_GENERATIVE_AI_API_KEY`. Architecture/contracts/model policy are approved; local key presence and Vercel Production configuration/redeployment are recorded. Provider authentication/billing remain unverified. See the [Google setup/status guide](docs/DEPLOYMENT.md#google-gemini-credential-setup); Search/Quality still do not consume this key or invoke a model. MCP-specific settings are documented in its [README](packages/mcp-server/README.md#environment-variables).
 
 ---
 
@@ -361,18 +363,18 @@ Generated TestSprite scripts/reports are local artifacts, not part of the commit
 - [x] Complete core-flow production verification: deployed watchlist hydration fix passes user and agent live browser retesting without React errors.
 
 ### Phase 6 — AI-native Layer 🔄
-- [ ] **6.0** Approve model/default/fallback policy. Architecture/contracts and local/Vercel credential availability are complete; Phase 5 and remote MCP listing/search smoke checks pass. Provider authentication/billing and actual Next.js-to-MCP integration remain unverified.
+- [x] **6.0** Entry approvals complete: architecture/contracts, credential availability, and explicit `gemini-3.1-flash-lite`/no-alternate-fallback policy. Provider access/billing and actual Next.js-to-MCP integration remain separate implementation/verification work.
 - [x] **6.1** Standalone Streamable HTTP MCP foundation with authentication, health endpoints, and independent tooling.
 - [x] **6.2** Five TMDB tools with Zod validation and mocked tests.
 - [x] **6.3** Server-only Next.js MCP client adapter.
 - [x] **6.4** Deterministic Search Agent: execute MCP plans, validate/normalize results, deduplicate by TMDB ID, and handle partial failures.
-- [ ] **6.5** Quality/Safety Agent: fact-check and approve validated presentation data.
+- [x] **6.5** Deterministic Quality/Safety: ground typed claims, reject unsupported/contradictory data, sanitize strict presentation DTOs, and preserve valid partial results; 77 focused tests.
 - [ ] **6.6** Orchestrator: intent planning, agent sequencing, and execution budgets.
 - [ ] **6.7** Accessible streaming UI for validated data and controlled progress events.
 - [ ] **6.8** Cache, limits, and token/latency observability.
 - [ ] **6.9** Hardening, integration verification, deployment checks, and documentation closure.
 
-Before removing the existing TMDB actions, resolve MCP contract coverage for popular movies, trailers, and trending pagination. The current five tools do not replace every existing UI request. Phase 5 production verification is closed, but remaining Phase 6.0 approvals are open and must not be inferred from implemented code or browser success. Synchronize `.ai/CONTEXT.md` and `.ai/TASK.md` as work proceeds.
+Before removing existing TMDB actions, resolve MCP coverage for popular movies, trailers, and trending pagination. The current five tools do not replace every UI request. Phase 5 and 6.0 entry approvals are complete, but approval is not proof of provider/billing or end-to-end AI integration. Continue with 6.6, then validated streaming. Synchronize `.ai/CONTEXT.md` and `.ai/TASK.md` as work proceeds.
 
 ### Phase 7 — Premium UI Polish 🔄
 - [ ] Apply Immersive Minimalism design system — fluid grid, glassmorphic cards, micro-animations.

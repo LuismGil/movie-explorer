@@ -19,6 +19,7 @@
 ├── docs
 │   ├── ANATOMY.md
 │   ├── DEPLOYMENT.md        # Deployment evidence, verification limits, and next steps
+│   ├── QUALITY_GATE.md      # Deterministic Quality/Safety contract and limitations
 │   └── ui_ux_principles_design_guide.html
 ├── .github
 │   └── workflows
@@ -75,7 +76,12 @@
 │   │   │   └── tmdb.ts
 │   │   ├── agents
 │   │   │   ├── __tests__
+│   │   │   │   ├── quality-agent.test.ts
 │   │   │   │   └── search-agent.test.ts
+│   │   │   ├── quality-agent.ts
+│   │   │   ├── quality-agent.schemas.ts
+│   │   │   ├── quality-agent.evidence.ts
+│   │   │   ├── search-agent.schemas.ts
 │   │   │   └── search-agent.ts
 │   │   ├── env
 │   │   │   └── mcp.ts

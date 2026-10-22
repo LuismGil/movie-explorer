@@ -2,7 +2,7 @@
 
 Independent Node.js runtime exposing five TMDB tools through **Streamable HTTP**. It has its own dependencies, build, tests, Dockerfile, and deployment lifecycle; it is not embedded in Next.js.
 
-**Status:** Phase 6.1 foundation, 6.2 tools, 6.3 Next.js server-only adapter, and deterministic 6.4 Search Agent are implemented. The executor is in `../../src/server/agents/search-agent.ts`; it accepts a validated tool plan and returns normalized results but does not use an LLM. Existing movie pages still use their original Server Actions. Quality/Safety, Orchestrator, and conversational UI are pending.
+**Status:** MCP foundation/tools, the Next.js adapter, deterministic 6.4 Search Agent, and 6.5 Quality/Safety gate are implemented. Search executes validated tool plans; Quality grounds structured claims and rebuilds presentation DTOs without network/provider calls. See [`docs/QUALITY_GATE.md`](../../docs/QUALITY_GATE.md). Existing movie pages still use their original Server Actions. Orchestrator/provider integration and conversational UI are pending.
 
 ## Local Setup
 
@@ -92,7 +92,7 @@ This runs lint → typecheck → tests → build. Individual scripts are `lint`,
 
 From the repository root, use `npm run mcp:verify` or the `mcp:lint`, `mcp:typecheck`, `mcp:test`, and `mcp:build` wrappers.
 
-Local verification on **2026-10-05**: lint, typecheck, all **45 tests**, and build passed. A Docker build was attempted but could not access the local Docker daemon (`/var/run/docker.sock` permission denied).
+Latest local verification on **2026-10-22**: lint, typecheck, all **45 MCP tests**, and build passed during 6.5 work; the app's 99 tests/lint/types/build also pass. The earlier local Docker build could not access the daemon (`/var/run/docker.sock` permission denied); no Docker rerun was performed for 6.5.
 
 **Deployment checkpoint (2026-10-22):** The user deployed the service to Render Free at `https://movie-explorer-ppc2.onrender.com/mcp`. Agent checks confirm `/health` and `/ready` return 200 and unauthenticated `POST /mcp` returns 401. User-provided Inspector 1.0.3 output confirms authenticated listing of all five tools and a real `Inception` search returning TMDB movie 27205 (`A Origem`). Actual Next.js-to-MCP execution, calls to the other four tools, build/image inspection, and free-tier wake-up reliability remain unverified. See [`docs/DEPLOYMENT.md`](../../docs/DEPLOYMENT.md) for evidence, remaining gates, and the corrected CLI commands.
 
@@ -149,9 +149,9 @@ The image uses a non-root distroless runner. Keep remote traffic on HTTPS and ne
 
 ## Remaining Work
 
-- Approve model/default/fallback policy in [the execution plan](../../.ai/PLAN.md). Google credential availability in Next.js/local and Vercel Production is recorded; provider access/billing are unverified. Current architecture/contracts, Phase 5, and remote Inspector listing/search verification are complete.
+- Confirm Google account/Free Tier eligibility before live generation. All 6.0 entry approvals, including the default model/no-alternate-fallback policy, are complete; provider access/billing remain unverified.
 - Harden the Next.js adapter for redirect rejection, concurrent initialization, and failure recovery.
-- Implement Quality/Safety → Orchestrator, validated streaming, limits, caching, and observability; review the pending 6.0 gates before production integration.
+- Implement 6.6 Orchestrator using the existing Search→Quality contracts, then validated streaming, limits, caching, and observability. Do not bypass Quality's strict presentation gate or treat approval as production AI integration evidence.
 - Test the other four tools remotely and review Render build/image evidence and free-tier reliability; public health checks, authenticated listing, and remote search already passed their smoke checks.
 - Verify real Next.js-to-MCP tool execution.
 - Resolve UI contract coverage before retiring duplicate server-side TMDB access.

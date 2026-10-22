@@ -2,7 +2,7 @@
 
 This document defines the interface, protocol structure, transport schemas, and tools exposed by the **Movie Explorer MCP Server**.
 
-**Approval (2026-10-22):** The user explicitly approved the current five tool contracts and the Vercel/standalone Render, Streamable HTTP, and Bearer-authenticated architecture. This does not approve new tools/contract changes, Google model policy, or paid API usage. Google credential availability is recorded; model policy remains pending in [the execution plan](PLAN.md), and provider access/billing have not been verified.
+**Approval (2026-10-22):** The user approved the current five tool contracts and Vercel/standalone Render, Streamable HTTP, and Bearer-authenticated architecture. The separate `gemini-3.1-flash-lite`/no-alternate-fallback policy is also approved in [the execution plan](PLAN.md). Google credentials are available, but provider access/billing remain unverified; paid usage or future MCP contract changes are not authorized. Quality/Safety uses these existing Search contracts without changing MCP tools or invoking a provider.
 
 ## 1. Server Configuration & Transport Protocols
 

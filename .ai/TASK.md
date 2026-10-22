@@ -1,9 +1,9 @@
 # Phase 6 — MCP Server + Multi-Agent System
 
 ## Active Phase
-- Phase 6.0 model-policy approval; architecture/contracts and credential availability are complete, remote Inspector listing/search pass, and 6.4 Search Agent is implemented.
+- Phase 6.5 Quality/Safety is implemented and verified; all 6.0 entry approvals are complete, including the explicit `gemini-3.1-flash-lite`/no-alternate-fallback policy.
 - Phase 5 production verification is closed: the deployed hydration fix passes user and agent live browser checks without React errors.
-- Next agent implementation: 6.5 Quality/Safety, after entry-gate approval.
+- Next agent task: 6.6 Orchestrator (intent planning, sequencing, and runtime budgets). No live Google calls or UI wiring were added in 6.5.
 
 ## Previous Completed Phases
 - [x] Phase 1 — Stabilization & Code Quality
@@ -13,7 +13,7 @@
 - [x] Phase 5 — Next.js App Router Migration and core-flow production verification (2026-10-22)
 
 ## Current Goal
-- Obtain explicit model/default/fallback policy approval before 6.5. Local Google key presence is verified without exposing its value; the user confirmed all variables in Vercel Production and redeployed. Credential availability does not validate provider access, authorize paid usage, or prove Next.js-to-MCP integration. The proposed stable `gemini-3.1-flash-lite` with no automatic model fallback remains unapproved.
+- Continue with 6.6 while preserving the implemented Search→Quality contracts and strict presentation gate. The approved model policy does not authorize paid usage; Google account/Free Tier eligibility must be confirmed before live generation. Actual provider/Next.js-to-MCP integration remains unverified.
 
 ## Tasks
 
@@ -127,11 +127,11 @@ docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:lat
 - [x] Standalone MCP hosting provider selected: Render Free; evaluate free-tier cold starts before production use.
 - [x] Bearer authentication using `MCP_INTERNAL_API_KEY` approved.
 - [x] `GOOGLE_GENERATIVE_AI_API_KEY` available locally/in Vercel: non-placeholder presence checked in root `.env`; user confirmed Production scope and successful redeploy. No credential value or provider request was exposed/sent.
-- [ ] Default and fallback Gemini model identifiers approved.
+- [x] Default model/no-alternate-fallback policy explicitly approved: `gemini-3.1-flash-lite`, controlled failures, no paid usage authorized.
 - [x] Current five MCP tool contracts reviewed and approved.
-- [x] Current Phase 6 architecture reviewed and approved; model/default/fallback policy remains separate.
+- [x] Current Phase 6 architecture reviewed and approved; model/default/fallback policy approved separately.
 
-Explicit user approval recorded on 2026-10-22. No model selection, paid usage, or future contract changes were approved. The root `.env.example` uses the canonical Google provider key name; actual secrets must be entered by the user, not committed or shared in chat.
+Explicit user approvals recorded on 2026-10-22, including the default model/no-alternate-fallback policy. No paid usage or future MCP contract changes are authorized. Actual billing eligibility and provider access must be verified before live generation. No secret values belong in chat or Git.
 
 ### Deployment Checkpoint — 2026-10-22
 
@@ -180,14 +180,17 @@ Explicit user approval recorded on 2026-10-22. No model selection, paid usage, o
 - [x] Keep successful tool data when another call fails and sanitize failure metadata.
 - [x] Ensure the Search Agent calls only MCP and receives its tool plan as input.
 
-**Implementation boundary:** `src/server/agents/search-agent.ts` is a deterministic MCP executor, not an LLM-powered query planner or user-facing agent. Vercel and Render deployments are recorded separately from the unresolved 6.0 architecture, credential, model, and contract approvals. The current pages still use their existing TMDB actions.
+**Implementation boundary:** `src/server/agents/search-agent.ts` remains a deterministic MCP executor, not an LLM planner or user-facing agent. Its schemas are shared with Quality/Safety without importing network modules into the quality gate. Entry approvals are complete; current pages still use existing TMDB actions.
 
 ## 6.5 Quality/Safety Agent
 
-- [ ] Validate factual claims against MCP/TMDB results.
-- [ ] Reject unsupported claims and detect contradictions.
-- [ ] Apply final DTO output schemas and sanitize content.
-- [ ] Ensure no raw LLM output reaches the UI.
+- [x] Validate typed factual claims against trusted Search Agent/MCP-derived data and preserve TMDB IDs.
+- [x] Reject unsupported/contradictory claims, inconsistent source status/IDs, and conflicting available metadata.
+- [x] Rebuild strict, bounded, plain-text presentation DTOs; preserve valid partial results and sanitize public issue codes.
+- [x] Reject arbitrary model prose/unknown proposal keys; never forward raw model/MCP envelopes or errors as presentation data.
+- [x] Add 77 focused tests, including mocked Search→Quality integration and no-network execution; all 99 app tests and 45 MCP tests pass, along with lint/types/build for both packages.
+
+See [`docs/QUALITY_GATE.md`](../docs/QUALITY_GATE.md). This is a deterministic structured-fact gate, not an LLM judge or general HTML sanitizer. No public entry point or UI consumes it yet.
 
 ## 6.6 Orchestrator Agent
 

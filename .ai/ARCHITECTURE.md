@@ -30,7 +30,7 @@ User
 * Progress events may be streamed only when they contain controlled application-defined status data.
 * **Never stream:** raw model output; raw MCP responses; private prompts; chain-of-thought; tool arguments containing secrets; unvalidated Markdown or HTML.
 
-**Current implementation:** the standalone MCP server, five TMDB tools, server-only client, and deterministic Search Agent executor exist. The Search Agent accepts a validated tool plan and produces normalized, deduplicated data plus sanitized per-call outcomes. The Orchestrator does not yet produce that plan; Quality/Safety, the AI provider integration, and UI streaming remain pending.
+**Current implementation:** the standalone MCP server, five TMDB tools, server-only client, deterministic Search Agent, and 6.5 Quality/Safety gate exist. Search returns normalized/deduplicated evidence; Quality validates typed selections/claims and reconstructs a strict presentation DTO while preserving valid partial results. Quality has no network/provider dependency. The Orchestrator does not yet produce the tool plan/proposal, and no public AI route or UI invokes the pipeline. Provider integration and streaming remain pending. Implemented modules live in `src/server/agents/`; see [`docs/QUALITY_GATE.md`](../docs/QUALITY_GATE.md).
 
 ## 3. Canonical Repository Boundaries
 
@@ -98,7 +98,7 @@ The MCP server must not be deployed inside the Next.js Vercel application.
 **Decision Record:**
 Comparing requirements (persistent Node.js HTTP process, Docker support, HTTPS, environment variables, health checks, predictable cold-start behavior, logs, Hobby/portfolio cost, deployment from GitHub), we recommend one deployment category: **Container-based managed service**.
 
-**Deployment checkpoint (2026-10-22):** Next.js is deployed to `https://movie-explorer-luis.vercel.app` and MCP to `https://movie-explorer-ppc2.onrender.com/mcp`. Agent health/auth-rejection checks and user-provided Inspector listing/search output pass; live browser retesting closes Phase 5 core-flow verification. Architecture/contracts are explicitly approved, local Google key presence is recorded without disclosing its value, and the user confirmed all variables in Vercel Production plus a successful redeploy. Current pages still use server-side TMDB actions. Actual Next.js/provider integration, other remote tool calls, cold-start suitability, Google access/billing verification, and model-policy approval remain pending. See [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md).
+**Deployment checkpoint (2026-10-22):** Next.js is deployed to `https://movie-explorer-luis.vercel.app` and MCP to `https://movie-explorer-ppc2.onrender.com/mcp`. Agent health/auth-rejection checks and user-provided Inspector listing/search output pass; live browser retesting closes Phase 5 core-flow verification. Architecture/contracts/model policy are explicitly approved, local Google key presence is recorded without disclosing its value, and the user confirmed Production variables/redeployment. Current pages still use server-side TMDB actions. Actual Next.js/provider integration, other remote tool calls, cold-start suitability, and Google access/billing verification remain pending; 6.5 was verified locally without provider calls. See [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md).
 
 ## 7. Canonical MCP Authentication
 
@@ -132,10 +132,9 @@ MCP_ALLOWED_ORIGINS=
 
 ## 9. Canonical AI Provider
 
-Target provider contract: Vercel AI SDK 6, `@ai-sdk/google`, Google Generative AI API.
-The future model policy must define: default low-latency model, higher-reasoning model, fallback behavior, timeout, retry limit, token budget, maximum tool calls, structured-output validation, and provider failure behavior.
+Target provider contract: Vercel AI SDK 6, `@ai-sdk/google`, Google Generative AI API. Approved default: `gemini-3.1-flash-lite`, with no automatic alternate-model fallback or paid escalation; provider/quota failures must produce controlled errors. Higher-cost/reasoning alternatives are not authorized. Detailed timeouts, retry limits, token budgets, tool-call limits, and runtime provider-error handling belong to 6.6. Confirm Google account/model access and Free Tier billing eligibility before live generation. The implemented Search/Quality agents are deterministic and make no model calls.
 
-**Approval/configuration record (2026-10-22):** The user explicitly approved the current architecture and five MCP contracts, including Vercel/standalone Render boundaries, Streamable HTTP, and Bearer authentication. They subsequently confirmed all variables in Vercel Production and a successful redeploy; non-placeholder Google key presence was checked in root `.env` without exposing its value. Model/default/fallback policy is still unapproved, provider authentication/billing are unverified, and paid usage or future contract changes are not authorized. No Google provider runtime or model setting has been added. Setup/status: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md#google-gemini-credential-setup).
+**Approval/configuration record (2026-10-22):** The user approved the current architecture/five MCP contracts, then the default model/no-alternate-fallback policy. Vercel Production configuration/redeployment is user-confirmed and local Google key presence was checked without exposing its value. All 6.0 entry approvals are complete; this is not provider-authentication/billing verification or authorization for paid usage/future MCP contract changes. No Google provider runtime has been added. Setup/status: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md#approved-model-policy).
 
 ## 10. Agent Responsibilities
 
@@ -155,6 +154,8 @@ Every boundary must use explicit Zod schemas:
 * UI result → validated presentation DTO schema
 
 TypeScript types must be inferred from schemas where applicable. Do not maintain duplicated manual interfaces and Zod schemas for the same contract. Unknown properties must be rejected or stripped according to one documented global policy. Raw provider text must never be treated as trusted structured data. MCP responses must not be passed directly to React components.
+
+**Implemented boundary policy:** existing MCP/Search source schemas strip unknown fields; Quality adds evidence size/status/provenance-consistency checks. Model proposals and final presentation DTOs reject unknown keys at every object level. Quality reconstructs only allowlisted evidence facts, never proposal prose, tool envelopes, or raw error details. Its plain-text values must be rendered as escaped text nodes, not HTML/Markdown. Evidence must be obtained through the server-side Search Agent, never accepted from a browser/model as purported TMDB truth.
 
 ## 12. Canonical MCP Tools
 
