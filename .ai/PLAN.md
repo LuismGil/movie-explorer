@@ -219,9 +219,9 @@ docker run --rm -p 3000:3000 movie-explorer:latest  # must serve app on :3000
 - [x] Observe no direct browser TMDB data API/MCP requests or `api_key` query parameters in the tested flows.
 - [x] Add a regression test and fix React hydration error #418 when a saved watchlist is loaded through full navigation/reload.
 - [x] Verify the fix locally: lint, typecheck, 22 unit tests, production build, browser smoke with no page errors, and no critical/serious axe violations on Home and empty/saved Watchlist.
-- [ ] Redeploy the fix and repeat production checks without hydration errors before closing the Phase 5 verification gate.
+- [x] Redeploy the fix and repeat production checks without hydration errors: the user confirmed success, and agent live browser smoke passed the core flows with no page errors.
 
-Evidence, reproduction, and verification limits: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md). The original live smoke found a hydration mismatch; the fix now passes local production checks, but Vercel redeployment/retest is still required.
+Evidence, reproduction, and verification limits: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md). The original hydration mismatch is resolved in the deployed app. Phase 5 production verification is closed for the tested core flows; this does not certify AI/MCP integration or replace a full security/performance audit.
 
 ### Verification
 
@@ -255,7 +255,7 @@ npm run lint        # exit 0
 
 ### 6.0 Architecture and Entry Gates
 
-- [ ] Phase 5 production deployment verified (hydration fix verified locally; Vercel redeployment/retest pending).
+- [x] Phase 5 production deployment verified: user-confirmed watchlist retest and agent live browser smoke of core flows, without React errors.
 - [ ] Streamable HTTP approved as the only MCP transport.
 - [ ] `packages/mcp-server` approved as the standalone server boundary.
 - [ ] Vercel approved as the Next.js deployment boundary.
@@ -275,7 +275,7 @@ npm run lint        # exit 0
 - [ ] Verify actual Next.js-to-Render MCP execution; no current page invokes the adapter.
 - [ ] Evaluate Render Free wake-up latency and its interaction with request timeouts.
 
-Deployments and health checks do not close the remaining 6.0 approvals. Immediate work is deploying/retesting the locally verified Phase 5 hydration fix, then the remaining verification/approval gates; **6.5 Quality/Safety** remains the next agent implementation task.
+Phase 5 production verification is closed. Next, confirm authenticated MCP tool execution against Render and review the remaining 6.0 approvals; **6.5 Quality/Safety** remains the next agent implementation task. The current movie UI does not exercise the MCP adapter, so successful browser checks cannot establish that connection.
 
 ### 6.4 Search Agent
 

@@ -1,8 +1,8 @@
 # Phase 6 — MCP Server + Multi-Agent System
 
 ## Active Phase
-- Deployment verification and Phase 6.0 gate review; 6.4 Search Agent is implemented.
-- Persisted-watchlist hydration error #418 is fixed and verified locally; Phase 5 production verification awaits Vercel redeployment/retest.
+- Phase 6.0 gate review and remote MCP verification; 6.4 Search Agent is implemented.
+- Phase 5 production verification is closed: the deployed hydration fix passes user and agent live browser checks without React errors.
 - Next agent implementation: 6.5 Quality/Safety, after entry-gate approval.
 
 ## Previous Completed Phases
@@ -10,9 +10,10 @@
 - [x] Phase 2 — Accessibility Baseline (WCAG 2.1 AA)
 - [x] Phase 3 — Security Baseline
 - [x] Phase 4 — DevOps Baseline
+- [x] Phase 5 — Next.js App Router Migration and core-flow production verification (2026-10-22)
 
 ## Current Goal
-- Deploy/retest the locally verified Phase 5 hydration fix and close the remaining verification/approval gates before 6.5. Do not infer AI provider/model or architecture approvals from deployed infrastructure.
+- Confirm authenticated remote MCP tools and close the remaining Phase 6.0 approval gates before 6.5. Do not infer AI provider/model or architecture approvals from deployed infrastructure or successful browser checks.
 
 ## Tasks
 
@@ -87,9 +88,9 @@
 - [x] Browser smoke: Home/SSR, search, daily/weekly trending, movie details, pagination, watchlist add/remove/persistence; no direct browser TMDB data API/MCP requests or `api_key` query parameters observed.
 - [x] Add an SSR/hydration regression test and fix React error #418 when reloading a persisted watchlist.
 - [x] Local verification: lint, typecheck, 22 tests, production build; browser smoke without page errors; axe with no critical/serious violations on Home and empty/saved Watchlist.
-- [ ] Redeploy and repeat production checks without hydration errors before marking the Vercel production gate verified.
+- [x] Redeploy and repeat production checks without hydration errors: user confirmation and agent live browser smoke passed core flows with no page errors.
 
-Details and reproduction: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md). Local production checks pass; the deployed Vercel version must still receive the fix and be retested.
+Details and evidence: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md). Phase 5 production verification is closed for the tested core flows; remote MCP/AI integration remains separate.
 
 ## Verification Checklist
 
@@ -119,7 +120,7 @@ docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:lat
 
 ## Architecture and Entry Gates
 
-- [ ] Phase 5 production deployment verified (local hydration fix passes; Vercel redeployment/retest pending).
+- [x] Phase 5 production deployment verified: user-confirmed watchlist retest and agent live core-flow smoke without React errors.
 - [ ] Streamable HTTP approved as the only MCP transport.
 - [ ] `packages/mcp-server` approved as the standalone server boundary.
 - [ ] Vercel approved as the Next.js deployment boundary.

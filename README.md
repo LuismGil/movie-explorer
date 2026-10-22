@@ -31,7 +31,7 @@ Movie Explorer is a movie discovery application and an engineering case study in
 
 Local verification on **2026-10-05**: application lint, typecheck, production build, and 15 unit tests passed; MCP lint, typecheck, build, and 42 tests passed. This checkpoint does not certify production deployment, Docker runtime, Lighthouse, or a fresh accessibility audit.
 
-**Deployment checkpoint (2026-10-22):** [The Vercel app](https://movie-explorer-luis.vercel.app) and standalone [Render MCP service](https://movie-explorer-ppc2.onrender.com/health) are deployed. Render health/readiness and unauthenticated-request rejection pass. The persisted-watchlist hydration error found in live smoke checks is now fixed locally: lint, types, all **22 app tests**, production build, browser smoke without page errors, and scoped axe checks pass. **Vercel redeployment/retest is still required** to close Phase 5 verification. Authenticated remote MCP tools and real Next.js-to-MCP execution remain unconfirmed; the current UI does not use MCP. The MCP port/deployment fix previously passed 45 local tests. Evidence and next steps: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
+**Deployment checkpoint (2026-10-22):** [The Vercel app](https://movie-explorer-luis.vercel.app) and standalone [Render MCP service](https://movie-explorer-ppc2.onrender.com/health) are deployed. Render health/readiness and unauthenticated-request rejection pass. The persisted-watchlist hydration fix passes lint, types, all **22 app tests**, build, and local browser/axe checks. After user redeployment, manual confirmation and agent live browser checks passed the core flows without React errors: **Phase 5 production verification is closed**. Authenticated remote MCP tools and real Next.js-to-MCP execution remain unconfirmed; the current UI does not use MCP. The MCP port/deployment fix previously passed 45 local tests. Evidence and next steps: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
 The historical local TestSprite report (2026-07-19) contains 13 failures out of 24 scenarios, including conflicting results for similar flows. These need reproduction before being classified as current application defects.
 
@@ -358,10 +358,10 @@ Generated TestSprite scripts/reports are local artifacts, not part of the commit
 - [x] File-based routing under `/app`.
 - [x] React Server Components for all data-heavy pages.
 - [x] Enable standalone server builds and distroless deployment.
-- [ ] Complete production verification: the persisted-watchlist hydration fix passes local checks but still needs Vercel redeployment/retest.
+- [x] Complete core-flow production verification: deployed watchlist hydration fix passes user and agent live browser retesting without React errors.
 
 ### Phase 6 — AI-native Layer 🔄
-- [ ] **6.0** Close remaining gates: clean production verification, transport/boundaries/authentication review, Google credentials, model policy, MCP contracts, and final architecture approval. Render Free hosting is selected and deployed.
+- [ ] **6.0** Close remaining gates: transport/boundaries/authentication review, Google credentials, model policy, MCP contracts, and final architecture approval. Phase 5 production verification is closed; Render Free hosting is selected and deployed.
 - [x] **6.1** Standalone Streamable HTTP MCP foundation with authentication, health endpoints, and independent tooling.
 - [x] **6.2** Five TMDB tools with Zod validation and mocked tests.
 - [x] **6.3** Server-only Next.js MCP client adapter.
@@ -372,7 +372,7 @@ Generated TestSprite scripts/reports are local artifacts, not part of the commit
 - [ ] **6.8** Cache, limits, and token/latency observability.
 - [ ] **6.9** Hardening, integration verification, deployment checks, and documentation closure.
 
-Before removing the existing TMDB actions, resolve MCP contract coverage for popular movies, trailers, and trending pagination. The current five tools do not replace every existing UI request. Phase 5 production verification and Phase 6.0 approvals are still open; approvals must not be inferred from implemented code. Synchronize `.ai/CONTEXT.md` and `.ai/TASK.md` as work proceeds.
+Before removing the existing TMDB actions, resolve MCP contract coverage for popular movies, trailers, and trending pagination. The current five tools do not replace every existing UI request. Phase 5 production verification is closed, but remaining Phase 6.0 approvals are open and must not be inferred from implemented code or browser success. Synchronize `.ai/CONTEXT.md` and `.ai/TASK.md` as work proceeds.
 
 ### Phase 7 — Premium UI Polish 🔄
 - [ ] Apply Immersive Minimalism design system — fluid grid, glassmorphic cards, micro-animations.
