@@ -212,4 +212,49 @@ describe('runSearchAgent', () => {
     await expect(runSearchAgent({ calls: [{ tool: 'search_movies', query: '   ' }] })).rejects.toThrow();
     expect(mockGetMcpClient).not.toHaveBeenCalled();
   });
+
+  it('passes cancellation and bounded per-tool timeouts into the SDK', async () => {
+    const signal = new AbortController().signal;
+    callTool.mockResolvedValue(textResult({ results: [movie], total_pages: 1 }));
+    await runSearchAgent({ calls: [{ tool: 'search_movies', query: 'example' }] }, { signal, timeoutMs: 100, maxToolCalls: 1 });
+    expect(mockGetMcpClient).toHaveBeenCalledWith({ signal });
+    expect(callTool).toHaveBeenCalledWith(
+      { name: 'search_movies', arguments: { query: 'example' } }, expect.anything(),
+      { signal, timeout: 100, maxTotalTimeout: 100, resetTimeoutOnProgress: false },
+    );
+  });
+
+  it('does not initialize or execute MCP for an already-aborted request', async () => {
+    const result = await runSearchAgent({ calls: [{ tool: 'search_movies', query: 'example' }] }, { signal: AbortSignal.abort() });
+    expect(result).toMatchObject({ status: 'failed', outcomes: [{ reason: 'request_failed' }] });
+    expect(mockGetMcpClient).not.toHaveBeenCalled();
+    expect(callTool).not.toHaveBeenCalled();
+  });
+
+  it('does not launch tools when cancellation occurs during shared initialization', async () => {
+    const controller = new AbortController();
+    mockGetMcpClient.mockImplementation(async () => { controller.abort(); return { callTool }; });
+    expect(await runSearchAgent({ calls: [{ tool: 'search_movies', query: 'example' }] }, { signal: controller.signal })).toMatchObject({ status: 'failed' });
+    expect(callTool).not.toHaveBeenCalled();
+  });
+
+  it.each([{ maxToolCalls: 0 }, { maxToolCalls: 6 }, { maxToolCalls: 1 }, { timeoutMs: 10001 }, { timeoutMs: 0 }])(
+    'rejects invalid/exceeded execution limits before opening MCP: %j', async options => {
+      await expect(runSearchAgent({ calls: [{ tool: 'search_movies', query: 'example' }, { tool: 'get_trending' }] }, options)).rejects.toThrow();
+      expect(mockGetMcpClient).not.toHaveBeenCalled();
+    },
+  );
+
+  it('preserves a successful result when another tool times out, without retries', async () => {
+    callTool.mockImplementation(async ({ name }: { name: string }) => {
+      if (name === 'search_movies') return textResult({ results: [movie], total_pages: 1 });
+      throw new Error('private timeout details');
+    });
+    const result = await runSearchAgent({ calls: [{ tool: 'search_movies', query: 'example' }, { tool: 'get_trending' }] }, { timeoutMs: 100 });
+    expect(result).toMatchObject({ status: 'partial', movies: [{ id: 42 }], outcomes: [
+      { status: 'succeeded' }, { status: 'failed', reason: 'request_failed' },
+    ] });
+    expect(callTool).toHaveBeenCalledTimes(2);
+    expect(JSON.stringify(result)).not.toContain('private timeout');
+  });
 });

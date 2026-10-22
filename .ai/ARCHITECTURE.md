@@ -67,7 +67,7 @@ src/
 
 ## 4. MCP Server Boundary
 
-* **Current State:** Next.js owns the existing server-side TMDB integration used by movie pages. The standalone MCP server and client adapter also exist, and the deterministic Search Agent now executes validated tool plans against MCP. The existing pages and future AI flow are not yet migrated to MCP.
+* **Current State:** Next.js owns the existing server-side TMDB integration used by movie pages. The standalone MCP server/client and server-only Orchestrator→Search→Quality pipeline exist. Planning has a disabled-by-default Google adapter; local tests use mocked provider/MCP dependencies. Existing pages are not migrated and no public AI route/UI is connected.
 * **Target State:** The MCP server is a standalone Node.js process. It has an independent package, build, test, start, Docker, and deployment lifecycle. It is not embedded in the Next.js application.
 * React components must never import MCP server modules. Next.js must communicate with MCP through a server-only network client. The browser must never call the MCP server directly.
 * The MCP server becomes the canonical owner of TMDB integration by the Phase 6 Definition of Done. Duplicate TMDB HTTP implementations must not remain in the final architecture. Existing server-side TMDB code must have an explicit migration and removal task. `TMDB_API_KEY` belongs only to the standalone MCP server after the migration is completed.
@@ -132,9 +132,9 @@ MCP_ALLOWED_ORIGINS=
 
 ## 9. Canonical AI Provider
 
-Target provider contract: Vercel AI SDK 6, `@ai-sdk/google`, Google Generative AI API. Approved default: `gemini-3.1-flash-lite`, with no automatic alternate-model fallback or paid escalation; provider/quota failures must produce controlled errors. Higher-cost/reasoning alternatives are not authorized. Detailed timeouts, retry limits, token budgets, tool-call limits, and runtime provider-error handling belong to 6.6. Confirm Google account/model access and Free Tier billing eligibility before live generation. The implemented Search/Quality agents are deterministic and make no model calls.
+Implemented provider contract: pinned `ai@6.0.314` / `@ai-sdk/google@3.0.137`, Google Generative AI API. Fixed model: `gemini-3.1-flash-lite`, no alternate-model fallback, retries, SDK continuations, or paid escalation. Phase 6.6 enforces exact-request token preflight (4,096 input / 512 output / 4,608 total), one planner invocation, 5 tool slots, 30s global / 10s per-tool deadlines, and controlled failures. Generation remains disabled without trusted server/operator Free Tier confirmation; confirm account/model access, billing eligibility, and privacy conditions before activation. The flag is not a billing check or guarantee. Search/Quality remain deterministic with no model calls. See [`docs/ORCHESTRATOR.md`](../docs/ORCHESTRATOR.md).
 
-**Approval/configuration record (2026-10-22):** The user approved the current architecture/five MCP contracts, then the default model/no-alternate-fallback policy. Vercel Production configuration/redeployment is user-confirmed and local Google key presence was checked without exposing its value. All 6.0 entry approvals are complete; this is not provider-authentication/billing verification or authorization for paid usage/future MCP contract changes. No Google provider runtime has been added. Setup/status: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md#approved-model-policy).
+**Approval/configuration record (2026-10-22):** The user approved the current architecture/five MCP contracts, then the default model/no-alternate-fallback policy. Vercel Production configuration/redeployment is user-confirmed and local Google key presence was checked without exposing its value. All 6.0 entry approvals are complete; this is not provider-authentication/billing verification or authorization for paid usage/future MCP contract changes. The 6.6 Google runtime is implemented but disabled by default and tested only with synthetic HTTP responses; no Google request has been performed. Setup/status: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md#approved-model-policy).
 
 ## 10. Agent Responsibilities
 

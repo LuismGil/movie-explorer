@@ -194,9 +194,14 @@ See [`docs/QUALITY_GATE.md`](../docs/QUALITY_GATE.md). This is a deterministic s
 
 ## 6.6 Orchestrator Agent
 
-- [ ] Classify intent, plan execution, and select tools.
-- [ ] Sequence agents and coordinate pipeline.
-- [ ] Enforce global timeout, tool-call budgets, and token budgets.
+- [x] Classify strict intents and deterministically compile approved MCP tools; disallow invented IDs and require selection when resolving named titles.
+- [x] Sequence Planner→Search→Quality using server-only evidence and return only Quality-approved presentation DTOs.
+- [x] Enforce 30s global / 10s per-tool deadlines, 5 tool slots, 1 planner invocation, and 4,096 input / 512 output / 4,608 total tokens; no retries/fallback.
+- [x] Add pinned AI SDK 6 Google adapter, actual-wire-request token preflight, controlled errors, and disabled-by-default operator Free Tier activation gate. No live generation authorized/performed.
+- [x] Harden shared MCP initialization, redirect rejection, cancellation, and reconnect-on-later-request behavior.
+- [x] Verify 213 app tests (67 Orchestrator, 32 Google-adapter HTTP mocks), lint/types/build, and all MCP checks/45 tests.
+
+Contract/limits: [`docs/ORCHESTRATOR.md`](../docs/ORCHESTRATOR.md). No public route/UI is connected. Live provider/billing/privacy and actual Next.js→MCP/Render cold-start verification remain pending.
 
 ## 6.7 Validated Streaming UI
 
@@ -211,6 +216,7 @@ See [`docs/QUALITY_GATE.md`](../docs/QUALITY_GATE.md). This is a deterministic s
 
 ## 6.9 Hardening and Phase Closure
 
+- [ ] Triage/fix dependency advisories before recommending deployment; root production audit currently reports 16 findings, including 2 critical. Do not apply broad automatic major upgrades.
 - [ ] Verify unit, integration, and accessibility tests pass.
 - [ ] Verify standalone Docker container build for MCP server.
 - [ ] Update final documentation.

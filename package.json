@@ -20,7 +20,9 @@
     "mcp:verify": "npm --prefix packages/mcp-server run verify"
   },
   "dependencies": {
+    "@ai-sdk/google": "3.0.137",
     "@modelcontextprotocol/sdk": "^1.29.0",
+    "ai": "6.0.314",
     "axios": "^1.13.2",
     "dotenv": "^17.4.2",
     "next": "^16.2.9",

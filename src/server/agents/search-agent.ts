@@ -225,13 +225,25 @@ function buildResult(executions: CallExecution[]): SearchAgentResult {
   });
 }
 
+export type SearchAgentOptions = { signal?: AbortSignal; timeoutMs?: number; maxToolCalls?: number };
+
 /** Executes an orchestrator-supplied MCP plan; it does not call TMDB or an LLM. */
-export async function runSearchAgent(input: unknown): Promise<SearchAgentResult> {
+export async function runSearchAgent(input: unknown, options: SearchAgentOptions = {}): Promise<SearchAgentResult> {
   const plan = searchAgentPlanSchema.parse(input);
+  const budget = options.maxToolCalls ?? 5;
+  if (!Number.isInteger(budget) || budget < 1 || budget > 5 || plan.calls.length > budget) {
+    throw new Error('Invalid or exceeded tool budget');
+  }
+  if (options.timeoutMs !== undefined && (!Number.isInteger(options.timeoutMs) || options.timeoutMs < 1 || options.timeoutMs > 10000)) {
+    throw new Error('Invalid tool timeout');
+  }
+  if (options.signal?.aborted) {
+    return buildResult(plan.calls.map((call, callIndex) => failedExecution(callIndex, call, 'request_failed')));
+  }
   let client: Awaited<ReturnType<typeof getMcpClient>>;
 
   try {
-    client = await getMcpClient();
+    client = await (options.signal ? getMcpClient({ signal: options.signal }) : getMcpClient());
   } catch {
     return buildResult(plan.calls.map((call, callIndex) =>
       failedExecution(callIndex, call, 'mcp_unavailable'),
@@ -240,10 +252,14 @@ export async function runSearchAgent(input: unknown): Promise<SearchAgentResult>
 
   const executions = await Promise.all(plan.calls.map(async (call, callIndex): Promise<CallExecution> => {
     try {
-      const response = await client.callTool({
-        name: call.tool,
-        arguments: getArguments(call),
-      }, CallToolResultSchema);
+      if (options.signal?.aborted) return failedExecution(callIndex, call, 'request_failed');
+      const request = { name: call.tool, arguments: getArguments(call) };
+      const response = options.signal || options.timeoutMs !== undefined
+        ? await client.callTool(request, CallToolResultSchema, {
+          signal: options.signal, timeout: options.timeoutMs ?? 10000,
+          maxTotalTimeout: options.timeoutMs ?? 10000, resetTimeoutOnProgress: false,
+        })
+        : await client.callTool(request, CallToolResultSchema);
       const parsedResult = CallToolResultSchema.safeParse(response);
       if (!parsedResult.success) {
         return failedExecution(callIndex, call, 'invalid_output');

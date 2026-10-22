@@ -1,6 +1,6 @@
 # Quality/Safety Gate — Phase 6.5
 
-`src/server/agents/quality-agent.ts` implements a deterministic, server-only gate. It makes **no Google, TMDB, or MCP calls**, reads no credentials, and is not connected to an API route or UI. Orchestrator integration is Phase 6.6; streaming is Phase 6.7.
+`src/server/agents/quality-agent.ts` implements a deterministic, server-only gate. It makes **no Google, TMDB, or MCP calls**, reads no credentials, and is not connected to an API route or UI. The [6.6 Orchestrator](ORCHESTRATOR.md) now sequences Search→Quality; streaming remains Phase 6.7.
 
 ## API and Trust Boundary
 
@@ -69,7 +69,7 @@ Final output is checked again with a strict Zod DTO schema. Public issues are bo
 
 - This is an exact structured-fact gate, **not** an LLM judge, natural-language entailment checker, toxicity classifier, or proof that source text is true. Unsupported free-form narrative is rejected instead of being guessed at.
 - It detects conflicts retained in the aggregated evidence. Conflicts already discarded by Search Agent deduplication cannot be reconstructed here; per-call provenance/history would require a separate contract change.
-- Selection/ranking intent, recommendation provenance, user preferences, provider timeout/retry/token budgets, and controlled UI messaging belong to the future Orchestrator/integration work.
+- Orchestrator 6.6 compiles selection/tool intent and enforces provider timeout/retry/token budgets; the gate does not independently judge semantic relevance, recommendation provenance, or user preferences. Controlled UI messaging remains integration work.
 - The approved `gemini-3.1-flash-lite`/no-alternate-fallback policy is recorded in [deployment policy](DEPLOYMENT.md#approved-model-policy), but no model is invoked by this gate. Google access/Free Tier billing status and end-user privacy conditions must be checked before live generation.
 
 ## Verification

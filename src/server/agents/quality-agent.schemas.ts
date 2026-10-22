@@ -13,8 +13,9 @@ export function sanitizeQualityText(value: string): string {
 }
 
 const credentialReference = /TMDB_API_KEY|MCP_INTERNAL_API_KEY|GOOGLE_GENERATIVE_AI_API_KEY|authorization\s*:\s*bearer|api_key\s*=|\bAIza[\w-]{30,}/i;
+export const containsCredentialReference = (value: string): boolean => credentialReference.test(value);
 const text = (max: number, min = 0) => z.string().min(min).max(max)
-  .refine(value => value.length <= max && value === sanitizeQualityText(value) && !credentialReference.test(value));
+  .refine(value => value.length <= max && value === sanitizeQualityText(value) && !containsCredentialReference(value));
 const id = z.number().int().positive();
 export const qualityImagePathSchema = z.string().regex(/^\/[a-z\d_-]+\.(?:jpe?g|png|webp)$/i).nullable();
 const person = z.strictObject({ id, name: text(500, 1) });

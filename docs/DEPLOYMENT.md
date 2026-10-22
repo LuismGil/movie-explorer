@@ -124,14 +124,14 @@ Setup reference (already completed according to the evidence above):
 4. In Vercel → **Project → Settings → Environment Variables**, add the exact name `GOOGLE_GENERATIVE_AI_API_KEY`, paste the key as the value, and mark it **Secret/Sensitive**. Select **Production** and, if needed, **Preview**. Keep the key in your own secret store because sensitive values may not be readable after saving. Never use a `NEXT_PUBLIC_` or `VITE_` prefix.
 5. Restart the local dev server if running. Vercel environment changes apply to new deployments, so redeploy to apply the saved configuration. Only confirm that setup is complete; never send the value, a screenshot containing it, or an environment-file dump to chat/Git.
 
-These steps prepare configuration only. Model policy is now approved as recorded below, but the Google provider is not wired into the runtime and adding the key alone does not enable AI/chat. Search/Quality are deterministic and make no model calls. The successful redeploy does not prove Google access or a Next.js-to-MCP call works.
+These steps prepare configuration only. The 6.6 Google adapter now exists but is disabled without trusted server/operator Free Tier confirmation; adding a key alone does not enable generation or AI/chat. No public AI route/UI is connected. Search/Quality are deterministic and make no model calls. The successful redeploy does not prove Google access or a Next.js-to-MCP call works.
 
 References: [Gemini API keys](https://ai.google.dev/gemini-api/docs/api-key), [Google provider environment variable](https://ai-sdk.dev/providers/ai-sdk-providers/google), [Vercel environment variables](https://vercel.com/docs/environment-variables).
 
 ## Approved Model Policy
 
 - **Explicit user approval (2026-10-22):** default `gemini-3.1-flash-lite`, no automatic switch to a second model, and controlled failures instead of paid escalation or unbounded retries. Google's model page labels it stable with structured outputs/function calling; published pricing lists Free Tier text input/output. Availability/quotas depend on the account/project and may change.
-- **Runtime constraints:** schema/Quality validation must never be bypassed. Detailed timeout/tool/token enforcement and provider-error handling are 6.6 Orchestrator work; the implemented 6.5 Quality gate is deterministic and invokes no provider.
+- **Runtime constraints:** schema/Quality validation must never be bypassed. Implemented 6.6 limits: one planner invocation, 4,096 input / 512 output / 4,608 total tokens with exact-request preflight, 5 tool slots, 30s global / 10s tool deadlines, no retries/fallback/continuations. Google planning is disabled until trusted server/operator approval; the flag is not a billing check or free-pricing guarantee. [Runtime contract](ORCHESTRATOR.md).
 - **Cost/privacy condition:** do not enable billing or make live generative calls without confirming the project's Free Tier status. Model selection does not force free billing on a paid project. The published Free Tier table also allows submitted data to be used to improve Google's products; do not submit secrets/private data. Broader end-user privacy requirements must be reviewed before a public AI flow.
 - Entry approval is complete, **not** a runtime/provider-authentication or billing certification. No provider authentication/generation test has been run. Older alternative model labels/cost estimates are superseded by this policy, not current approval for other models.
 
@@ -139,8 +139,8 @@ Sources checked on 2026-10-22: [model capabilities/status](https://ai.google.dev
 
 ## Next Work, in Order
 
-1. Continue with **6.6 Orchestrator**: intent/planning, sequencing the implemented Search→Quality contracts, and runtime timeout/tool/token/provider-error budgets. All 6.0 entry approvals and deterministic 6.5 are complete; see [`QUALITY_GATE.md`](QUALITY_GATE.md).
-2. Confirm Google account/model access, Free Tier billing eligibility, and end-user privacy conditions before any live generation; no paid usage is authorized. No provider calls were made during 6.5.
+1. Continue with **6.7 validated streaming UI**. 6.6 is locally implemented/tested with mocks only: app lint/types/build and 213 tests, MCP lint/types/build and 45 tests pass. No public AI route or UI is connected; see [`ORCHESTRATOR.md`](ORCHESTRATOR.md).
+2. Confirm Google account/model access, Free Tier billing eligibility, and end-user privacy conditions before any live generation/activation; no paid usage is authorized. No provider calls were made during 6.6. Triage dependency-audit findings before recommending deployment (root production audit: 16 findings, including 2 critical; no automatic broad updates attempted).
 3. Verify the actual Next.js-to-MCP path as integration proceeds; retain the remaining remote-tool and free-tier reliability checks for hardening.
 
 The current Vercel pages do not invoke MCP or the Search Agent. Do not add a public diagnostic endpoint or expose the shared secret to browser code just to test the connection.

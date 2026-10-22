@@ -1,5 +1,17 @@
 # Project Context
 
+## Session: 2026-10-22 — Orchestrator 6.6 Implemented
+
+**Estado:** 6.6 is implemented and tested locally with mocks. `runOrchestrator` validates requests/strict intent, compiles approved MCP plans, sequences Search→Quality, and returns only Quality-approved presentation or controlled statuses. The user requested committing this unit, then proceeding to 6.7.
+**Archivos:** `src/server/agents/orchestrator{,.schemas,.plan}.ts`, `google-planner{,.fetch}.ts`, `src/server/runtime/abort.ts`, focused tests, and shared credential-reference validation. `ai@6.0.314` / `@ai-sdk/google@3.0.137` are exact SDK 6 dependencies; fixed model remains `gemini-3.1-flash-lite`.
+**Presupuestos:** One planning invocation, no retries/fallback/SDK continuations, exact-wire-request `countTokens` preflight (4,096 input / 512 output / 4,608 total), 5 reserved MCP calls, 30s global deadline and 10s per-tool/init ceilings. IDs must match request context; title-based ID resolution returns validated choices rather than silently guessing. Unknown request/decision/DTO fields and raw prose cannot reach presentation.
+**MCP:** Redirects rejected, concurrent initialization shared/bounded, cancelled waiters isolated, failed/disconnected singletons cleared for later requests. Search propagates SDK cancellation/timeouts and rechecks tool budget before initialization. This is scoped hardening, not a complete SDK security remediation or real transport verification.
+**Activación:** Google is disabled without trusted server/operator `freeTierConfirmed: true`; request schemas cannot supply this flag/options/evidence/dependencies. This assertion does not check billing or force free pricing. Confirm account/model access, quotas, Free Tier eligibility, privacy conditions, and explicit live-test approval before activation. No Google or live MCP call, secret/environment change, public route/UI, or paid usage was performed.
+**Verificación:** App lint/types/build and all 213 tests pass (67 Orchestrator, 32 real-SDK/mock-HTTP Google, 17 Search, 7 MCP-client, 77 Quality, 13 app/env/UI). MCP verify passes all checks/45 tests. No fresh browser/axe/Lighthouse/Docker checks. Runtime abort prevents downstream continuation but cannot guarantee accepted upstream work stops or consumes no quota.
+**Seguridad pendiente:** Install audit: 59 findings (4 low/12 moderate/40 high/3 critical); production-only audit: 16 (5 moderate/9 high/2 critical), including Next.js/Axios/MCP SDK. All production-reported package names existed before; these three direct versions are unchanged. No broad audit fix attempted; triage/targeted remediation required before recommending deployment.
+**Siguiente tarea:** 6.7 validated streaming UI, controlled progress/localized loading-error-empty-selection states, never raw model/MCP/prompt/Markdown streaming. Keep live Google activation gated; actual Next.js→MCP/Render cold starts and dependency remediation remain pending. Existing pages still use TMDB actions.
+**Detalle:** [`docs/ORCHESTRATOR.md`](../docs/ORCHESTRATOR.md), [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md).
+
 ## Session: 2026-10-22 — Quality/Safety 6.5 Implemented
 
 **Estado:** All 6.0 entry approvals are complete. The user explicitly approved `gemini-3.1-flash-lite`, no automatic alternate-model fallback, controlled provider/quota failures, and no paid usage. Phase 6.5 is implemented as a deterministic server-only gate, with no provider/network calls or UI/API integration.
@@ -106,15 +118,15 @@
 
 ## Current Status
 
-App/MCP lint/types/tests/build were rerun for 6.5. Browser/axe/Lighthouse/Docker entries below describe earlier verification, not fresh 6.5 runs or production AI certification.
+App/MCP lint/types/tests/build were rerun for 6.6. Browser/axe/Lighthouse/Docker entries below describe earlier verification, not fresh 6.6 runs or production AI certification.
 
 - **Active Work**: Phase 6 — MCP Server + Multi-Agent System.
-  - 6.1 foundation, 6.2 MCP tools, 6.3 adapter, 6.4 deterministic Search, and 6.5 deterministic Quality/Safety are implemented.
-  - Search accepts validated tool plans; Quality grounds typed selections/claims and rebuilds strict DTOs. Both await the future Orchestrator and are not connected to UI/public AI routes.
+  - 6.1 foundation, 6.2 MCP tools, 6.3 adapter, 6.4 deterministic Search, 6.5 deterministic Quality/Safety, and 6.6 Orchestrator are implemented.
+  - Orchestrator compiles strict plans and sequences Search→Quality with time/tool/token budgets and a disabled-by-default Google adapter. No UI/public AI route is connected; production activation/integration remain unverified.
   - Vercel/Render, Phase 5 core-flow verification, remote Inspector listing/search, and 6.0 entry approvals are complete. Actual Next.js/provider integration and billing eligibility remain unverified.
 - **ESLint**: 0 warnings, 0 errors (via `npm run lint`).
 - **TypeScript**: 0 compiler errors (via `npm run typecheck`).
-- **Tests**: All 99 app tests pass, including 77 Quality/Safety, 8 Search, and 8 watchlist tests; all 45 MCP tests pass.
+- **Tests**: All 213 app tests pass, including 67 Orchestrator, 32 Google-adapter, 77 Quality/Safety, 17 Search, 7 MCP-client, and 8 watchlist tests; all 45 MCP tests pass.
 - **A11y**: Latest scoped Playwright/axe run against local production on port 3100 found 0 critical/serious violations on Home and empty/saved Watchlist. The hardcoded-port `npm run test:a11y` script was not used in this run.
 - **Lighthouse**: Assertions validated via Lighthouse CI local runs (`npx lhci autorun`). All budgets for Performance, Accessibility, and CLS met.
 - **Docker**: Standalone multi-stage Distroless configuration. CSS asset serving fixed via Tailwind content path correction.

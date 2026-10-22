@@ -248,7 +248,7 @@ npm run lint        # exit 0
 6.3 Server-only MCP Client - [Completed]
 6.4 Search Agent - [Completed]
 6.5 Quality/Safety Agent - [Completed]
-6.6 Orchestrator Agent
+6.6 Orchestrator Agent - [Completed locally with mocks; live activation gated]
 6.7 Validated Streaming UI
 6.8 Cache, Limits, and Observability
 6.9 Hardening and Phase Closure
@@ -302,7 +302,19 @@ All 6.0 entry approvals and **6.5 Quality/Safety** are complete; **6.6 Orchestra
 - [x] Add 77 Quality/Safety tests covering every claim kind, source/proposal limits, unsafe/unknown content, immutable inputs, no-network execution, and mocked Search→Quality integration.
 - [x] Verify app lint/types/build and all 99 tests, plus MCP lint/types/build and all 45 tests. No live provider calls, public AI route, or UI wiring added.
 
-Contract and limitations: [`docs/QUALITY_GATE.md`](../docs/QUALITY_GATE.md). The gate is deterministic: free-form narrative is rejected rather than semantically judged, and source provenance must come from server-side Search execution. Conflicts already discarded by Search deduplication cannot be recovered here. Next is 6.6 intent planning, sequencing, and runtime budgets; do not bypass this gate when integrating.
+Contract and limitations: [`docs/QUALITY_GATE.md`](../docs/QUALITY_GATE.md). The gate is deterministic: free-form narrative is rejected rather than semantically judged, and source provenance must come from server-side Search execution. Conflicts already discarded by Search deduplication cannot be recovered here. Orchestrator integration is implemented below; do not bypass this gate when adding the UI.
+
+### 6.6 Orchestrator Agent
+
+- [x] Validate/normalize requests, classify strict movie intents, and compile only approved MCP tool plans; reject invented movie IDs and unsupported fields/tools.
+- [x] Coordinate Planner→Search→Quality with server-obtained evidence and Quality-only presentation; preserve partial/empty results and require selection when title resolution needs an ID.
+- [x] Enforce a 30s global deadline, 10s tool timeout, 5-call reservation ceiling, and one planner invocation; propagate cancellation with no retry/fallback.
+- [x] Add pinned AI SDK 6 Google planning for the approved model, exact-wire-request token preflight (4,096 input / 512 output / 4,608 total), and controlled provider/usage/budget errors. No SDK continuation or paid escalation.
+- [x] Keep real Google calls disabled without trusted server/operator Free Tier confirmation; no provider request, public AI route, UI wiring, or secret changes performed.
+- [x] Bound/share MCP initialization, reject redirects, and clear failed/disconnected clients; add cancellation/tool-budget regression tests.
+- [x] Verify app lint/types/build and 213 tests, including 67 Orchestrator and 32 mock-HTTP Google adapter tests; MCP lint/types/build and 45 tests pass.
+
+Contract: [`docs/ORCHESTRATOR.md`](../docs/ORCHESTRATOR.md). Live provider access/billing/privacy, actual Next.js→MCP, cold-start suitability, and dependency-audit remediation remain unverified/pending. Next implementation unit is 6.7 validated streaming UI; no production AI certification is implied.
 
 ### Phase 6 Verification
 ```bash

@@ -32,7 +32,15 @@ The system freezes exactly three agents with strictly isolated responsibilities:
 
 The gate checks exact canonical facts, movie-scoped metadata, available summary/detail contradictions, and source status/outcome consistency. It reconstructs a strict, sanitized DTO from evidence rather than forwarding proposal values, raw MCP envelopes, provider messages, or tool outcomes. Valid movies survive rejected selections/partial source failures. Unavailable searches are distinct from successful empty searches. Data remains text-only: it must never be rendered as HTML or Markdown.
 
-See [`docs/QUALITY_GATE.md`](../docs/QUALITY_GATE.md) for schemas, limits, statuses, evidence-trust assumptions, and known limitations. The gate makes no network/provider calls; Orchestrator and UI integration remain later tasks.
+See [`docs/QUALITY_GATE.md`](../docs/QUALITY_GATE.md) for schemas, limits, statuses, evidence-trust assumptions, and known limitations. The gate makes no network/provider calls; Orchestrator integration is implemented in 6.6 and UI integration remains 6.7.
+
+### 6.6 Orchestrator Contract
+
+`runOrchestrator({ message, referenceMovieId? }, serverOptions?)` validates a strict normalized request and invokes one structured Google planner (disabled without trusted Free Tier confirmation). Its strict decision selects search/trending/details/credits/recommendations, title clarification, or unsupported status; a deterministic compiler creates approved MCP tool plans. ID-based decisions must match the supplied reference ID. Options, evidence, model overrides, and dependencies must never come from browser/model input.
+
+Search obtains evidence server-side; at most 20 evidence-derived IDs pass through the deterministic Quality gate. Final outcomes are `completed`, `needs_selection`, `unsupported`, or `failed`, with sanitized usage/codes and no raw plan/provider/Search data. Partial valid results survive; failed/invalid gates cannot expose presentation.
+
+Ceilings: 30s global deadline, 10s shared MCP initialization and per-tool timeout, 5 reserved tool slots, one planner invocation, no retries/alternate models, 4,096 input / 512 output / 4,608 total tokens. The SDK's real request is counted before generation; output/usage is checked again before tools. Abort stops waiting and prevents downstream continuation but cannot guarantee remote work already accepted stops. See [`docs/ORCHESTRATOR.md`](../docs/ORCHESTRATOR.md). No public entry/stream/UI or live provider verification is included.
 
 ## 3. Streaming Response Contracts
 * **Allowed**: Progress events may be streamed only when they contain controlled application-defined status data.

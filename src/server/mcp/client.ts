@@ -2,53 +2,52 @@ import 'server-only';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { getMcpEnv } from '../env/mcp';
+import { awaitWithSignal, createDeadline, throwIfAborted } from '../runtime/abort';
 
-// Singleton instance to prevent creating multiple connections in development/SSR
-let mcpClientInstance: Client | null = null;
-let mcpTransportInstance: StreamableHTTPClientTransport | null = null;
+type Connection = { client: Client; pending: Promise<Client> };
+let connection: Connection | null = null;
 
-export async function getMcpClient(): Promise<Client> {
-  if (mcpClientInstance) {
-    return mcpClientInstance;
-  }
-
+function startConnection(): Connection {
   const env = getMcpEnv();
-  
-  // We use the Streamable HTTP transport as defined in the Phase 6 architecture
-  mcpTransportInstance = new StreamableHTTPClientTransport(new URL(env.MCP_SERVER_URL), {
+  const transport = new StreamableHTTPClientTransport(new URL(env.MCP_SERVER_URL), {
     requestInit: {
-      headers: {
-        'Authorization': `Bearer ${env.MCP_INTERNAL_API_KEY}`
-      }
+      headers: { 'Authorization': `Bearer ${env.MCP_INTERNAL_API_KEY}` },
+      redirect: 'error',
+    },
+  });
+  const client = new Client({ name: 'movie-explorer-mcp-client', version: '1.0.0' }, { capabilities: {} });
+  client.onclose = () => { if (connection?.client === client) connection = null; };
+  const pending: Promise<Client> = Promise.resolve().then(async () => {
+    const deadline = createDeadline(10000);
+    try {
+      // Shared initialization has its own bound; cancelling one waiter must not cancel other callers.
+      await awaitWithSignal(() => client.connect(transport, {
+        signal: deadline.signal, timeout: 10000, maxTotalTimeout: 10000,
+      }), deadline.signal);
+      if (connection !== state) throw new Error('Connection replaced');
+      return client;
+    } catch {
+      if (connection === state) connection = null;
+      void client.close().catch(() => undefined);
+      console.error('MCP connection initialization failed.');
+      throw new Error('Failed to establish connection with the MCP backend.');
+    } finally {
+      deadline.dispose();
     }
   });
+  const state: Connection = { client, pending };
+  connection = state;
+  return state;
+}
 
-  mcpClientInstance = new Client(
-    {
-      name: 'movie-explorer-mcp-client',
-      version: '1.0.0'
-    },
-    {
-      capabilities: {}
-    }
-  );
-
-  try {
-    await mcpClientInstance.connect(mcpTransportInstance);
-  } catch (error) {
-    mcpClientInstance = null;
-    mcpTransportInstance = null;
-    console.error('Failed to connect to the MCP server', error instanceof Error ? error.message : '');
-    throw new Error('Failed to establish connection with the MCP backend.');
-  }
-
-  return mcpClientInstance;
+export async function getMcpClient(options: { signal?: AbortSignal } = {}): Promise<Client> {
+  throwIfAborted(options.signal);
+  const state = connection ?? startConnection();
+  return awaitWithSignal(() => state.pending, options.signal);
 }
 
 export async function closeMcpClient(): Promise<void> {
-  if (mcpClientInstance) {
-    await mcpClientInstance.close();
-    mcpClientInstance = null;
-    mcpTransportInstance = null;
-  }
+  const state = connection;
+  connection = null;
+  if (state) await state.client.close();
 }
