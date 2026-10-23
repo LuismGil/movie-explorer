@@ -1,6 +1,7 @@
 import 'server-only';
 import type { AiStage } from '@/lib/ai/stream-contract';
 import { createDeadline, awaitWithSignal } from '../runtime/abort';
+import { measureAgent, measureAgentSync, recordPlannerTokenUsage } from '../telemetry/ai-metrics';
 import { createGooglePlanner, type GooglePlannerOptions } from './google-planner';
 import { compileOrchestratorPlan } from './orchestrator.plan';
 import {
@@ -38,13 +39,16 @@ export async function runOrchestrator(input: unknown, options: Options = {}): Pr
     deadline.check();
     options.onProgress?.('planning');
     usage.plannerCalls = 1;
-    const planned = await awaitWithSignal(() => (options.planner ?? createGooglePlanner(options.google))(
+    const planned = await measureAgent('planner', () => awaitWithSignal(() => (options.planner ?? createGooglePlanner(options.google))(
       request.data, { signal: deadline.signal, limits },
-    ), deadline.signal);
+    ), deadline.signal), result =>
+      !plannerUsageSchema.safeParse(result.usage).success
+      || !orchestratorDecisionSchema.safeParse(result.decision).success);
     deadline.check();
     const reported = plannerUsageSchema.safeParse(planned.usage);
     if (!reported.success) return fail('invalid_provider_usage');
     Object.assign(usage, reported.data);
+    recordPlannerTokenUsage(reported.data);
     if (reported.data.inputTokens > limits.maxInputTokens || reported.data.outputTokens > limits.maxOutputTokens
       || reported.data.totalTokens > limits.maxTotalTokens) return fail('token_budget_exceeded');
     const decision = orchestratorDecisionSchema.safeParse(planned.decision);
@@ -55,14 +59,18 @@ export async function runOrchestrator(input: unknown, options: Options = {}): Pr
     usage.toolCallsReserved = plan.calls.length;
     deadline.check();
     options.onProgress?.('searching');
-    const searchResult = await awaitWithSignal(() => (options.searchAgent ?? runSearchAgent)(plan, {
+    const searchResult = await measureAgent('search', () => awaitWithSignal(() => (options.searchAgent ?? runSearchAgent)(plan, {
       signal: deadline.signal, timeoutMs: limits.toolTimeoutMs, maxToolCalls: limits.maxToolCalls,
-    }), deadline.signal);
+    }), deadline.signal), result => result.status === 'failed');
     deadline.check();
     // Build selections only from server Search evidence; model-authored prose/IDs are not presentation authority.
     options.onProgress?.('validating');
     const candidates = Array.isArray(searchResult?.movies) ? searchResult.movies.slice(0, 20).map(movie => ({ movieId: movie.id })) : [];
-    const presentation = qualityAgentResultSchema.safeParse((options.qualityAgent ?? runQualityAgent)(searchResult, { movies: candidates }));
+    const presentation = qualityAgentResultSchema.safeParse(measureAgentSync(
+      'quality',
+      () => (options.qualityAgent ?? runQualityAgent)(searchResult, { movies: candidates }),
+      result => result.status === 'rejected' || result.status === 'unavailable',
+    ));
     deadline.check();
     if (!presentation.success) return fail('quality_rejected');
     if (presentation.data.status === 'unavailable') return fail('search_unavailable');
@@ -79,7 +87,10 @@ export async function runOrchestrator(input: unknown, options: Options = {}): Pr
     if (deadline.signal.aborted) return fail(deadline.failureCode());
     if (error instanceof PlannerFailure) {
       const reported = plannerUsageSchema.safeParse(error.usage);
-      if (reported.success) Object.assign(usage, reported.data);
+      if (reported.success) {
+        Object.assign(usage, reported.data);
+        recordPlannerTokenUsage(reported.data);
+      }
       const validated = orchestratorResultSchema.safeParse(fail(error.code));
       return validated.success ? validated.data : fail('internal_error');
     }

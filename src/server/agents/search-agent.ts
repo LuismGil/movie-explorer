@@ -6,6 +6,8 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import type { z } from 'zod';
 import { getMcpClient } from '../mcp/client';
+import { performance } from 'node:perf_hooks';
+import { recordToolCall } from '../telemetry/ai-metrics';
 
 import {
   creditsSchema,
@@ -251,6 +253,8 @@ export async function runSearchAgent(input: unknown, options: SearchAgentOptions
   }
 
   const executions = await Promise.all(plan.calls.map(async (call, callIndex): Promise<CallExecution> => {
+    const startedAt = performance.now();
+    let failed = true;
     try {
       if (options.signal?.aborted) return failedExecution(callIndex, call, 'request_failed');
       const request = { name: call.tool, arguments: getArguments(call) };
@@ -266,10 +270,12 @@ export async function runSearchAgent(input: unknown, options: SearchAgentOptions
       }
 
       try {
+        const payload = parseToolPayload(call, parsedResult.data);
+        failed = false;
         return {
           callIndex,
           tool: call.tool,
-          payload: parseToolPayload(call, parsedResult.data),
+          payload,
         };
       } catch {
         return failedExecution(
@@ -280,6 +286,8 @@ export async function runSearchAgent(input: unknown, options: SearchAgentOptions
       }
     } catch {
       return failedExecution(callIndex, call, 'request_failed');
+    } finally {
+      recordToolCall(call.tool, performance.now() - startedAt, failed);
     }
   }));
 

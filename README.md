@@ -10,7 +10,7 @@
 
 **A movie discovery platform built on React 19, Next.js App Router Server Components, and Server Actions.**
 
-> **Current checkpoint: Phase 6.7 implemented; generation disabled.** `/discover` adds controlled progress and Quality-only results, with honest unavailable/loading/error/empty/selection states. Orchestrator/provider data flows are tested with mocks; live provider/billing/privacy and actual Next.js→MCP verification remain pending. Premium UI polish is Phase 7 work.
+> **Current checkpoint: Phase 6.8 implemented locally; generation disabled.** `/discover` remains unavailable by design. Aggregate process-local telemetry is operator-protected; prompt/result caching is disabled. Production abuse-rate limiting, actual Next.js→Render credentials/integration, Render cold-start suitability, provider/billing/privacy review, and final hardening remain open before Phase 6 closure or Phase 7.
 
 ---
 
@@ -32,9 +32,9 @@ Movie Explorer is a movie discovery application and an engineering case study in
 - **Orchestrator (6.6)** validates requests/structured intent, compiles allowlisted tools, and sequences Search→Quality. Fixed-model Google planning is disabled until trusted Free Tier confirmation, with exact-request token preflight, bounded deadlines, controlled failures, and no retries/fallback. [Contract and activation gate](docs/ORCHESTRATOR.md).
 - **Validated streaming UI (6.7)** adds `/discover` and a bounded same-origin NDJSON entry point. Only static stage codes and Quality DTOs can pass, with clean-EOF validation before presentation; production availability stays false with no provider/agent invocation. [Contract and activation blockers](docs/STREAMING_UI.md).
 
-Local verification on **2026-10-22**: app lint/types/build and **281 tests** pass (including 68 streaming/handler/UI cases); MCP checks and **45 tests** pass. A local production Chromium smoke/axe run on disabled `/discover` passed at desktop/320 px mobile with zero violations, page errors, external requests or horizontal overflow. Enabled flows use synthetic/mocked data, not live Google/MCP. No fresh Docker/Lighthouse or production redeploy was performed for 6.7.
+Local Phase 6.8 verification on **2026-10-23**: app lint/types/build and **286 tests** pass; MCP lint/types/tests/build and **45 tests** pass. Home, Watchlist, and disabled Discover pass the local production axe audit with no critical/serious violations. MCP container build/smoke passed; production dependency audits report zero vulnerabilities. Remaining development-tool advisories and external AI/MCP/Render activation gates are documented in [`docs/AI_OPERATIONS.md`](docs/AI_OPERATIONS.md) and [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md). No live Google request was made.
 
-**Deployment checkpoint (2026-10-22):** [The Vercel app](https://movie-explorer-luis.vercel.app) and [Render MCP service](https://movie-explorer-ppc2.onrender.com/health) are deployed. Health/auth-rejection and user-provided Inspector listing/search smoke checks pass. Live browser retesting of the watchlist fix closed Phase 5 production verification. All 6.0 entry approvals, including model policy, are complete, and Google/MCP Production variables/redeployment are user-confirmed. Actual Next.js-to-MCP and Google integration/billing remain unverified; the current UI does not use Search/Quality. Evidence and policy: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
+**Deployment checkpoint (2026-10-23):** [The Vercel app](https://movie-explorer-luis.vercel.app) and [Render MCP service](https://movie-explorer-ppc2.onrender.com/health) are deployed. Health/auth-rejection and user-provided Inspector listing/search smoke checks pass. Live browser retesting of the watchlist fix closed Phase 5 production verification. All 6.0 entry approvals, including model policy, are complete, and Google/MCP Production variables/redeployment are user-confirmed. Phase 6.8 changes are local and not redeployed; because public AI availability remains disabled, the current UI does not invoke Search/Quality. Actual Next.js-to-MCP and Google integration/billing remain unverified. Evidence and policy: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
 The historical local TestSprite report (2026-07-19) contains 13 failures out of 24 scenarios, including conflicting results for similar flows. These need reproduction before being classified as current application defects.
 
@@ -83,11 +83,11 @@ Execution tracking: [`.ai/PLAN.md`](.ai/PLAN.md). Architecture: [`.ai/ARCHITECTU
 
 | Layer | Technology |
 |---|---|
-| **Runtime** | React 19.2.0, Next.js 16.2.9 App Router, TypeScript 5.9.3 (strict) |
+| **Runtime** | React 19.2.0, Next.js 16.4.3 App Router, TypeScript 5.9.3 (strict) |
 | **Styling** | Tailwind CSS v3.4.18, Immersive Minimalism design system, PostCSS v8.5.6 |
 | **Testing** | Vitest v4.0.16, React Testing Library, axe-core, Lighthouse CI |
 | **DevOps** | Docker (multi-stage, standalone runner), GitHub Actions CI/CD |
-| **MCP server** | MCP SDK 1.29.0, Express 5.2.1, Zod 4.4.3, independent TypeScript/tsup/Vitest tooling |
+| **MCP server** | MCP SDK 1.32.2, Express 5.2.1, Zod 4.6.7, independent TypeScript/tsup/Vitest tooling |
 | **AI planning (gated)** | AI SDK 6.0.314, Google provider 3.0.137, fixed `gemini-3.1-flash-lite` |
 
 ---
@@ -189,6 +189,7 @@ docker run --rm -p 3000:3000 \
 | `MCP_SERVER_URL` | Next.js server | Adapter endpoint; defaults to `http://127.0.0.1:3001/mcp`. Required deployment value when MCP is used remotely. |
 | `MCP_INTERNAL_API_KEY` | Both servers | Shared Bearer credential, at least 32 characters. Required when the adapter/server is used. |
 | `GOOGLE_GENERATIVE_AI_API_KEY` | Next.js server | Used only by explicitly activated Google planning; a configured key alone does not enable generation. |
+| `AI_TELEMETRY_API_KEY` | Next.js server | Optional operator-only Bearer key (at least 32 characters) for aggregate process-local token/latency metrics. |
 
 > **Security note**: No environment variables use the `NEXT_PUBLIC_` prefix. `TMDB_API_KEY` is inaccessible to client-side JavaScript.
 
@@ -211,6 +212,7 @@ The root `.env.example` uses canonical `GOOGLE_GENERATIVE_AI_API_KEY`. Architect
 | `npm run mcp:lint` / `mcp:typecheck` / `mcp:test` | Runs independent MCP quality checks. |
 | `npm run mcp:build` / `mcp:start` | Builds / starts the standalone MCP server. |
 | `npm run mcp:verify` | Runs MCP lint → typecheck → tests → build. |
+| `npm run verify:mcp:remote` | Calls the documented Render MCP deployment through the server-only Search Agent; never invokes Google. Configure local `.env.local` first. |
 
 ---
 

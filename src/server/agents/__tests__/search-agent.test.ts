@@ -5,6 +5,7 @@ const { mockGetMcpClient } = vi.hoisted(() => ({ mockGetMcpClient: vi.fn() }));
 vi.mock('../../mcp/client', () => ({ getMcpClient: mockGetMcpClient }));
 
 import { runSearchAgent } from '../search-agent';
+import { getAiTelemetrySnapshot, resetAiTelemetryForTests } from '../../telemetry/ai-metrics';
 
 function textResult(payload: unknown) {
   return { content: [{ type: 'text' as const, text: JSON.stringify(payload) }] };
@@ -22,6 +23,7 @@ describe('runSearchAgent', () => {
   const callTool = vi.fn();
 
   beforeEach(() => {
+    resetAiTelemetryForTests();
     vi.resetAllMocks();
     mockGetMcpClient.mockResolvedValue({ callTool });
   });
@@ -71,6 +73,10 @@ describe('runSearchAgent', () => {
       { name: 'search_movies', arguments: { query: 'example', page: 2 } },
       expect.anything(),
     );
+    expect(getAiTelemetrySnapshot().tools).toMatchObject({
+      search_movies: { calls: 1, failures: 0 },
+      get_trending: { calls: 1, failures: 0 },
+    });
   });
 
   it('keeps valid results when another MCP tool reports an error', async () => {

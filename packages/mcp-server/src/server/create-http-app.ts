@@ -49,7 +49,6 @@ export function createHttpApp() {
     });
     
     const server = await createMcpServer();
-    // @ts-expect-error mismatch with exactOptionalPropertyTypes
     await server.connect(transport);
     
     const start = Date.now();

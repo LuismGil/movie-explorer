@@ -10,7 +10,7 @@ WORKDIR /app
 COPY --from=base /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
-RUN npm prune --production
+RUN npm prune --omit=dev
 
 # Stage 3: Runner
 FROM gcr.io/distroless/nodejs20-debian12 AS runner

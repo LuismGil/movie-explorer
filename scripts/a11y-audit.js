@@ -15,7 +15,8 @@ import AxeBuilder from '@axe-core/playwright';
   const page = await context.newPage();
   const targetPages = [
     { name: 'Home', url: 'http://localhost:3000/' },
-    { name: 'Watchlist', url: 'http://localhost:3000/watchlist' }
+    { name: 'Watchlist', url: 'http://localhost:3000/watchlist' },
+    { name: 'Discover', url: 'http://localhost:3000/discover' }
   ];
 
   let totalViolations = 0;

@@ -11,6 +11,11 @@
 ├── app
 │   ├── layout.tsx
 │   ├── page.tsx
+│   ├── api
+│   │   ├── ai
+│   │   │   └── search/route.ts
+│   │   └── telemetry
+│   │       └── tokens/route.ts
 │   ├── movie
 │   │   └── [id]
 │   │       └── page.tsx
@@ -19,13 +24,15 @@
 ├── docs
 │   ├── ANATOMY.md
 │   ├── DEPLOYMENT.md        # Deployment evidence, verification limits, and next steps
+│   ├── AI_OPERATIONS.md     # Phase 6.8 cache, telemetry, and activation boundaries
 │   ├── QUALITY_GATE.md      # Deterministic Quality/Safety contract and limitations
 │   └── ui_ux_principles_design_guide.html
 ├── .github
 │   └── workflows
 │       └── ci.yml
 ├── scripts
-│   └── a11y-audit.js
+│   ├── a11y-audit.js
+│   └── verify-mcp-remote.ts # Opt-in server-only adapter check; never calls Google
 ├── shared
 │   └── tokens
 │       ├── colors.json
@@ -85,8 +92,10 @@
 │   │   │   └── search-agent.ts
 │   │   ├── env
 │   │   │   └── mcp.ts
-│   │   └── mcp
+│   │   ├── mcp
 │   │       └── client.ts
+│   │   └── telemetry
+│   │       └── ai-metrics.ts
 │   ├── test
 │   │   └── setup.ts
 │   ├── types

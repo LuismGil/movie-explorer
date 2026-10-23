@@ -250,8 +250,8 @@ npm run lint        # exit 0
 6.5 Quality/Safety Agent - [Completed]
 6.6 Orchestrator Agent - [Completed locally with mocks; live activation gated]
 6.7 Validated Streaming UI - [Completed locally; production generation disabled]
-6.8 Cache, Limits, and Observability
-6.9 Hardening and Phase Closure
+6.8 Cache, Limits, and Observability - [Implemented locally; distributed abuse limiting remains a pre-activation gate]
+6.9 Hardening and Phase Closure - [Open; remote integration/cold-start and operator approvals remain]
 
 ### 6.0 Architecture and Entry Gates
 
@@ -268,9 +268,9 @@ npm run lint        # exit 0
 
 **Approval/configuration record (2026-10-22):** The user explicitly approved the current architecture/contracts (Vercel, standalone Render MCP, Streamable HTTP, Bearer authentication, and five tools). After Google setup, they confirmed all variables in Vercel Production and a successful redeploy; local Google key presence was checked without revealing or transmitting the value. This does not approve model identifiers, fallback behavior, paid API usage, or future contract changes, and is not a provider-authentication test.
 
-**Model approval (2026-10-22):** The user explicitly approved `gemini-3.1-flash-lite`, no automatic alternate-model fallback, and controlled failure on quota/provider errors. No paid usage is authorized. Account/model access, actual Free Tier billing status, provider integration, and runtime timeout/token enforcement remain to be verified/implemented before live generation. Choosing a model does not prevent charges on a paid project. See [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md#approved-model-policy). Phase 6.5 is deterministic and makes no provider calls.
+**Model approval (2026-10-22):** The user explicitly approved `gemini-3.1-flash-lite`, no automatic alternate-model fallback, and controlled failure on quota/provider errors. No paid usage is authorized. Runtime timeout/token enforcement is implemented; account/model access, actual Free Tier billing status, provider integration, and privacy approval remain to be confirmed before live generation. Choosing a model does not prevent charges on a paid project. See [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md#approved-model-policy). Phase 6.5 is deterministic and makes no provider calls.
 
-### Deployment Evidence — 2026-10-22
+### Deployment Evidence — 2026-10-23
 
 - [x] Record the user-reported Render Free deployment from `packages/mcp-server` at `https://movie-explorer-ppc2.onrender.com/mcp`.
 - [x] Verify remote `/health` and `/ready` return HTTP 200 and unauthenticated `POST /mcp` returns HTTP 401.
@@ -279,8 +279,10 @@ npm run lint        # exit 0
 - [x] Confirm authenticated tool listing and a real TMDB search against Render: user-provided Inspector 1.0.3 output lists all five tools and `search_movies(query=Inception, page=1)` returns TMDB data including movie 27205 (`A Origem`), without an MCP error.
 - [ ] Verify actual Next.js-to-Render MCP execution; no current page invokes the adapter.
 - [ ] Evaluate Render Free wake-up latency and its interaction with request timeouts.
+- [x] Sample four sequential public `/health` requests: 200 in 13,869 ms, 620 ms, 245 ms, and 237 ms. The first measurement's idle duration was unknown, so this is not a cold-start certification; its latency exceeds the configured 10s initialization/tool bound.
+- [ ] Run the local server-only adapter verification against Render; this checkout has no local `MCP_INTERNAL_API_KEY`. `npm run verify:mcp:remote` exercises all five tools without Google calls and refuses non-Render targets.
 
-All 6.0 entry approvals and **6.5 Quality/Safety** are complete; **6.6 Orchestrator** is next. Inspector success and saved environment variables still do not prove Next.js-to-Render or Google-provider integration; the current UI does not use these paths. Billing/Free Tier eligibility must be confirmed before live generation. Setup/status: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md#google-gemini-credential-setup).
+All 6.0 entry approvals and units 6.1–6.7 plus 6.8 cache/telemetry work are implemented locally. The distributed rate-limit item remains open. Inspector success and saved environment variables still do not prove Next.js-to-Render or Google-provider integration. Billing/Free Tier eligibility and end-user privacy must be confirmed before live generation. Generation remains disabled. Setup/status: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md#google-gemini-credential-setup).
 
 ### 6.4 Search Agent
 
@@ -314,7 +316,7 @@ Contract and limitations: [`docs/QUALITY_GATE.md`](../docs/QUALITY_GATE.md). The
 - [x] Bound/share MCP initialization, reject redirects, and clear failed/disconnected clients; add cancellation/tool-budget regression tests.
 - [x] Verify app lint/types/build and 213 tests, including 67 Orchestrator and 32 mock-HTTP Google adapter tests; MCP lint/types/build and 45 tests pass.
 
-Contract: [`docs/ORCHESTRATOR.md`](../docs/ORCHESTRATOR.md). Live provider access/billing/privacy, actual Next.js→MCP, cold-start suitability, and dependency-audit remediation remain unverified/pending. No production AI certification is implied.
+Contract: [`docs/ORCHESTRATOR.md`](../docs/ORCHESTRATOR.md). Live provider access/billing/privacy, actual Next.js→MCP, and cold-start suitability remain unverified/pending. Production dependency audits are clear after same-major updates; remaining development-only audit findings are documented. No production AI certification is implied.
 
 ### 6.7 Validated Streaming UI
 
@@ -325,7 +327,28 @@ Contract: [`docs/ORCHESTRATOR.md`](../docs/ORCHESTRATOR.md). Live provider acces
 - [x] Keep the public server gate and real Google activation disabled; UI discloses unavailability, with no fake results or network generation.
 - [x] Verify lint/types/build, 281 app tests (68 new streaming/handler/UI cases), MCP checks/45 tests, and local standalone Chromium/axe on desktop/mobile with zero violations, page errors or external requests.
 
-Contract and verification scope: [`docs/STREAMING_UI.md`](../docs/STREAMING_UI.md). Live activation still requires eligibility/privacy approval, abuse/rate-limit review, dependency remediation and actual Next.js→MCP testing. Next implementation unit: 6.8 cache, limits, and observability.
+Contract and verification scope: [`docs/STREAMING_UI.md`](../docs/STREAMING_UI.md). Live activation still requires eligibility/privacy approval, a reviewed distributed abuse-rate limit, and actual Next.js→MCP testing. 6.8 operations work is recorded below.
+
+### 6.8 Cache, Limits, and Observability
+
+- [x] Define a no-user-data cache strategy: no prompt, evidence, model decision, tool result, or presentation cache; keep only the process-local MCP connection reuse.
+- [x] Record bounded, fixed-cardinality planner/search/quality latency and reported token totals, plus per-tool latency/failures. Do not retain raw prompts, movie IDs, results, credentials, or exception text.
+- [x] Add uncached `GET /api/telemetry/tokens` with optional operator-only `AI_TELEMETRY_API_KEY`; fail closed when unset or invalid.
+- [x] Document process-local/serverless limitations and preserve token/tool/deadline ceilings; keep the public generation route disabled.
+- [ ] Configure and review a distributed abuse-rate limiter before enabling the public route; no shared rate-limit store is approved/configured.
+
+Operations contract: [`docs/AI_OPERATIONS.md`](../docs/AI_OPERATIONS.md). Telemetry is per-process, non-durable, and not billing reconciliation. Deterministic Search/Quality report zero model tokens; planner totals remain null when provider usage is unavailable.
+
+### 6.9 Hardening and Phase Closure
+
+- [x] Triage/fix production dependency advisories using same-major updates only: root and MCP `npm audit --omit=dev` both report zero vulnerabilities. Full development audits retain documented toolchain advisories; no Tailwind/Lighthouse major change was forced.
+- [x] Verify application lint, typecheck, production build, 286 tests, MCP lint/typecheck/build/45 tests, Home/Watchlist/Discover axe checks, and MCP standalone Docker build plus health/unauthenticated-auth smoke.
+- [x] Update deployment, operations, architecture, README, and task-tracking documentation with evidence and limitations.
+- [ ] Execute the authenticated server-only Next.js MCP adapter against deployed Render (requires operator-provided local secret; no secret is present in this checkout).
+- [ ] Measure a confirmed Render Free idle wake-up and determine whether the 10s connection/tool timeout is suitable; current first health sample was 13.9s but idle duration was unknown.
+- [ ] Confirm Google account/model access, Free Tier billing eligibility, end-user privacy, and live-test authorization before any provider call. No Google request or paid usage is authorized/performed.
+
+**Phase 6 closure remains blocked** by the open external and rate-limit gates above. Do not begin Phase 7 until every Phase 6 checkbox is closed or the user explicitly amends the phase-order rule.
 
 ### Phase 6 Verification
 ```bash

@@ -39,10 +39,10 @@ Static copy is centralized in `src/i18n/messages.ts` (`pt-BR`). Styling is scope
 - Desktop (1440 px) and mobile (320 px) axe WCAG A/AA checks returned **zero violations** on the disabled discovery page. No horizontal overflow at 320 px; keyboard focus outline verified. Screenshots stayed outside Git under `/tmp/opencode`; the temporary server was stopped.
 - Targeted client-bundle scan found none of the Google endpoint/model or MCP-runtime error markers. This is a scoped boundary check, not a comprehensive secret/reachability/security audit.
 
-Enabled streaming/results are tested with mocks, **not** browser/live Google/MCP. No production redeploy, Docker/Lighthouse rerun, full-site accessibility certification, billing verification, environment modification, new dependency, or paid usage occurred in 6.7. Existing dependency audit findings remain unresolved.
+Enabled streaming/results are tested with mocks, **not** browser/live Google/MCP. No production redeploy, Docker/Lighthouse rerun, full-site accessibility certification, billing verification, environment modification, new dependency, or paid usage occurred in 6.7. The later 6.8 dependency update cleared production-only audits; development-tool advisories remain documented in [`ORCHESTRATOR.md`](ORCHESTRATOR.md).
 
 ## Activation remains blocked
 
 Do not make the public gate environment-controlled or enable it merely because a key is present. Before activation: confirm model/account access, quota, Free Tier billing eligibility and end-user privacy; obtain explicit live-test approval; implement/review abuse protection and rate limits; triage dependency security findings; and verify actual Next.js→MCP/Render cold starts. Only trusted server code may configure the separate 6.6 Google `freeTierConfirmed` assertion; it cannot guarantee free billing. Current public code has **neither gate enabled**.
 
-Next implementation unit: **6.8 cache, rate limits, and observability**. Keep raw prompts, secrets, source envelopes, and generated text out of telemetry/cache. No new hosting/payment/model choice is authorized by this UI work.
+Phase 6.8 now keeps prompts/evidence/results out of cache and records only bounded process-local agent/tool aggregates. Distributed rate limiting remains an activation gate because no shared store is approved/configured. Keep raw prompts, secrets, source envelopes, and generated text out of telemetry/cache. No new hosting/payment/model choice is authorized by this UI work. See [`AI_OPERATIONS.md`](AI_OPERATIONS.md).

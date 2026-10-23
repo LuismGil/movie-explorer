@@ -17,12 +17,13 @@ Expected Render settings: allow origin `https://movie-explorer-luis.vercel.app`,
 
 - Agent HTTP checks: `GET /health` → `200 {"status":"ok"}`; `GET /ready` → `200 {"status":"ready"}`.
 - Agent authentication check: `POST /mcp` without credentials → `401 {"error":"Unauthorized"}`.
-- During the latest availability check, the first `/health` request returned 503; subsequent `/health` and `/ready` requests returned 200 with the expected JSON. The cause and wake-up duration were not established. Health success after recovery is not a cold-start/reliability certification.
+- Latest health timing sample (2026-10-23): four sequential `/health` requests returned 200 in 13,869 ms, 620 ms, 245 ms, and 237 ms. The initial latency is compatible with a wake-up but the pre-check idle duration was unknown, so this is not a verified cold-start measurement. It exceeds the 10-second MCP connection/tool budget on the first sample; Render Free suitability remains unresolved.
 - User reported successful **local** health/readiness, authentication, Inspector tool listing, and a real TMDB search.
 - User-provided **remote** Inspector 1.0.3 output confirms authenticated `tools/list` with all five documented tools and `search_movies(query=Inception, page=1)` returning real TMDB data, including movie 27205 (`A Origem`), with no MCP error.
-- **Pending:** actual Next.js-to-Render execution, authenticated calls to the other four tools, and broader failure/reliability testing. Listing tools does not exercise every tool, and Inspector success does not prove Vercel integration.
+- **Pending:** authenticated Next.js server-adapter execution and broader failure/reliability testing. A local opt-in `npm run verify:mcp:remote` exercises all five tools through the same server-only MCP client/Search Agent; the current checkout has no local MCP secret, so it was not run. Listing tools does not prove Vercel integration.
 - Health/readiness do not test TMDB credentials or upstream availability.
-- Render deployment success was reported by the user; build logs and image contents were not inspected. The previous local Docker build attempt was blocked by daemon permissions.
+- Render deployment success was reported by the user; build logs and image contents were not inspected. An earlier local Docker attempt was blocked by daemon permissions; a later local build/smoke succeeded as recorded below.
+- Local MCP container verification (2026-10-23): `docker build -t movie-explorer-mcp:phase6-check ./packages/mcp-server` succeeded after the dependency updates. A container started with synthetic health-smoke credentials returned `/health` 200 and unauthenticated `POST /mcp` 401, then was stopped. The synthetic values were not production credentials and no TMDB/Google call was made.
 - Free-tier idle wake-up latency, load testing, and production suitability remain unverified.
 
 ### Vercel
@@ -139,8 +140,8 @@ Sources checked on 2026-10-22: [model capabilities/status](https://ai.google.dev
 
 ## Next Work, in Order
 
-1. Continue with **6.8 cache, rate limits, and observability**. 6.7 is locally implemented with generation disabled: app lint/types/build and 281 tests, MCP lint/types/build and 45 tests pass. Disabled-UI standalone Chromium/axe desktop/mobile checks pass; enabled streams/results remain mocked. See [`STREAMING_UI.md`](STREAMING_UI.md).
-2. Confirm Google account/model access, Free Tier billing eligibility, and end-user privacy conditions before any live generation/activation; no paid usage is authorized. No provider calls were made during 6.6. Triage dependency-audit findings before recommending deployment (root production audit: 16 findings, including 2 critical; no automatic broad updates attempted).
-3. Verify the actual Next.js-to-MCP path as integration proceeds; retain the remaining remote-tool and free-tier reliability checks for hardening.
+1. Phase 6.8 now documents no user-data/result caching and records fixed-cardinality process-local agent/tool latency and token aggregates. The operator-only telemetry route is guarded by optional `AI_TELEMETRY_API_KEY`; the public AI route stays disabled. See [`AI_OPERATIONS.md`](AI_OPERATIONS.md).
+2. Root production dependency audit is clear after targeted same-major security updates. The full development audit still contains advisories whose available remediation requires a Tailwind 4 or Lighthouse CI major change; those changes were not applied. MCP production audit is clear; one low development-only `esbuild` advisory remains under triage.
+3. Run `npm run verify:mcp:remote` locally with the secret already in `.env.local`; do not send credentials. Confirm Google account/model access, Free Tier billing eligibility, and end-user privacy before any live generation; no paid use or provider request is authorized. Render cold-start suitability and distributed abuse-rate limiting also remain open.
 
 The existing Vercel movie pages do not invoke MCP or Search; 6.7 was not pushed/deployed here. Its new public route also stays disabled and performs no provider/agent calls. Do not add a public diagnostic endpoint or expose the shared secret to browser code just to test the connection.

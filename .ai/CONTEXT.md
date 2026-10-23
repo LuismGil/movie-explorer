@@ -1,5 +1,12 @@
 # Project Context
 
+## Session: 2026-10-23 — Phase 6.8 Implemented; Phase 6 Still Open
+
+**Estado:** Added aggregate process-local telemetry for Planner/Search/Quality and the five MCP tools, plus an uncached `GET /api/telemetry/tokens` protected by optional server-only `AI_TELEMETRY_API_KEY`. No prompts, movie IDs, results, credentials, or raw exceptions are retained. Prompt/evidence/result caching remains disabled; only the MCP connection is reused. The public AI route and Google activation remain disabled.
+**Seguridad:** Same-major updates moved Next.js 16.4.3, Axios 1.20.0, MCP SDK 1.32.2, and Zod 4.6.7 into patched ranges. Root and MCP production audits report zero vulnerabilities. Root dev audit retains 19 toolchain findings requiring Tailwind/Lighthouse changes; MCP retains one low dev-only `esbuild` advisory. No major upgrade was forced.
+**Verificación:** App lint/typecheck/build and 286 tests pass; MCP lint/typecheck/build and 45 tests pass. Home/Watchlist/Discover production axe audit, MCP Docker build, health and unauthenticated 401 smoke pass. Render health sample: 13.869s, 620ms, 245ms, 237ms; initial idle duration was unknown, so cold start is unresolved.
+**Pendientes que bloquean Phase 7:** Run `npm run verify:mcp:remote` with a locally configured `MCP_INTERNAL_API_KEY` (not available in this checkout), measure confirmed Render idle wake, review distributed abuse-rate limiting (no shared store approved), and confirm Google Free Tier/privacy/live-test gates. No live Google call or paid use was made. Full evidence: [`docs/AI_OPERATIONS.md`](../docs/AI_OPERATIONS.md), [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md).
+
 ## Session: 2026-10-22 — Validated Streaming UI 6.7 Implemented
 
 **Estado:** After committing 6.6 as `eae2697`, continued into 6.7 at the user's request. `/discover`, leaf `AIChatPanel`, and bounded same-origin `POST /api/ai/search` now exist locally. No push/redeploy was performed. Existing movie pages/actions remain unchanged; navigation includes the new gated page.

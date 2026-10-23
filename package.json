@@ -17,7 +17,8 @@
     "mcp:test": "npm --prefix packages/mcp-server run test",
     "mcp:build": "npm --prefix packages/mcp-server run build",
     "mcp:start": "npm --prefix packages/mcp-server run start",
-    "mcp:verify": "npm --prefix packages/mcp-server run verify"
+    "mcp:verify": "npm --prefix packages/mcp-server run verify",
+    "verify:mcp:remote": "node --conditions=react-server --import tsx scripts/verify-mcp-remote.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "3.0.137",

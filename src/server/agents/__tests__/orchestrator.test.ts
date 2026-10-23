@@ -3,6 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { runOrchestrator } from '../orchestrator';
 import { runQualityAgent } from '../quality-agent';
 import { runSearchAgent } from '../search-agent';
+import { getAiTelemetrySnapshot, resetAiTelemetryForTests } from '../../telemetry/ai-metrics';
+import { GET as getTokenTelemetry } from '../../../../app/api/telemetry/tokens/route';
 import { orchestratorResultSchema, PlannerFailure, type OrchestratorDecision, type OrchestratorPlanner } from '../orchestrator.schemas';
 import type { SearchAgentResult } from '../search-agent.schemas';
 
@@ -25,6 +27,7 @@ describe('runOrchestrator', () => {
   let qualityAgent: ReturnType<typeof vi.fn<typeof runQualityAgent>>;
 
   beforeEach(() => {
+    resetAiTelemetryForTests();
     vi.stubGlobal('fetch', vi.fn(() => { throw new Error('Live HTTP forbidden in tests'); }));
     planner = vi.fn<OrchestratorPlanner>().mockResolvedValue({ decision: decision(), usage: reportedUsage });
     searchAgent = vi.fn<typeof runSearchAgent>().mockResolvedValue(structuredClone(evidence));
@@ -49,6 +52,37 @@ describe('runOrchestrator', () => {
     expect(result).not.toHaveProperty('decision');
     expect(result).not.toHaveProperty('outcomes');
     expect(globalThis.fetch).not.toHaveBeenCalled();
+    expect(getAiTelemetrySnapshot().agents).toMatchObject({
+      planner: { calls: 1, failures: 0, tokenUsage: { inputTokens: 100, outputTokens: 40, totalTokens: 140 } },
+      search: { calls: 1, failures: 0 },
+      quality: { calls: 1, failures: 0 },
+    });
+  });
+
+  it('serves the expected aggregate agent breakdown after ten mocked requests', async () => {
+    const originalKey = process.env.AI_TELEMETRY_API_KEY;
+    process.env.AI_TELEMETRY_API_KEY = 'test-telemetry-operator-key-with-at-least-32-characters';
+    try {
+      for (let index = 0; index < 10; index += 1) {
+        const result = await runOrchestrator({ message: 'Find Example' }, { planner, searchAgent, qualityAgent });
+        expect(result.status).toBe('completed');
+      }
+
+      const response = getTokenTelemetry(new Request('https://example.test/api/telemetry/tokens', {
+        headers: { Authorization: `Bearer ${process.env.AI_TELEMETRY_API_KEY}` },
+      }));
+      expect(response.status).toBe(200);
+      expect(await response.json()).toMatchObject({
+        agents: {
+          planner: { calls: 10, tokenUsage: { reports: 10, inputTokens: 1000, outputTokens: 400, totalTokens: 1400 } },
+          search: { calls: 10, failures: 0, tokenUsage: { inputTokens: 0, outputTokens: 0, totalTokens: 0 } },
+          quality: { calls: 10, failures: 0, tokenUsage: { inputTokens: 0, outputTokens: 0, totalTokens: 0 } },
+        },
+      });
+    } finally {
+      if (originalKey === undefined) delete process.env.AI_TELEMETRY_API_KEY;
+      else process.env.AI_TELEMETRY_API_KEY = originalKey;
+    }
   });
 
   it.each([

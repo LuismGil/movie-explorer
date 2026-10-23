@@ -216,12 +216,21 @@ Contract/limits: [`docs/STREAMING_UI.md`](../docs/STREAMING_UI.md). Enabled data
 
 ## 6.8 Cache, Limits, and Observability
 
-- [ ] Define caching strategies without leaking user data.
-- [ ] Record tool latency and token usage.
+- [x] Define caching strategies without leaking user data: no prompt/evidence/result caching; reuse only the server-side MCP connection; AI responses are `no-store`.
+- [x] Record fixed-cardinality agent/tool latency, failures, and reported planner token usage in process-local aggregate metrics only.
+- [x] Add operator-protected, uncached `/api/telemetry/tokens`; fail closed without `AI_TELEMETRY_API_KEY`; document process/serverless scope.
+- [ ] Configure a reviewed distributed abuse rate limit before public AI activation; no shared store is currently approved/configured.
+
+See [`docs/AI_OPERATIONS.md`](../docs/AI_OPERATIONS.md). No model calls, user identifiers, prompts, results, movie IDs, or raw errors are included in telemetry.
 
 ## 6.9 Hardening and Phase Closure
 
-- [ ] Triage/fix dependency advisories before recommending deployment; root production audit currently reports 16 findings, including 2 critical. Do not apply broad automatic major upgrades.
-- [ ] Verify unit, integration, and accessibility tests pass.
-- [ ] Verify standalone Docker container build for MCP server.
-- [ ] Update final documentation.
+- [x] Triage/fix production dependency advisories without broad major upgrades: root and MCP production-only audits now report zero vulnerabilities. Full audits retain documented development-tool findings.
+- [x] Verify application lint, types, build, 286 unit/mock-integration tests, MCP lint/types/build/45 tests, and Home/Watchlist/Discover axe audits.
+- [x] Verify standalone MCP Docker build and local health/unauthenticated-auth smoke.
+- [x] Update README, deployment/operations docs, architecture, and phase tracking.
+- [ ] Run the authenticated server-only MCP adapter against Render via `npm run verify:mcp:remote`; no local `MCP_INTERNAL_API_KEY` is configured here.
+- [ ] Measure Render Free wake-up after a confirmed idle window and evaluate against 10s connection/tool timeouts; the current 13.9s first sample had unknown idle duration.
+- [ ] Confirm Google account/model access, Free Tier billing eligibility, end-user privacy, and explicit live-test approval before any provider request. No paid usage is authorized.
+
+**Phase 6 remains open** until the remaining integration, latency, abuse-rate-limit, and operator gates above are resolved. Keep `/discover` and generation disabled.

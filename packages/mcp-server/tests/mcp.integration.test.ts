@@ -47,7 +47,6 @@ describe('MCP Integration Test', () => {
       }
     );
 
-    // @ts-expect-error exactOptionalPropertyTypes mismatch
     await client.connect(transport);
     
     const result = await client.listTools();

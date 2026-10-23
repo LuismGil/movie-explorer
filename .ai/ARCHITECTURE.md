@@ -1,10 +1,10 @@
 # Movie Explorer: Architecture & Structural Truth
 
-This document defines the 2026 senior-level target architecture for Movie Explorer. It serves as the "structural truth" of the system. Any AI agent operating in this repository MUST read and adhere to these architectural guidelines before touching the code.
+This document records the current and approved target architecture for Movie Explorer. It serves as the structural truth of the system. Any AI agent operating in this repository MUST read and adhere to these architectural guidelines before touching the code.
 
 ## 1. Frontend Topology (React 19 & Next.js)
 
-The application is migrating from a traditional Vite SPA to a server-rendered architecture using Next.js App Router.
+The application has migrated from a traditional Vite SPA to a server-rendered architecture using Next.js App Router.
 
 * **Server Components by Default:** Data-heavy pages are written as async React Server Components (RSC) to completely eliminate client-side data fetching waterfalls.
 * **Client Boundaries:** The `"use client"` directive is reserved strictly for leaf nodes requiring interactivity.
@@ -12,7 +12,7 @@ The application is migrating from a traditional Vite SPA to a server-rendered ar
 
 ## 2. Canonical Target Flow
 
-The target flow for AI interactions is:
+The implemented, server-owned flow for a future enabled AI interaction is:
 
 User
 → Next.js UI
@@ -30,11 +30,11 @@ User
 * Progress events may be streamed only when they contain controlled application-defined status data.
 * **Never stream:** raw model output; raw MCP responses; private prompts; chain-of-thought; tool arguments containing secrets; unvalidated Markdown or HTML.
 
-**Current implementation:** the standalone MCP server, five TMDB tools, server-only client, deterministic Search Agent, and 6.5 Quality/Safety gate exist. Search returns normalized/deduplicated evidence; Quality validates typed selections/claims and reconstructs a strict presentation DTO while preserving valid partial results. Quality has no network/provider dependency. The Orchestrator does not yet produce the tool plan/proposal, and no public AI route or UI invokes the pipeline. Provider integration and streaming remain pending. Implemented modules live in `src/server/agents/`; see [`docs/QUALITY_GATE.md`](../docs/QUALITY_GATE.md).
+**Current implementation:** the standalone MCP server, five TMDB tools, server-only client, deterministic Search Agent, Quality/Safety gate, Orchestrator, bounded same-origin NDJSON route, and `/discover` UI exist. The public route and Google provider activation remain disabled; enabled flows are tested with mocks. No user-facing result can bypass Quality. Implemented modules live in `src/server/agents/`; contracts are in [`docs/QUALITY_GATE.md`](../docs/QUALITY_GATE.md), [`docs/ORCHESTRATOR.md`](../docs/ORCHESTRATOR.md), and [`docs/STREAMING_UI.md`](../docs/STREAMING_UI.md).
 
 ## 3. Canonical Repository Boundaries
 
-The target repository structure isolates the MCP server from the Next.js application (these paths are planned Phase 6.0 architecture only):
+The current repository structure isolates the MCP server from the Next.js application:
 
 ```
 packages/
@@ -53,24 +53,28 @@ packages/
 
 src/
 └── server/
-    └── ai/
-        ├── agents/
-        │   ├── orchestrator.ts
-        │   ├── search.ts
-        │   └── quality-safety.ts
-        ├── mcp/
-        │   └── client.ts
-        ├── schemas/
-        ├── services/
-        └── config/
+    ├── agents/
+    │   ├── orchestrator.ts
+    │   ├── search-agent.ts
+    │   └── quality-agent.ts
+    ├── ai/
+    │   └── search-handler.ts
+    ├── mcp/
+    │   └── client.ts
+    └── telemetry/
+        └── ai-metrics.ts
+
+app/api/
+├── ai/search/route.ts
+└── telemetry/tokens/route.ts
 ```
 
 ## 4. MCP Server Boundary
 
-* **Current State:** Next.js owns the existing server-side TMDB integration used by movie pages. The standalone MCP server/client and server-only Orchestrator→Search→Quality pipeline exist. `/discover` and `/api/ai/search` provide the 6.7 UI/strict NDJSON boundary, but public availability and Google activation are disabled pending eligibility/privacy/abuse/security gates. Enabled data flows are mocked; existing movie pages are not migrated.
+* **Current State:** Next.js and the standalone MCP server both have server-side TMDB access; movie pages still use Next.js Server Actions. The server-only Orchestrator→Search→Quality pipeline exists. `/discover` and `/api/ai/search` provide the 6.7 UI/strict NDJSON boundary, but public availability and Google activation are disabled pending eligibility/privacy/abuse/security gates. Enabled AI data flows are mocked; existing movie pages are not migrated.
 * **Target State:** The MCP server is a standalone Node.js process. It has an independent package, build, test, start, Docker, and deployment lifecycle. It is not embedded in the Next.js application.
 * React components must never import MCP server modules. Next.js must communicate with MCP through a server-only network client. The browser must never call the MCP server directly.
-* The MCP server becomes the canonical owner of TMDB integration by the Phase 6 Definition of Done. Duplicate TMDB HTTP implementations must not remain in the final architecture. Existing server-side TMDB code must have an explicit migration and removal task. `TMDB_API_KEY` belongs only to the standalone MCP server after the migration is completed.
+* **Long-term data-access target:** migrate existing movie-page TMDB access to the MCP server only after the five approved tools cover every current page feature (including popular movies, trailers, and pagination). Until then, retain the existing server actions and document the duplication; `TMDB_API_KEY` currently exists on both server boundaries.
 
 ## 5. Canonical Transport
 
@@ -98,7 +102,7 @@ The MCP server must not be deployed inside the Next.js Vercel application.
 **Decision Record:**
 Comparing requirements (persistent Node.js HTTP process, Docker support, HTTPS, environment variables, health checks, predictable cold-start behavior, logs, Hobby/portfolio cost, deployment from GitHub), we recommend one deployment category: **Container-based managed service**.
 
-**Deployment checkpoint (2026-10-22):** Next.js is deployed to `https://movie-explorer-luis.vercel.app` and MCP to `https://movie-explorer-ppc2.onrender.com/mcp`. Agent health/auth-rejection checks and user-provided Inspector listing/search output pass; live browser retesting closes Phase 5 core-flow verification. Architecture/contracts/model policy are explicitly approved, local Google key presence is recorded without disclosing its value, and the user confirmed Production variables/redeployment. Current pages still use server-side TMDB actions. Actual Next.js/provider integration, other remote tool calls, cold-start suitability, and Google access/billing verification remain pending; 6.5 was verified locally without provider calls. See [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md).
+**Deployment checkpoint (2026-10-23):** Next.js is deployed to `https://movie-explorer-luis.vercel.app` and MCP to `https://movie-explorer-ppc2.onrender.com/mcp`. Health/auth rejection and user-provided Inspector listing/search evidence pass. Four current health samples measured 13.869s, 620ms, 245ms, and 237ms, but idle time was unknown; the 10s MCP deadline's suitability is unresolved. The authenticated Next.js adapter, remaining external tool paths, and Google access/billing/privacy remain unverified; AI generation is disabled. Root/MCP production dependency audits report zero findings after targeted same-major updates. See [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md).
 
 ## 7. Canonical MCP Authentication
 
@@ -115,9 +119,11 @@ Target server-side variables:
 
 ```env
 # Next.js server
+TMDB_API_KEY= # Existing movie pages; migrate only after MCP feature coverage is complete
 GOOGLE_GENERATIVE_AI_API_KEY=
 MCP_SERVER_URL=
 MCP_INTERNAL_API_KEY=
+AI_TELEMETRY_API_KEY= # Optional operator-only aggregate telemetry access
 
 # Standalone MCP server
 TMDB_API_KEY=
@@ -158,6 +164,8 @@ TypeScript types must be inferred from schemas where applicable. Do not maintain
 **Implemented boundary policy:** existing MCP/Search source schemas strip unknown fields; Quality adds evidence size/status/provenance-consistency checks. Model proposals and final presentation DTOs reject unknown keys at every object level. Quality reconstructs only allowlisted evidence facts, never proposal prose, tool envelopes, or raw error details. Its plain-text values must be rendered as escaped text nodes, not HTML/Markdown. Evidence must be obtained through the server-side Search Agent, never accepted from a browser/model as purported TMDB truth.
 
 **6.7 public boundary:** only public presentation/event schemas are shared under `src/lib/ai`; evidence, proposals, agents, provider/MCP code and configuration remain server-only. Ordered static progress and one Quality-approved terminal use NDJSON with request/response byte caps, deadlines/cancellation, and clean-EOF client validation. The public route is same-origin and currently returns controlled disabled status without invoking agents; it is not authenticated/rate-limited production generation. See [`docs/STREAMING_UI.md`](../docs/STREAMING_UI.md).
+
+**6.8 operations boundary:** prompts/results/evidence are not cached. `src/server/telemetry/ai-metrics.ts` retains only fixed-cardinality process-local aggregates; `GET /api/telemetry/tokens` requires the optional server-only `AI_TELEMETRY_API_KEY`, is uncached, and has no raw request/result fields. This is not durable or cross-instance telemetry. The public AI route remains disabled pending a reviewed distributed rate limiter, privacy/provider approval, and actual MCP/Render checks. See [`docs/AI_OPERATIONS.md`](../docs/AI_OPERATIONS.md).
 
 ## 12. Canonical MCP Tools
 
