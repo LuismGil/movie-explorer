@@ -32,6 +32,7 @@
 │       └── ci.yml
 ├── scripts
 │   ├── a11y-audit.js
+│   ├── test-ai-rate-limit.ts # Isolated local Redis integration tests; no hosted credentials
 │   └── verify-mcp-remote.ts # Opt-in server-only adapter check; never calls Google
 ├── shared
 │   └── tokens
@@ -92,6 +93,10 @@
 │   │   │   └── search-agent.ts
 │   │   ├── env
 │   │   │   └── mcp.ts
+│   │   ├── ai
+│   │   │   ├── search-handler.ts
+│   │   │   ├── rate-limit.ts
+│   │   │   └── rate-limit.script.ts
 │   │   ├── mcp
 │   │       └── client.ts
 │   │   └── telemetry

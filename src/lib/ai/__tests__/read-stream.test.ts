@@ -58,6 +58,11 @@ describe('validated NDJSON reader', () => {
     await expect(readAiStream(response(ndjson([...progressEvents, resultEvent]), 500), () => {}, signal())).rejects.toThrow();
   });
 
+  it('accepts an application rate limit on HTTP 429 without requiring progress frames', async () => {
+    expect(await readAiStream(response(ndjson([{ type: 'error', code: 'rate_limited' }]), 429), () => {}, signal()))
+      .toEqual({ type: 'error', code: 'rate_limited' });
+  });
+
   it('rejects raw text or unexpected media types', async () => {
     await expect(readAiStream(new Response('raw model output'), () => {}, signal())).rejects.toThrow();
   });

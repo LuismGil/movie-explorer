@@ -139,4 +139,38 @@ describe('AIChatPanel', () => {
     expect(signal.aborted).toBe(true);
     expect(vi.getTimerCount()).toBe(0);
   });
+
+  it('honors Retry-After without automatic retries and cleans up the cooldown timer', async () => {
+    vi.useFakeTimers();
+    fetch.mockResolvedValue(new Response(ndjson([{ type: 'error', code: 'rate_limited' }]), {
+      status: 429, headers: { 'Content-Type': 'application/x-ndjson', 'Retry-After': '60' },
+    }));
+    const view = render(<AIChatPanel enabled />);
+    await act(async () => { submit(); });
+    expect(screen.getByText(copy.errors.rate_limited)).toBeInTheDocument();
+    expect(screen.getByText(copy.rateLimitWait(60))).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: copy.submit })).toBeDisabled();
+    expect(screen.queryByRole('button', { name: copy.retry })).not.toBeInTheDocument();
+    await act(async () => { await vi.advanceTimersByTimeAsync(59_999); });
+    expect(screen.getByRole('button', { name: copy.submit })).toBeDisabled();
+    await act(async () => { await vi.advanceTimersByTimeAsync(1); });
+    expect(screen.getByRole('button', { name: copy.submit })).toBeEnabled();
+    expect(screen.getByRole('button', { name: copy.retry })).toBeInTheDocument();
+    expect(fetch).toHaveBeenCalledTimes(1);
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: copy.retry })); });
+    view.unmount();
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it.each(['', '-1', '86401', 'Infinity', 'private'])('uses a bounded default cooldown for an invalid Retry-After: %s', async retryAfter => {
+    vi.useFakeTimers();
+    fetch.mockResolvedValue(new Response(ndjson([{ type: 'error', code: 'rate_limited' }]), {
+      status: 429, headers: { 'Content-Type': 'application/x-ndjson', 'Retry-After': retryAfter },
+    }));
+    render(<AIChatPanel enabled />);
+    await act(async () => { submit(); });
+    expect(screen.getByText(copy.rateLimitWait(60))).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: copy.submit })).toBeDisabled();
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
 });

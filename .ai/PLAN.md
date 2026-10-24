@@ -250,7 +250,7 @@ npm run lint        # exit 0
 6.5 Quality/Safety Agent - [Completed]
 6.6 Orchestrator Agent - [Completed locally with mocks; live activation gated]
 6.7 Validated Streaming UI - [Completed locally; production generation disabled]
-6.8 Cache, Limits, and Observability - [Implemented locally; distributed abuse limiting remains a pre-activation gate]
+6.8 Cache, Limits, and Observability - [Implemented locally; approved free shared admission awaits hosted setup/verification]
 6.9 Hardening and Phase Closure - [Open; remote integration/cold-start and operator approvals remain]
 
 ### 6.0 Architecture and Entry Gates
@@ -282,7 +282,7 @@ npm run lint        # exit 0
 - [x] Sample four sequential public `/health` requests: 200 in 13,869 ms, 620 ms, 245 ms, and 237 ms. The first measurement's idle duration was unknown, so this is not a cold-start certification; its latency exceeds the configured 10s initialization/tool bound.
 - [ ] Run the local server-only adapter verification against Render; this checkout has no local `MCP_INTERNAL_API_KEY`. `npm run verify:mcp:remote` exercises all five tools without Google calls and refuses non-Render targets.
 
-All 6.0 entry approvals and units 6.1–6.7 plus 6.8 cache/telemetry work are implemented locally. The distributed rate-limit item remains open. Inspector success and saved environment variables still do not prove Next.js-to-Render or Google-provider integration. Billing/Free Tier eligibility and end-user privacy must be confirmed before live generation. Generation remains disabled. Setup/status: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md#google-gemini-credential-setup).
+All 6.0 entry approvals and units 6.1–6.8 are implemented locally. The user approved Upstash Redis Free with no payment method and conservative global admission on 2026-10-23; hosted configuration/verification remains open. Inspector success and saved environment variables still do not prove Next.js-to-Render or Google-provider integration. Free-tier usage is user-reported, not account/billing verification; privacy and live-test approval remain outstanding. Generation remains disabled. Setup/status: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md#google-gemini-credential-setup).
 
 ### 6.4 Search Agent
 
@@ -335,7 +335,11 @@ Contract and verification scope: [`docs/STREAMING_UI.md`](../docs/STREAMING_UI.m
 - [x] Record bounded, fixed-cardinality planner/search/quality latency and reported token totals, plus per-tool latency/failures. Do not retain raw prompts, movie IDs, results, credentials, or exception text.
 - [x] Add uncached `GET /api/telemetry/tokens` with optional operator-only `AI_TELEMETRY_API_KEY`; fail closed when unset or invalid.
 - [x] Document process-local/serverless limitations and preserve token/tool/deadline ceilings; keep the public generation route disabled.
-- [ ] Configure and review a distributed abuse-rate limiter before enabling the public route; no shared rate-limit store is approved/configured.
+- [x] Record explicit approval for Upstash Redis Free without a payment method or paid plan; one shared admission per 60 seconds and ten per rolling 24 hours for the whole demo. No visitor identifiers, retries/refunds, namespace overrides, or local fallback.
+- [x] Implement mandatory atomic admission before the enabled public pipeline, bounded fail-closed REST transport, 429/Retry-After/static error and UI cooldown; keep production AI and Google gates false.
+- [x] Verify concurrency/window/expiry behavior against an isolated local Redis with the real Lua script and independent handlers; no hosted database or Google calls. Include the local integration check in CI.
+- [x] Verify limiter checkpoint: app lint/typecheck/build/342 tests plus five opt-in real local Redis cases, MCP checks/45 tests, Home/Watchlist/Discover production axe, and 320px disabled Discover browser smoke. Scoped client-chunk scan contains no Upstash env names/script/key markers. No fresh Lighthouse/Docker build, hosted counter check, or generation was performed for this unit.
+- [ ] Operator: provision/configure the approved Upstash Free database without payment details, keep eviction disabled, and verify hosted admission without enabling Google. Code/local tests do not certify a live Free account.
 
 Operations contract: [`docs/AI_OPERATIONS.md`](../docs/AI_OPERATIONS.md). Telemetry is per-process, non-durable, and not billing reconciliation. Deterministic Search/Quality report zero model tokens; planner totals remain null when provider usage is unavailable.
 

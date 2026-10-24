@@ -3,6 +3,7 @@ import { AI_STREAM_MAX_BYTES, aiStreamEventSchema, type AiErrorCode, type AiStre
 import { runOrchestrator } from '../agents/orchestrator';
 import { orchestratorRequestSchema, orchestratorResultSchema, type OrchestratorFailure } from '../agents/orchestrator.schemas';
 import { awaitWithSignal, createDeadline } from '../runtime/abort';
+import { aiAdmissionSchema, enforceAiRateLimit, type AiRateLimiter } from './rate-limit';
 
 const headers = {
   'Content-Type': 'application/x-ndjson; charset=utf-8', 'Cache-Control': 'no-store, no-transform',
@@ -10,8 +11,10 @@ const headers = {
 };
 const encoder = new TextEncoder();
 const encode = (event: AiStreamEvent) => encoder.encode(`${JSON.stringify(aiStreamEventSchema.parse(event))}\n`);
-function failure(code: AiErrorCode, status: number) {
-  return new Response(encode({ type: 'error', code }), { status, headers });
+function failure(code: AiErrorCode, status: number, retryAfterSeconds?: number) {
+  return new Response(encode({ type: 'error', code }), {
+    status, headers: { ...headers, ...(retryAfterSeconds === undefined ? {} : { 'Retry-After': String(retryAfterSeconds) }) },
+  });
 }
 function sameOrigin(request: Request): boolean {
   try {
@@ -56,7 +59,7 @@ async function readRequest(request: Request, signal: AbortSignal): Promise<unkno
 }
 
 /** Dependencies/activation are trusted server configuration, not request parameters. */
-export function createAiSearchHandler(options: { enabled: boolean; run?: typeof runOrchestrator }) {
+export function createAiSearchHandler(options: { enabled: boolean; run?: typeof runOrchestrator; rateLimit?: AiRateLimiter }) {
   return async (request: Request): Promise<Response> => {
     if (!sameOrigin(request)
       || request.headers.get('sec-fetch-site') === 'cross-site') return failure('invalid_request', 403);
@@ -73,6 +76,25 @@ export function createAiSearchHandler(options: { enabled: boolean; run?: typeof 
     }
     if (!input.success) { deadline.dispose(); return failure('invalid_request', 400); }
     if (!options.enabled) { deadline.dispose(); return failure('disabled', 503); }
+
+    const admissionDeadline = createDeadline(2000, deadline.signal);
+    try {
+      const admission = aiAdmissionSchema.parse(await awaitWithSignal(
+        () => (options.rateLimit ?? enforceAiRateLimit)(admissionDeadline.signal), admissionDeadline.signal,
+      ));
+      admissionDeadline.check();
+      if (admission.status !== 'allowed') {
+        deadline.dispose();
+        return admission.status === 'limited'
+          ? failure('rate_limited', 429, admission.retryAfterSeconds)
+          : failure('unavailable', 503);
+      }
+    } catch {
+      deadline.dispose();
+      return failure(deadline.signal.aborted ? deadline.failureCode() === 'cancelled' ? 'cancelled' : 'timeout' : 'unavailable', 503);
+    } finally {
+      admissionDeadline.dispose();
+    }
 
     let closed = false;
     const cancellation = new AbortController();

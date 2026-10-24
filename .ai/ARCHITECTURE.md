@@ -17,6 +17,7 @@ The implemented, server-owned flow for a future enabled AI interaction is:
 User
 → Next.js UI
 → server-side AI entry point
+→ atomic shared admission (Upstash Redis Free; inactive while public generation is disabled)
 → Orchestrator Agent
 → Search Agent
 → server-only MCP Client Adapter
@@ -124,6 +125,8 @@ GOOGLE_GENERATIVE_AI_API_KEY=
 MCP_SERVER_URL=
 MCP_INTERNAL_API_KEY=
 AI_TELEMETRY_API_KEY= # Optional operator-only aggregate telemetry access
+UPSTASH_REDIS_REST_URL= # Approved Free database; hosted setup/verification pending
+UPSTASH_REDIS_REST_TOKEN=
 
 # Standalone MCP server
 TMDB_API_KEY=
@@ -165,7 +168,7 @@ TypeScript types must be inferred from schemas where applicable. Do not maintain
 
 **6.7 public boundary:** only public presentation/event schemas are shared under `src/lib/ai`; evidence, proposals, agents, provider/MCP code and configuration remain server-only. Ordered static progress and one Quality-approved terminal use NDJSON with request/response byte caps, deadlines/cancellation, and clean-EOF client validation. The public route is same-origin and currently returns controlled disabled status without invoking agents; it is not authenticated/rate-limited production generation. See [`docs/STREAMING_UI.md`](../docs/STREAMING_UI.md).
 
-**6.8 operations boundary:** prompts/results/evidence are not cached. `src/server/telemetry/ai-metrics.ts` retains only fixed-cardinality process-local aggregates; `GET /api/telemetry/tokens` requires the optional server-only `AI_TELEMETRY_API_KEY`, is uncached, and has no raw request/result fields. This is not durable or cross-instance telemetry. The public AI route remains disabled pending a reviewed distributed rate limiter, privacy/provider approval, and actual MCP/Render checks. See [`docs/AI_OPERATIONS.md`](../docs/AI_OPERATIONS.md).
+**6.8 operations boundary:** prompts/results/evidence are not cached. `src/server/telemetry/ai-metrics.ts` retains only fixed-cardinality process-local aggregates; `GET /api/telemetry/tokens` requires optional server-only `AI_TELEMETRY_API_KEY` and is uncached. This is not durable or cross-instance telemetry. Separately, explicitly approved Upstash Redis Free stores one atomic global admission history (at most ten timestamps): one admission every 60s and ten per rolling 24h across deployments. The enabled public route must pass admission before orchestration; configuration/store errors fail closed and no retries/refunds/local fallback are permitted. No IPs, cookies, visitor identifiers, prompts, or results go to the store. Hosted setup/verification, privacy/provider approval, and actual MCP/Render checks remain outstanding; AI stays disabled. See [`docs/AI_OPERATIONS.md`](../docs/AI_OPERATIONS.md).
 
 ## 12. Canonical MCP Tools
 

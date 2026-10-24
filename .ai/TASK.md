@@ -219,7 +219,11 @@ Contract/limits: [`docs/STREAMING_UI.md`](../docs/STREAMING_UI.md). Enabled data
 - [x] Define caching strategies without leaking user data: no prompt/evidence/result caching; reuse only the server-side MCP connection; AI responses are `no-store`.
 - [x] Record fixed-cardinality agent/tool latency, failures, and reported planner token usage in process-local aggregate metrics only.
 - [x] Add operator-protected, uncached `/api/telemetry/tokens`; fail closed without `AI_TELEMETRY_API_KEY`; document process/serverless scope.
-- [ ] Configure a reviewed distributed abuse rate limit before public AI activation; no shared store is currently approved/configured.
+- [x] Record user approval (2026-10-23): Upstash Redis Free, no payment method/paid plan, one global admission per 60 seconds and ten per rolling 24 hours; no visitor identifiers.
+- [x] Implement atomic shared admission with bounded REST/strict schemas, no retries/refunds/local fallback, fail-closed 503, and 429/Retry-After/UI cooldown before the enabled public pipeline. Keep AI/Google disabled.
+- [x] Verify actual atomic Lua/concurrency/window/expiry behavior with isolated local Redis; add the local integration check to CI without hosted credentials.
+- [x] Verify 342 app tests plus five opt-in real Redis cases, app lint/types/build, MCP checks/45 tests, local production axe, and disabled Discover 320px browser smoke; no live Google/Upstash, no external requests on Discover, and no client-chunk Upstash markers.
+- [ ] Operator: configure the approved hosted Upstash Free store (no payment method, eviction disabled) and verify it without Google. The hosted gate remains open.
 
 See [`docs/AI_OPERATIONS.md`](../docs/AI_OPERATIONS.md). No model calls, user identifiers, prompts, results, movie IDs, or raw errors are included in telemetry.
 
@@ -233,4 +237,4 @@ See [`docs/AI_OPERATIONS.md`](../docs/AI_OPERATIONS.md). No model calls, user id
 - [ ] Measure Render Free wake-up after a confirmed idle window and evaluate against 10s connection/tool timeouts; the current 13.9s first sample had unknown idle duration.
 - [ ] Confirm Google account/model access, Free Tier billing eligibility, end-user privacy, and explicit live-test approval before any provider request. No paid usage is authorized.
 
-**Phase 6 remains open** until the remaining integration, latency, abuse-rate-limit, and operator gates above are resolved. Keep `/discover` and generation disabled.
+**Phase 6 remains open** until the remaining integration, latency, hosted-admission configuration/verification, and operator gates above are resolved. Keep `/discover` and generation disabled.

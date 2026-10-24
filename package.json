@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "test:a11y": "node scripts/a11y-audit.js",
+    "test:ai:rate-limit": "node --import tsx scripts/test-ai-rate-limit.ts",
     "mcp:dev": "npm --prefix packages/mcp-server run dev",
     "mcp:lint": "npm --prefix packages/mcp-server run lint",
     "mcp:typecheck": "npm --prefix packages/mcp-server run typecheck",

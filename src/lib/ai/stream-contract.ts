@@ -3,7 +3,7 @@ import { qualityAgentResultSchema } from './presentation';
 
 export const AI_STREAM_MAX_BYTES = 2 * 1024 * 1024;
 export const aiStages = ['planning', 'searching', 'validating'] as const;
-export const aiErrorCodeSchema = z.enum(['invalid_request', 'disabled', 'unavailable', 'quota_exceeded', 'timeout', 'cancelled', 'unsafe_result', 'invalid_stream']);
+export const aiErrorCodeSchema = z.enum(['invalid_request', 'disabled', 'unavailable', 'quota_exceeded', 'rate_limited', 'timeout', 'cancelled', 'unsafe_result', 'invalid_stream']);
 const presentation = qualityAgentResultSchema.refine(value =>
   ['approved', 'partial', 'empty'].includes(value.status)
   && (value.status !== 'empty' || value.movies.length === 0)

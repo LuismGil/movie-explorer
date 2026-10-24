@@ -17,13 +17,19 @@ export function AIChatPanel({ enabled }: { enabled: boolean }) {
   const [pending, setPending] = useState(false);
   const [stage, setStage] = useState<AiStage>();
   const [terminal, setTerminal] = useState<AiTerminalEvent>();
+  const [retryAfterSeconds, setRetryAfterSeconds] = useState<number>();
   const active = useRef<AbortController | null>(null);
   const activeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [lastRequest, setLastRequest] = useState<SearchRequest>();
   useEffect(() => () => { active.current?.abort(); active.current = null; clearTimeout(activeTimer.current); }, []);
+  useEffect(() => {
+    if (retryAfterSeconds === undefined) return;
+    const timer = setTimeout(() => setRetryAfterSeconds(undefined), retryAfterSeconds * 1000);
+    return () => clearTimeout(timer);
+  }, [retryAfterSeconds]);
 
   async function search(input: SearchRequest) {
-    if (!enabled || active.current) return;
+    if (!enabled || active.current || retryAfterSeconds !== undefined) return;
     if (!input.message.trim() || input.message.length > 1000) {
       setTerminal({ type: 'error', code: 'invalid_request' });
       return;
@@ -46,7 +52,14 @@ export function AIChatPanel({ enabled }: { enabled: boolean }) {
         body: JSON.stringify(input), signal: controller.signal, cache: 'no-store', redirect: 'error',
       });
       const result = await readAiStream(response, next => { if (active.current === controller) setStage(next); }, controller.signal);
-      if (active.current === controller) setTerminal(result);
+      if (active.current === controller) {
+        if (result.type === 'error' && result.code === 'rate_limited') {
+          const header = response.headers.get('retry-after') ?? '';
+          const seconds = /^\d{1,5}$/.test(header) ? Number(header) : 0;
+          setRetryAfterSeconds(seconds >= 1 && seconds <= 86_400 ? seconds : 60);
+        }
+        setTerminal(result);
+      }
     } catch {
       if (active.current === controller) setTerminal({ type: 'error', code: timedOut ? 'timeout' : controller.signal.aborted ? 'cancelled' : 'invalid_stream' });
     } finally {
@@ -78,7 +91,7 @@ export function AIChatPanel({ enabled }: { enabled: boolean }) {
           aria-describedby="ai-privacy" className={`${styles.input} ${focus}`} />
         <p id="ai-privacy" className={styles.muted}>{copy.privacy}</p>
         <div className={styles.actions}>
-          <button type="submit" disabled={!enabled || pending || !message.trim()} className={`${styles.button} ${focus}`}>{copy.submit}</button>
+          <button type="submit" disabled={!enabled || pending || retryAfterSeconds !== undefined || !message.trim()} className={`${styles.button} ${focus}`}>{copy.submit}</button>
           {pending && <button type="button" onClick={cancel} className={`${styles.link} ${focus}`}>{copy.cancel}</button>}
         </div>
       </form>
@@ -90,9 +103,10 @@ export function AIChatPanel({ enabled }: { enabled: boolean }) {
         {!pending && !terminal && enabled && <p className={styles.muted}>{copy.idle}</p>}
         {terminal?.type === 'unsupported' && <p>{copy.unsupported}</p>}
         {terminal?.type === 'error' && <p className={styles.error}>{copy.errors[terminal.code]}</p>}
+        {retryAfterSeconds !== undefined && <p>{copy.rateLimitWait(retryAfterSeconds)}</p>}
         {result && <p>{result.status === 'needs_selection' ? copy.selectionTitle : result.presentation.movies.length ? copy.resultTitle : copy.empty}</p>}
       </div>
-      {terminal?.type === 'error' && enabled && lastRequest && !pending && terminal.code !== 'disabled' && (
+      {terminal?.type === 'error' && enabled && lastRequest && !pending && retryAfterSeconds === undefined && terminal.code !== 'disabled' && (
         <div><button type="button" onClick={() => { void search(lastRequest); }} className={`${styles.link} ${focus}`}>{copy.retry}</button></div>
       )}
       {result && <div className={styles.results} aria-busy={pending}>
@@ -109,7 +123,7 @@ export function AIChatPanel({ enabled }: { enabled: boolean }) {
             {movie.runtime !== null && <p>{messages.movie.durationLabel(movie.runtime)}</p>}
             <div className={styles.actions}>
               <Link href={`/movie/${movie.id}`} className={`${styles.link} ${focus}`}>{copy.details}</Link>
-              {result.status === 'needs_selection' && <button type="button" disabled={pending || !enabled} className={`${styles.button} ${focus}`}
+              {result.status === 'needs_selection' && <button type="button" disabled={pending || !enabled || retryAfterSeconds !== undefined} className={`${styles.button} ${focus}`}
                 onClick={() => { if (lastRequest) void search({ message: lastRequest.message, referenceMovieId: movie.id }); }}>{copy.select(movie.title)}</button>}
             </div>
           </div>

@@ -10,7 +10,7 @@
 
 **A movie discovery platform built on React 19, Next.js App Router Server Components, and Server Actions.**
 
-> **Current checkpoint: Phase 6.8 implemented locally; generation disabled.** `/discover` remains unavailable by design. Aggregate process-local telemetry is operator-protected; prompt/result caching is disabled. Production abuse-rate limiting, actual Next.js→Render credentials/integration, Render cold-start suitability, provider/billing/privacy review, and final hardening remain open before Phase 6 closure or Phase 7.
+> **Current checkpoint: Phase 6.8 free-tier admission implemented locally; generation disabled.** Shared admission limits are one request per 60 seconds and ten per rolling 24 hours across the whole demo, using approved Upstash Redis Free (no payment method). Local atomic Redis and mocked HTTP/UI tests pass; hosted configuration/verification is still pending. Next.js→Render integration, Render cold-start suitability, provider/billing/privacy review, and final hardening remain open before Phase 6 closure or Phase 7.
 
 ---
 
@@ -32,7 +32,7 @@ Movie Explorer is a movie discovery application and an engineering case study in
 - **Orchestrator (6.6)** validates requests/structured intent, compiles allowlisted tools, and sequences Search→Quality. Fixed-model Google planning is disabled until trusted Free Tier confirmation, with exact-request token preflight, bounded deadlines, controlled failures, and no retries/fallback. [Contract and activation gate](docs/ORCHESTRATOR.md).
 - **Validated streaming UI (6.7)** adds `/discover` and a bounded same-origin NDJSON entry point. Only static stage codes and Quality DTOs can pass, with clean-EOF validation before presentation; production availability stays false with no provider/agent invocation. [Contract and activation blockers](docs/STREAMING_UI.md).
 
-Local Phase 6.8 verification on **2026-10-23**: app lint/types/build and **286 tests** pass; MCP lint/types/tests/build and **45 tests** pass. Home, Watchlist, and disabled Discover pass the local production axe audit with no critical/serious violations. MCP container build/smoke passed; production dependency audits report zero vulnerabilities. Remaining development-tool advisories and external AI/MCP/Render activation gates are documented in [`docs/AI_OPERATIONS.md`](docs/AI_OPERATIONS.md) and [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md). No live Google request was made.
+Latest Phase 6.8 verification on **2026-10-23**: app lint/types/build and **342 tests** pass, plus **5 separately executed real local Redis integration cases**; the default test run skips only those opt-in Docker cases. MCP lint/types/tests/build and **45 tests** pass. Home, Watchlist, and disabled Discover pass production axe with no critical/serious violations. A 320px Discover browser smoke has no page errors, failed resources, external requests, or overflow; its actual AI route returns disabled 503. Earlier MCP Docker smoke remains recorded; no fresh Docker app/MCP build or Lighthouse audit was done for the rate limiter. Production dependency audits report zero vulnerabilities. Remaining development-tool advisories and activation gates are in [`docs/AI_OPERATIONS.md`](docs/AI_OPERATIONS.md) and [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md). No live Upstash or Google request was made.
 
 **Deployment checkpoint (2026-10-23):** [The Vercel app](https://movie-explorer-luis.vercel.app) and [Render MCP service](https://movie-explorer-ppc2.onrender.com/health) are deployed. Health/auth-rejection and user-provided Inspector listing/search smoke checks pass. Live browser retesting of the watchlist fix closed Phase 5 production verification. All 6.0 entry approvals, including model policy, are complete, and Google/MCP Production variables/redeployment are user-confirmed. Phase 6.8 changes are local and not redeployed; because public AI availability remains disabled, the current UI does not invoke Search/Quality. Actual Next.js-to-MCP and Google integration/billing remain unverified. Evidence and policy: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
@@ -190,6 +190,8 @@ docker run --rm -p 3000:3000 \
 | `MCP_INTERNAL_API_KEY` | Both servers | Shared Bearer credential, at least 32 characters. Required when the adapter/server is used. |
 | `GOOGLE_GENERATIVE_AI_API_KEY` | Next.js server | Used only by explicitly activated Google planning; a configured key alone does not enable generation. |
 | `AI_TELEMETRY_API_KEY` | Next.js server | Optional operator-only Bearer key (at least 32 characters) for aggregate process-local token/latency metrics. |
+| `UPSTASH_REDIS_REST_URL` | Next.js server | Root HTTPS endpoint of the approved Free Redis database. Required before future AI activation; missing/invalid config denies admission. |
+| `UPSTASH_REDIS_REST_TOKEN` | Next.js server | Private REST token for the shared global admission counter; never sent to the browser. |
 
 > **Security note**: No environment variables use the `NEXT_PUBLIC_` prefix. `TMDB_API_KEY` is inaccessible to client-side JavaScript.
 
@@ -207,7 +209,8 @@ The root `.env.example` uses canonical `GOOGLE_GENERATIVE_AI_API_KEY`. Architect
 | `npm run lint` | Runs ESLint across all source files. |
 | `npm run typecheck` | Runs `tsc --noEmit` for type-only validation without emitting files. |
 | `npm run test` | Runs Vitest unit tests. |
-| `npm run test:a11y` | Runs accessibility audits on the Home and Watchlist pages. |
+| `npm run test:a11y` | Runs accessibility audits on Home, Watchlist, and disabled Discover. |
+| `npm run test:ai:rate-limit` | Runs atomic admission/concurrency tests against an isolated local Docker Redis, without hosted keys or Google calls. |
 | `npm run mcp:dev` | Starts the independent MCP development server; environment variables must already be supplied. |
 | `npm run mcp:lint` / `mcp:typecheck` / `mcp:test` | Runs independent MCP quality checks. |
 | `npm run mcp:build` / `mcp:start` | Builds / starts the standalone MCP server. |
