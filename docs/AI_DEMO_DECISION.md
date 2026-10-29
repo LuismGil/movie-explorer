@@ -109,7 +109,8 @@ If an alternative is explicitly chosen later, revise D2–D3 for that provider f
 
 ### D4 — Verify runtime paths without activating generation
 
-- [ ] Agree on an **operator-only/protected** Vercel runtime check for Render and isolated Upstash access. Use fixed targets and minimal aggregate results; no public diagnostic, browser-held secret, arbitrary URL, production-counter reset, or keep-alive polling. Approve any temporary deployment/code surface first, then remove it or retain deliberate operator protection.
+- [x] Operator explicitly approved a temporary token-protected check: fixed Upstash PING/isolated-key EVAL (5s expiry), fixed Inception search through the Render app adapter, no Google/real-counter access, caller-selected targets, retries or availability change. Implemented locally with a new optional server-only `AI_RUNTIME_CHECK_API_KEY`; lint/types/build and 394 mocked tests plus local production auth/override/disabled-AI smoke pass. [Setup and mandatory retirement](AI_RUNTIME_CHECK.md).
+- [ ] Configure the new token privately in local env and Vercel Production, deploy, run `npm run verify:ai:runtime` once and record aggregate results. No hosted diagnostic execution has occurred yet. Remove diagnostic code/token afterward and handle diagnostic-containing older deployments with operator approval.
 - [ ] Measure the approved runtime check after a quiet window and choose an explicit demo cold-start policy: bounded first-request failure may be acceptable **only with operator acceptance and honest UI**. Do not promise all Render Free wake-ups fit in 20s, increase time budgets silently, or add automatic retries.
 
 ### D5 — One controlled inference, then a deliberate public release

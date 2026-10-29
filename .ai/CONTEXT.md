@@ -1,5 +1,15 @@
 # Project Context
 
+## Active D4: 2026-10-29 — Temporary Protected Runtime Check Prepared
+
+After the latest production disabled smoke passed, the user explicitly selected the protected diagnostic method: fixed isolated Upstash state and a fixed Render movie search, new private token, no Google or real admission counter. Implemented `src/server/ai/runtime-check.ts`, POST `/api/internal/runtime-check`, and `npm run verify:ai:runtime`. Requires NEW server-only `AI_RUNTIME_CHECK_API_KEY`; no real token was generated, read or configured. Missing secret fails closed; missing/wrong Bearer fails before outbound work; parameters/body are rejected. Upstash PING/EVAL share 2s/1KiB caps; one UUID diagnostic key expires in 5s. MCP uses existing app adapter/Search for Inception, one tool slot, 20s init/10s tool; global handler deadline 30s, route max35s. No retries, arbitrary targets, payload logs or Google imports; public availability stays false.
+
+Verification: lint/typecheck/build and 394 tests pass, including 45 new mocked diagnostic cases (five opt-in Redis cases skipped). Local production smoke with a synthetic token returned 401 missing/wrong token, 400 target-query override, 405 GET, private/no-store, and AI 503/disabled; no authenticated dependency probe ran and the temporary server was stopped. The real Vercel→dependency check is still pending deployment/configuration. Next: operator creates token privately, saves it to local `.env`/`.env.local` and Vercel Production, commits/pushes/deploys this unit, then run the caller once after Ready. No secret in chat. Mandatory removal of route/code/token afterward; old immutable deployments may retain secrets/code and require operator-approved cleanup. Instructions: [`docs/AI_RUNTIME_CHECK.md`](../docs/AI_RUNTIME_CHECK.md).
+
+## Deployment follow-up: 2026-10-29 — Quota/Privacy Preparation Ready
+
+The user confirms step 1 (push/deploy) is Ready; local main and origin/main match, including `088ef9b`. Production smoke passed `/discover` 200 with expanded human-review disclosure and the official Google terms link, startup hint hidden, and same-origin AI POST 503/disabled with `no-store, no-transform`. This does not execute admission, Render or Google. D4 still needs approval of a concrete protected runtime check: no such route currently exists, and optional `AI_TELEMETRY_API_KEY` is not configured locally (presence check only; no secrets printed). Do not repurpose the metrics GET into network execution or add an unapproved diagnostic. No live inference performed.
+
 ## Latest work: 2026-10-29 — Direct Demo Access and Real Quota Countdown
 
 The user rejects invitation/link-request friction and prefers a public portfolio demo with a quota-exhaustion notice/time remaining, then asks to finish and commit. Record direct access as the UX decision; do not propose or build invitations/accounts. A Brazil-only restriction was previously suggested, not approved or implemented. Low expected recruiter traffic is not proof of visitor eligibility; public distribution compatibility remains a release task, not something this quota UI resolves.

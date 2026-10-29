@@ -12,6 +12,8 @@
 
 > **Current checkpoint: Phase 6 release preparation; real generation still disabled.** The operator in Brazil accepts Google's unpaid-service data policy and wants direct public access without invitations. Google/model remain approved; Free/no-payment and disabled Upstash eviction are user-confirmed. Local production wiring, privacy disclosure and a real quota countdown with catalog access are prepared; lint/types/build and 349 tests pass. Shared limits remain one admission/60s and ten/rolling 24h, with manual retry only. Public distribution compatibility, protected Vercel runtime verification, cold-start acceptance and the scoped live test remain open. [Plan and next steps](docs/AI_DEMO_DECISION.md); Phase 7 has not started.
 
+**Latest verification preparation:** `088ef9b` is deployed and the disabled production smoke passes. An operator-approved temporary [protected runtime check](docs/AI_RUNTIME_CHECK.md) is now implemented locally, with 394 tests/lint/types/build passing and a local production auth/disabled-boundary smoke. It requires a new private token and deployment before checking Vercel→Upstash/Render; no hosted diagnostic or Google call has occurred. It is not a visitor login and must be removed after verification.
+
 ---
 
 ## 1. Project Overview

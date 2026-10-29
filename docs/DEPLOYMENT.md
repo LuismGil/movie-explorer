@@ -31,6 +31,10 @@ Expected Render settings: allow origin `https://movie-explorer-luis.vercel.app`,
 
 ### Vercel
 
+**Quota/privacy preparation deployed (2026-10-29):** `088ef9b` is pushed and the user confirms Ready. A subsequent production smoke returned Discover 200 with the expanded privacy disclosure and official terms link, startup hint hidden, and same-origin AI POST 503/disabled with `no-store, no-transform`. This checks the deployed disabled boundary only; no admission/Render/Google call occurs.
+
+**Protected runtime check subsequently approved/prepared:** the user approved the temporary operator-only method. Local POST `/api/internal/runtime-check` requires a new private `AI_RUNTIME_CHECK_API_KEY` and performs only fixed Upstash PING/isolated-key EVAL (5s expiry) and one Render/MCP Inception search. It does not touch the real admission key or Google, accept request-selected targets, or alter the public gate. Lint/types/build and 394 mocked tests pass; local production auth/override/disabled-AI smoke passed. No hosted diagnostic execution occurred. Configure the new key privately, deploy, then use the fixed caller once; remove the diagnostic afterward. Exact setup, limits and old-deployment cleanup caveat: [`AI_RUNTIME_CHECK.md`](AI_RUNTIME_CHECK.md).
+
 **Latest AI checkpoint (2026-10-29):** Commit `5419f86` is pushed and Vercel Ready is user-confirmed. The subsequent smoke returned `/discover` 200 with the startup hint hidden, and same-origin `POST /api/ai/search` 503 with only `error/disabled` and `no-store, no-transform`. This verifies the deployed disabled boundary, not Vercel→Upstash/Render/Google execution. No Google request occurred.
 
 A headless Chromium smoke test verified:

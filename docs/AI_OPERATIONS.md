@@ -68,6 +68,10 @@ Official references checked 2026-10-23: [Render Free limits](https://render.com/
 
 ## Aggregate telemetry
 
+### Temporary protected runtime verification — D4
+
+The user explicitly approved a separate, temporary POST `/api/internal/runtime-check` using a **new** `AI_RUNTIME_CHECK_API_KEY`. It is not the metrics GET and is not a visitor invitation system. The route is disabled without its private key, authenticates before outbound work, accepts no body/query operations, and checks only fixed Upstash PING/five-second isolated-key EVAL plus a fixed Inception search through the authenticated Render app adapter. It never uses the real admission key or Google, and leaves public availability false. Setup, bounded deadlines/response sizes, single-run caller, evidence and mandatory retirement (including old deployment URLs) are in [`AI_RUNTIME_CHECK.md`](AI_RUNTIME_CHECK.md). Local lint/types/build, 394 mocked tests and production auth/disabled-boundary smoke pass; real hosted runtime execution remains pending.
+
 `GET /api/telemetry/tokens` returns counts, cumulative latency, and reported token totals by planner/search/quality, plus fixed per-tool call/failure/latency counters. Search and Quality report zero model tokens because they are deterministic. Planner token values are `null` until a provider reports usage; missing usage is not interpreted as free.
 
 The route is uncached and requires `Authorization: Bearer <AI_TELEMETRY_API_KEY>`. The optional key must be at least 32 characters. If it is missing or invalid, the route fails closed (503/401). Never place it in a `NEXT_PUBLIC_` variable or browser request.
