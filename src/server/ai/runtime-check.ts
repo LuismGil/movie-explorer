@@ -59,7 +59,7 @@ export function createRuntimeCheckHandler(options: Options = {}) {
   return async (request: Request): Promise<Response> => {
     const env = options.env ?? process.env;
     const secret = secretSchema.safeParse(env.AI_RUNTIME_CHECK_API_KEY);
-    if (!secret.success) return failure('unavailable', 503);
+    if (!secret.success) return failure('operator_configuration_invalid', 503);
     const match = /^Bearer ([^\s]+)$/i.exec(request.headers.get('authorization') ?? '');
     const expected = Buffer.from(secret.data);
     const received = Buffer.from(match?.[1] ?? '');
@@ -67,7 +67,11 @@ export function createRuntimeCheckHandler(options: Options = {}) {
     if (request.method !== 'POST') return failure('invalid_request', 405);
     if (new URL(request.url).search) return failure('invalid_request', 400);
     const config = configuration.safeParse(env);
-    if (!config.success) return failure('unavailable', 503);
+    if (!config.success) {
+      // Report only fixed field names, never Zod issues, received values or credentials.
+      const variables = configuration.keyof().options.filter(name => config.error.issues.some(issue => issue.path[0] === name));
+      return Response.json({ error: 'configuration_invalid', variables }, { status: 503, headers });
+    }
 
     const deadline = createDeadline(30_000, request.signal);
     const started = performance.now();

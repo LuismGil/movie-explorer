@@ -40,12 +40,14 @@ describe('temporary operator-only runtime dependency check', () => {
     vi.stubEnv('AI_RUNTIME_CHECK_API_KEY', '');
     const response = await POST(request());
     expect(response.status).toBe(503);
-    expect(await response.json()).toEqual({ error: 'unavailable' });
+    expect(await response.json()).toEqual({ error: 'operator_configuration_invalid' });
     expect(globalThis.fetch).not.toHaveBeenCalled();
   });
 
   it.each(['', 'short', 'x'.repeat(257), `${'x'.repeat(32)}\n`])('fails closed for invalid operator secret %#', async value => {
-    expect((await handler({ ...env, AI_RUNTIME_CHECK_API_KEY: value })(request())).status).toBe(503);
+    const response = await handler({ ...env, AI_RUNTIME_CHECK_API_KEY: value })(request());
+    expect(response.status).toBe(503);
+    expect(await response.json()).toEqual({ error: 'operator_configuration_invalid' });
     expect(fetch).not.toHaveBeenCalled();
     expect(search).not.toHaveBeenCalled();
   });
@@ -84,7 +86,34 @@ describe('temporary operator-only runtime dependency check', () => {
     { ...env, MCP_SERVER_URL: `${env.MCP_SERVER_URL}?token=private` },
     { ...env, MCP_INTERNAL_API_KEY: '' },
   ])('rejects missing/unsafe dependency configuration without outbound work %#', async configuration => {
-    expect((await handler(configuration)(request())).status).toBe(503);
+    const response = await handler(configuration)(request());
+    expect(response.status).toBe(503);
+    const variables = Object.keys(env).filter(name => name !== 'AI_RUNTIME_CHECK_API_KEY'
+      && configuration[name as keyof typeof env] !== env[name as keyof typeof env]);
+    expect(await response.json()).toEqual({ error: 'configuration_invalid', variables });
+    expect(fetch).not.toHaveBeenCalled();
+    expect(search).not.toHaveBeenCalled();
+  });
+
+  it('reports only fixed variable names for multiple invalid settings, with no secrets or Zod details', async () => {
+    const response = await handler({
+      ...env, UPSTASH_REDIS_REST_URL: 'https://user:secret@test-db.upstash.io/private',
+      MCP_SERVER_URL: 'private-invalid-target', MCP_INTERNAL_API_KEY: 'private-short-token',
+    })(request());
+    expect(response.status).toBe(503);
+    expect(response.headers.get('cache-control')).toBe('private, no-store');
+    expect(response.headers.get('x-content-type-options')).toBe('nosniff');
+    expect(await response.json()).toEqual({
+      error: 'configuration_invalid', variables: ['UPSTASH_REDIS_REST_URL', 'MCP_SERVER_URL', 'MCP_INTERNAL_API_KEY'],
+    });
+    expect(fetch).not.toHaveBeenCalled();
+    expect(search).not.toHaveBeenCalled();
+  });
+
+  it('never discloses invalid dependency names before operator authentication', async () => {
+    const response = await handler({ ...env, MCP_INTERNAL_API_KEY: '' })(request({ headers: {} }));
+    expect(response.status).toBe(401);
+    expect(await response.json()).toEqual({ error: 'unauthorized' });
     expect(fetch).not.toHaveBeenCalled();
     expect(search).not.toHaveBeenCalled();
   });
