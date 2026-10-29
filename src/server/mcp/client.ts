@@ -6,6 +6,7 @@ import { awaitWithSignal, createDeadline, throwIfAborted } from '../runtime/abor
 
 type Connection = { client: Client; pending: Promise<Client> };
 let connection: Connection | null = null;
+const MCP_INITIALIZATION_TIMEOUT_MS = 20_000;
 
 function startConnection(): Connection {
   const env = getMcpEnv();
@@ -18,11 +19,11 @@ function startConnection(): Connection {
   const client = new Client({ name: 'movie-explorer-mcp-client', version: '1.0.0' }, { capabilities: {} });
   client.onclose = () => { if (connection?.client === client) connection = null; };
   const pending: Promise<Client> = Promise.resolve().then(async () => {
-    const deadline = createDeadline(10000);
+    const deadline = createDeadline(MCP_INITIALIZATION_TIMEOUT_MS);
     try {
       // Shared initialization has its own bound; cancelling one waiter must not cancel other callers.
       await awaitWithSignal(() => client.connect(transport, {
-        signal: deadline.signal, timeout: 10000, maxTotalTimeout: 10000,
+        signal: deadline.signal, timeout: MCP_INITIALIZATION_TIMEOUT_MS, maxTotalTimeout: MCP_INITIALIZATION_TIMEOUT_MS,
       }), deadline.signal);
       if (connection !== state) throw new Error('Connection replaced');
       return client;

@@ -33,7 +33,7 @@ Search obtains all evidence through the server-only MCP adapter. Orchestrator se
 | Limit | Default and hard maximum |
 |---|---|
 | Global pipeline deadline | 30,000 ms, including planning and MCP initialization |
-| Shared MCP initialization | 10,000 ms, separately bounded |
+| Shared MCP initialization | 20,000 ms, separately bounded; 30,000 ms global deadline still applies |
 | Individual MCP tool request | 10,000 ms; progress cannot extend it |
 | MCP calls reserved | 5; complete compiled plan checked before Search |
 | Planning invocations | 1 |

@@ -24,6 +24,8 @@ if (!internalKey || internalKey.length < 32) {
       console.error('Remote MCP check not run: only the documented HTTPS Render /mcp endpoint is allowed.');
       process.exitCode = 2;
     } else {
+      // Make the verified remote target explicit for getMcpEnv, whose normal app default is localhost.
+      process.env.MCP_SERVER_URL = endpoint.href;
       const { runSearchAgent } = await import('../src/server/agents/search-agent');
       const { closeMcpClient } = await import('../src/server/mcp/client');
       const startedAt = performance.now();

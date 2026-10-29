@@ -77,8 +77,25 @@ describe('MCP Client Adapter', () => {
     finish();
     expect(await first).toBe(await second);
     expect(connect).toHaveBeenCalledWith(expect.anything(), {
-      signal: expect.any(AbortSignal), timeout: 10000, maxTotalTimeout: 10000,
+      signal: expect.any(AbortSignal), timeout: 20000, maxTotalTimeout: 20000,
     });
+  });
+
+  it('allows an observed cold-start handshake within the extended initialization bound', async () => {
+    vi.useFakeTimers();
+    let finish!: () => void;
+    const connect = vi.fn(() => new Promise<void>(resolve => { finish = resolve; }));
+    const fake = { connect, close: vi.fn().mockResolvedValue(undefined) };
+    vi.mocked(Client).mockImplementationOnce(function () { return fake as unknown as Client; });
+
+    const pending = getMcpClient();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(connect).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(15_000);
+    expect(fake.close).not.toHaveBeenCalled();
+    finish();
+    await expect(pending).resolves.toBe(fake);
+    expect(vi.getTimerCount()).toBe(0);
   });
 
   it('lets one caller cancel without aborting shared initialization for other callers', async () => {
@@ -121,7 +138,7 @@ describe('MCP Client Adapter', () => {
     const fake = { connect: vi.fn(() => new Promise<void>(() => {})), close: vi.fn().mockResolvedValue(undefined) };
     vi.mocked(Client).mockImplementationOnce(function () { return fake as unknown as Client; });
     const pending = expect(getMcpClient()).rejects.toThrow('Failed to establish connection');
-    await vi.advanceTimersByTimeAsync(10000);
+    await vi.advanceTimersByTimeAsync(20000);
     await pending;
     expect(fake.close).toHaveBeenCalledTimes(1);
     expect(vi.getTimerCount()).toBe(0);

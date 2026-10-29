@@ -251,7 +251,7 @@ npm run lint        # exit 0
 6.6 Orchestrator Agent - [Completed locally with mocks; live activation gated]
 6.7 Validated Streaming UI - [Completed locally; production generation disabled]
 6.8 Cache, Limits, and Observability - [Implemented locally; approved free shared admission awaits hosted setup/verification]
-6.9 Hardening and Phase Closure - [Open; remote integration/cold-start and operator approvals remain]
+6.9 Hardening and Phase Closure - [Open; cold-start suitability and provider/operator approvals remain]
 
 ### 6.0 Architecture and Entry Gates
 
@@ -277,12 +277,14 @@ npm run lint        # exit 0
 - [x] Record user-reported Vercel MCP environment configuration and redeployment; no secrets inspected or committed.
 - [x] Record the corrected Vercel scope: user moved/added MCP variables to Production (they had been Development-only), configured the Google variable, and confirmed a successful redeploy. Dashboard values were not inspected.
 - [x] Confirm authenticated tool listing and a real TMDB search against Render: user-provided Inspector 1.0.3 output lists all five tools and `search_movies(query=Inception, page=1)` returns TMDB data including movie 27205 (`A Origem`), without an MCP error.
-- [ ] Verify actual Next.js-to-Render MCP execution; no current page invokes the adapter.
-- [ ] Evaluate Render Free wake-up latency and its interaction with request timeouts.
-- [x] Sample four sequential public `/health` requests: 200 in 13,869 ms, 620 ms, 245 ms, and 237 ms. The first measurement's idle duration was unknown, so this is not a cold-start certification; its latency exceeds the configured 10s initialization/tool bound.
-- [ ] Run the local server-only adapter verification against Render; this checkout has no local `MCP_INTERNAL_API_KEY`. `npm run verify:mcp:remote` exercises all five tools without Google calls and refuses non-Render targets.
+- [x] Verify the local server-only Next.js MCP adapter against deployed Render using the authenticated 5-tool check: all succeeded in 3,253 ms; no Google call. This does not verify Vercel runtime-to-Render.
+- [x] Measure a single authenticated MCP initialization after a 16-minute period with no agent-generated requests: connected in 13,889 ms with zero tools called. External traffic could not be observed.
+- [ ] Confirm Render Free cold-start suitability; the observed handshake exceeds the previous 10-second init timeout and may not represent the platform's longest wake-up.
+- [x] Sample `/health` after a 16-minute no-agent-request window: HTTP 200 in 12,542 ms; external traffic remained unobservable.
+- [x] Raise only the shared MCP initialization cap from 10s to 20s based on the 13.889s observed handshake; retain 30s orchestrator, 35s route/UI, and 10s per-tool limits. Add pt-BR free-demo cold-start guidance only when AI is available.
+- [x] Fix the remote verifier to apply its strictly validated Render endpoint to the app client when local `MCP_SERVER_URL` is unset.
 
-All 6.0 entry approvals and units 6.1–6.8 are implemented locally. The user approved Upstash Redis Free with no payment method and conservative global admission on 2026-10-23; hosted configuration/verification remains open. Inspector success and saved environment variables still do not prove Next.js-to-Render or Google-provider integration. Free-tier usage is user-reported, not account/billing verification; privacy and live-test approval remain outstanding. Generation remains disabled. Setup/status: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md#google-gemini-credential-setup).
+All 6.0 entry approvals and units 6.1–6.8 are implemented locally. The user provisioned Upstash and reported Vercel Production variables/redeployment; an isolated hosted PING/EVAL passed from local `.env`, but the production counter key and Vercel runtime were not exercised. Authenticated local Next.js→Render checks passed. Render wake-up was sampled, but external traffic is unobservable and the 13.889s MCP handshake exceeds the prior 10s cap; the local init cap is now 20s, leaving 30/35s total caps unchanged. Google project/account/model access, Free eligibility, privacy and live-test approval remain outstanding. Generation remains disabled. Setup/status: [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md#google-gemini-credential-setup).
 
 ### 6.4 Search Agent
 
@@ -310,10 +312,10 @@ Contract and limitations: [`docs/QUALITY_GATE.md`](../docs/QUALITY_GATE.md). The
 
 - [x] Validate/normalize requests, classify strict movie intents, and compile only approved MCP tool plans; reject invented movie IDs and unsupported fields/tools.
 - [x] Coordinate Planner→Search→Quality with server-obtained evidence and Quality-only presentation; preserve partial/empty results and require selection when title resolution needs an ID.
-- [x] Enforce a 30s global deadline, 10s tool timeout, 5-call reservation ceiling, and one planner invocation; propagate cancellation with no retry/fallback.
+- [x] Enforce a 30s global deadline, 20s shared MCP initialization cap, 10s per-tool timeout, 5-call reservation ceiling, and one planner invocation; propagate cancellation with no retry/fallback.
 - [x] Add pinned AI SDK 6 Google planning for the approved model, exact-wire-request token preflight (4,096 input / 512 output / 4,608 total), and controlled provider/usage/budget errors. No SDK continuation or paid escalation.
 - [x] Keep real Google calls disabled without trusted server/operator Free Tier confirmation; no provider request, public AI route, UI wiring, or secret changes performed.
-- [x] Bound/share MCP initialization, reject redirects, and clear failed/disconnected clients; add cancellation/tool-budget regression tests.
+- [x] Bound/share MCP initialization at 20s, reject redirects, and clear failed/disconnected clients; add cancellation/tool-budget/cold-start-bound regression tests.
 - [x] Verify app lint/types/build and 213 tests, including 67 Orchestrator and 32 mock-HTTP Google adapter tests; MCP lint/types/build and 45 tests pass.
 
 Contract: [`docs/ORCHESTRATOR.md`](../docs/ORCHESTRATOR.md). Live provider access/billing/privacy, actual Next.js→MCP, and cold-start suitability remain unverified/pending. Production dependency audits are clear after same-major updates; remaining development-only audit findings are documented. No production AI certification is implied.
@@ -339,7 +341,8 @@ Contract and verification scope: [`docs/STREAMING_UI.md`](../docs/STREAMING_UI.m
 - [x] Implement mandatory atomic admission before the enabled public pipeline, bounded fail-closed REST transport, 429/Retry-After/static error and UI cooldown; keep production AI and Google gates false.
 - [x] Verify concurrency/window/expiry behavior against an isolated local Redis with the real Lua script and independent handlers; no hosted database or Google calls. Include the local integration check in CI.
 - [x] Verify limiter checkpoint: app lint/typecheck/build/342 tests plus five opt-in real local Redis cases, MCP checks/45 tests, Home/Watchlist/Discover production axe, and 320px disabled Discover browser smoke. Scoped client-chunk scan contains no Upstash env names/script/key markers. No fresh Lighthouse/Docker build, hosted counter check, or generation was performed for this unit.
-- [ ] Operator: provision/configure the approved Upstash Free database without payment details, keep eviction disabled, and verify hosted admission without enabling Google. Code/local tests do not certify a live Free account.
+- [x] Operator reports provisioning Upstash and configuring Vercel Production; local `.env` PING and isolated temporary-key EVAL passed without touching the production admission key or Google.
+- [ ] Confirm dashboard Free/no-card/eviction-disabled state and Vercel runtime access without enabling Google. The isolated test does not certify account entitlements or the live production counter key.
 
 Operations contract: [`docs/AI_OPERATIONS.md`](../docs/AI_OPERATIONS.md). Telemetry is per-process, non-durable, and not billing reconciliation. Deterministic Search/Quality report zero model tokens; planner totals remain null when provider usage is unavailable.
 
@@ -348,8 +351,9 @@ Operations contract: [`docs/AI_OPERATIONS.md`](../docs/AI_OPERATIONS.md). Teleme
 - [x] Triage/fix production dependency advisories using same-major updates only: root and MCP `npm audit --omit=dev` both report zero vulnerabilities. Full development audits retain documented toolchain advisories; no Tailwind/Lighthouse major change was forced.
 - [x] Verify application lint, typecheck, production build, 286 tests, MCP lint/typecheck/build/45 tests, Home/Watchlist/Discover axe checks, and MCP standalone Docker build plus health/unauthenticated-auth smoke.
 - [x] Update deployment, operations, architecture, README, and task-tracking documentation with evidence and limitations.
-- [ ] Execute the authenticated server-only Next.js MCP adapter against deployed Render (requires operator-provided local secret; no secret is present in this checkout).
-- [ ] Measure a confirmed Render Free idle wake-up and determine whether the 10s connection/tool timeout is suitable; current first health sample was 13.9s but idle duration was unknown.
+- [x] Execute the authenticated server-only Next.js MCP adapter locally against deployed Render; all five read-only tools succeeded. Vercel runtime-to-Render remains unverified because public AI is disabled.
+- [x] Measure a Render health wake and MCP handshake after 16-minute no-agent-request windows; results were 12.542s and 13.889s respectively. External traffic could not be observed; handshake exceeds prior 10s init bound.
+- [ ] Confirm cold-start suitability and Vercel runtime-to-Render without enabling Google; longer provider wake-ups remain possible and the current 20s init / 30s total caps are not certified against all Render Free starts.
 - [ ] Confirm Google account/model access, Free Tier billing eligibility, end-user privacy, and live-test authorization before any provider call. No Google request or paid usage is authorized/performed.
 
 **Phase 6 closure remains blocked** by the open external and rate-limit gates above. Do not begin Phase 7 until every Phase 6 checkbox is closed or the user explicitly amends the phase-order rule.

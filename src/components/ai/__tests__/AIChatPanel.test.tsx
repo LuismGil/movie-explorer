@@ -27,6 +27,13 @@ describe('AIChatPanel', () => {
     expect(screen.getByLabelText(copy.label)).toBeDisabled();
     expect(screen.getByRole('button', { name: copy.submit })).toBeDisabled();
     expect(screen.getByRole('link', { name: copy.browse })).toHaveAttribute('href', '/');
+    expect(screen.queryByText(copy.coldStartHint)).not.toBeInTheDocument();
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('sets a calm expectation for free-tier startup only when AI search is available', () => {
+    render(<AIChatPanel enabled />);
+    expect(screen.getByText(copy.coldStartHint)).toBeInTheDocument();
     expect(fetch).not.toHaveBeenCalled();
   });
 

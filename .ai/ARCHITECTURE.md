@@ -125,7 +125,7 @@ GOOGLE_GENERATIVE_AI_API_KEY=
 MCP_SERVER_URL=
 MCP_INTERNAL_API_KEY=
 AI_TELEMETRY_API_KEY= # Optional operator-only aggregate telemetry access
-UPSTASH_REDIS_REST_URL= # Approved Free database; hosted setup/verification pending
+UPSTASH_REDIS_REST_URL= # User-configured Free database; local isolated REST check passed
 UPSTASH_REDIS_REST_TOKEN=
 
 # Standalone MCP server

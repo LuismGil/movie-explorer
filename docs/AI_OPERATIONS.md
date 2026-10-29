@@ -9,9 +9,11 @@
 
 ## Limits and activation gate
 
-The Orchestrator enforces one planner invocation, at most five planned MCP calls, 4,096 input / 512 output / 4,608 total model tokens, a 30-second total deadline, and a 10-second MCP initialization/per-tool deadline. It has no retry or model fallback.
+The Orchestrator enforces one planner invocation, at most five planned MCP calls, 4,096 input / 512 output / 4,608 total model tokens, and a 30-second total deadline. Shared MCP initialization is separately capped at 20 seconds; each MCP tool request remains capped at 10 seconds. The 30-second total deadline still wins, and there is no retry or model fallback. These are time limits, not a monetary budget; raising the initialization cap does not add model calls, tokens, or billing, but a pending request can hold the function open longer.
 
-The public AI route is still server-disabled. Same-origin checks and request/response byte limits are not authentication. **Approved free-only policy (2026-10-23):** Upstash Redis Free, with no payment method or paid plan, stores one global admission counter. The implementation is local and tested; the operator has not yet provisioned/configured the hosted database. Do not enable generation until hosted admission is verified along with provider/billing/privacy approval and the integration checks in [`DEPLOYMENT.md`](DEPLOYMENT.md).
+Render Free's observed authenticated MCP handshake took 13.889 seconds after a 16-minute period with no requests from our checks. The 20-second initialization cap gives modest margin for that observation, not a guarantee against Render's longer documented wake-ups. Total orchestration/route/UI limits remain 30/35/35 seconds, so slow or unresponsive requests still fail closed. When the public AI panel is enabled, a quiet pt-BR note explains that the first search after inactivity can take longer; the disabled production panel does not show a misleading startup notice.
+
+The public AI route is still server-disabled. Same-origin checks and request/response byte limits are not authentication. **Approved free-only policy (2026-10-23):** Upstash Redis Free, with no payment method or paid plan, stores one global admission counter. The user reports creating the database and setting Vercel Production variables. Local authenticated REST PING and isolated temporary-key EVAL tests passed; the production admission key was not touched. Dashboard plan/payment/eviction settings and Vercel runtime access have not been independently verified. Do not enable generation until those checks plus provider/privacy approval are resolved.
 
 ### Minimal shared admission policy
 
@@ -28,23 +30,23 @@ These are application limits, not a claim about the account's available Gemini R
 
 ### Why not Render's free memory store?
 
-Render documents that Free Key Value data disappears on restart. An in-memory counter or local file in the MCP web service also resets on restart/idle spin-down. That is unsuitable as the sole 24-hour shared admission history. Render Free web services sleep after 15 minutes of inactivity and can take about a minute to wake; no keep-alive polling or relaxed/unbounded timeout is introduced here.
+Render documents that Free Key Value data disappears on restart. An in-memory counter or local file in the MCP web service also resets on restart/idle spin-down. That is unsuitable as the sole 24-hour shared admission history. Render Free web services sleep after 15 minutes of inactivity and can take about a minute to wake; no keep-alive polling or unbounded timeout is introduced here.
 
 ### Operator setup — no paid usage
 
 1. Create an Upstash account and **one Redis database on the Free plan**. No payment method is needed. Do not use the temporary agent-provisioned database flow; its unclaimed databases expire after three days. No resource was created by this implementation.
 2. Confirm Free in the dashboard and keep eviction disabled so counters cannot be evicted to admit extra work. Use a dedicated database for this counter; do not delete/recreate or manually clear it to bypass the daily cap. **Do not add a card:** Upstash documents automatic migration to pay-as-you-go after a payment method is added.
-3. Copy its HTTPS REST URL and REST token privately into root `.env.local`, preserving other settings:
+3. Copy its HTTPS REST URL and REST token privately into root `.env` or `.env.local`, preserving other settings:
 
    ```dotenv
    UPSTASH_REDIS_REST_URL=https://YOUR-DATABASE.upstash.io
    UPSTASH_REDIS_REST_TOKEN=YOUR_PRIVATE_REST_TOKEN
    ```
 
-4. Save the same two values as server-side Vercel Production environment variables (Preview only if needed). Never use `NEXT_PUBLIC_`, commit the token, or send it in chat/screenshots. A Vercel redeploy is needed to apply changed environment values; the public AI and Google gates must remain disabled. No Upstash configuration is needed on Render.
+4. Save the same two values as server-side Vercel Production environment variables (Preview only if needed). Never use `NEXT_PUBLIC_`, commit the token, or send it in chat/screenshots. A Vercel redeploy is needed to apply changed environment values; the user reports this was done and deployment returned Ready. The public AI and Google gates remain disabled. No Upstash configuration is needed on Render.
 5. Check [AI Studio Projects](https://aistudio.google.com/projects) shows Free for the dedicated Google project and does not have an active paid billing account; do not select Set up billing, purchase credits, or enable auto-reload. Check the project's actual [active rate limits](https://aistudio.google.com/rate-limit). If its available quota is lower than this demo policy, keep generation disabled until limits are lowered accordingly. Free-tier eligibility is user-reported, not independently verified here.
 6. Check Render's Billing/Monthly Included Usage. Its documentation warns that bandwidth/build overages can be billed when a payment method exists, even on Free compute. Do not change billing automatically; with no payment method Render documents suspension/build blocking rather than supplementary billing. Keep any build spend limit at zero where available. This code cannot impose a hard platform-wide spending cap.
-7. Report only that setup is complete. A separate explicitly approved hosted-counter check must still verify actual configuration and atomic behavior without invoking Google, before this gate can be marked closed. The tests below use **only a local Redis**, not the hosted Free database.
+7. A hosted REST PING and an atomic EVAL against a random temporary key (five-second expiry) were explicitly approved and passed from local `.env`, without touching the production counter or Google. Still confirm dashboard Free/no-card/eviction-disabled settings; do not treat this isolated test as account-billing verification. The CI tests below use **only a local Redis**.
 
 ### Verification
 
@@ -60,4 +62,4 @@ The route is uncached and requires `Authorization: Bearer <AI_TELEMETRY_API_KEY>
 
 The app test suite runs ten mocked Orchestrator requests and verifies the endpoint's per-agent aggregate totals. This validates aggregation and authorization, not live provider billing or durable/cross-instance behavior.
 
-Run `npm run verify:mcp:remote` with `MCP_INTERNAL_API_KEY` set in local `.env.local` to exercise all five tools through the server-only adapter. It logs only aggregate outcomes/timing and never calls Google. It refuses non-Render endpoints. Do not paste the secret into chat or command history.
+Run `npm run verify:mcp:remote` with `MCP_INTERNAL_API_KEY` set in local `.env` or `.env.local` to exercise all five read-only tools through the server-only adapter. It logs only aggregate outcomes/timing and never calls Google. It refuses non-Render endpoints and explicitly sets its validated Render URL for the app client. Do not paste the secret into chat or command history.

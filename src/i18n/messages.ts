@@ -76,6 +76,7 @@ export const messages = {
     eyebrow: 'Sua próxima sessão',
     title: 'Um pedido. Novos filmes.',
     description: 'Busque um título, veja o que está em alta ou peça detalhes e recomendações a partir de um filme.',
+    coldStartHint: 'Demonstração gratuita: após um período sem uso, a primeira busca pode demorar um pouco enquanto o serviço é iniciado.',
     label: 'O que você quer assistir?',
     placeholder: 'Ex.: Quais filmes estão em alta nesta semana?',
     submit: 'Buscar com IA',

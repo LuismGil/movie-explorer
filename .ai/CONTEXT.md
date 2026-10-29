@@ -1,5 +1,13 @@
 # Project Context
 
+## Session: 2026-10-29 — Remote MCP and Render Free Wake Measurements
+
+**Autorización:** User authorized authenticated Render/MCP verification. Vercel reported Ready after the shared-admission deployment; production `POST /api/ai/search` still returned the expected 503/disabled. No Google request occurred.
+**Verificación remota:** Render `/health` and `/ready` returned 200 (12.874s and 0.755s; preceding idle unknown). An authenticated local server-only MCP adapter test completed all five read-only tools in 3,253ms (52 movie summaries). The initial attempt failed because local `MCP_SERVER_URL` was absent and the app defaulted to localhost; an explicit strict Render endpoint fixed this. `scripts/verify-mcp-remote.ts` now applies its validated Render endpoint to the app client. No tool results or credentials were logged.
+**Quiet-window samples:** After 16 minutes with no requests from our checks, `/health` returned 200 in 12,542ms. After a later 16-minute quiet window, an authenticated MCP initialize-only handshake connected in 13,889ms; zero tools were called. External inbound traffic was not observable, so these are indicative, not certified no-traffic samples. The measured handshake exceeds the prior 10s initialization timeout.
+**Change:** Increased only shared MCP initialization cap to 20s; retained 30s orchestrator, 35s route/UI, 10s per-tool, model token ceilings, and no automatic retries. Added a muted pt-BR notice explaining free-tier wake delay, only when AI search is enabled. Lint, typecheck, build, and 344 tests pass. This is a time limit, not a monetary/token budget; longer waits do not add provider calls but can occupy the function longer. The cap does not cover Render's full documented possible wake time, so AI remains disabled.
+**Pendientes:** Confirm hosted Upstash plan/eviction and production runtime path, Vercel→Render behavior, Render cold-start suitability, and Google project Free/quota/privacy/live-test approvals. No Phase 7.
+
 ## Session: 2026-10-23 — Free-Only Shared AI Admission
 
 **Autorización:** User reports all services are Free Tier and explicitly approved Upstash Redis Free without a card/paid plan, plus one global admission per 60 seconds and ten per rolling 24 hours. No new resource/account/credential was created or inspected; this is not provider billing/privacy/live-generation verification.

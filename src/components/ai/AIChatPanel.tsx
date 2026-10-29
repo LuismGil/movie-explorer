@@ -82,6 +82,7 @@ export function AIChatPanel({ enabled }: { enabled: boolean }) {
         <p className={styles.eyebrow}>{copy.eyebrow}</p>
         <h1 id="ai-title" className={styles.title}>{copy.title}</h1>
         <p className={styles.muted}>{copy.description}</p>
+        {enabled && <p className={styles.muted}>{copy.coldStartHint}</p>}
       </header>
       {!enabled && <div className={styles.notice}><p>{copy.disabled}</p><Link href="/" className={`${styles.link} ${focus}`}>{copy.browse}</Link></div>}
       <form className={styles.form} onSubmit={event => { event.preventDefault(); void search({ message }); }}>

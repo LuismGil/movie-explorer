@@ -223,7 +223,8 @@ Contract/limits: [`docs/STREAMING_UI.md`](../docs/STREAMING_UI.md). Enabled data
 - [x] Implement atomic shared admission with bounded REST/strict schemas, no retries/refunds/local fallback, fail-closed 503, and 429/Retry-After/UI cooldown before the enabled public pipeline. Keep AI/Google disabled.
 - [x] Verify actual atomic Lua/concurrency/window/expiry behavior with isolated local Redis; add the local integration check to CI without hosted credentials.
 - [x] Verify 342 app tests plus five opt-in real Redis cases, app lint/types/build, MCP checks/45 tests, local production axe, and disabled Discover 320px browser smoke; no live Google/Upstash, no external requests on Discover, and no client-chunk Upstash markers.
-- [ ] Operator: configure the approved hosted Upstash Free store (no payment method, eviction disabled) and verify it without Google. The hosted gate remains open.
+- [x] Operator reports hosted Upstash creation and Vercel Production variables; local PING and isolated temporary-key atomic EVAL passed, with no Google call or production-counter mutation.
+- [ ] Confirm Free/no-card/eviction-disabled dashboard settings and Vercel runtime access. No account entitlement or production-key test has been certified.
 
 See [`docs/AI_OPERATIONS.md`](../docs/AI_OPERATIONS.md). No model calls, user identifiers, prompts, results, movie IDs, or raw errors are included in telemetry.
 
@@ -233,8 +234,10 @@ See [`docs/AI_OPERATIONS.md`](../docs/AI_OPERATIONS.md). No model calls, user id
 - [x] Verify application lint, types, build, 286 unit/mock-integration tests, MCP lint/types/build/45 tests, and Home/Watchlist/Discover axe audits.
 - [x] Verify standalone MCP Docker build and local health/unauthenticated-auth smoke.
 - [x] Update README, deployment/operations docs, architecture, and phase tracking.
-- [ ] Run the authenticated server-only MCP adapter against Render via `npm run verify:mcp:remote`; no local `MCP_INTERNAL_API_KEY` is configured here.
-- [ ] Measure Render Free wake-up after a confirmed idle window and evaluate against 10s connection/tool timeouts; the current 13.9s first sample had unknown idle duration.
+- [x] Run authenticated server-only MCP adapter against Render: all five read-only tools succeeded in 3,253 ms; no Google call. The verifier now sets its validated remote endpoint when local `MCP_SERVER_URL` is absent.
+- [x] Measure `/health` and an MCP initialize-only handshake after 16-minute windows with no agent requests: 12,542 ms and 13,889 ms; external traffic could not be observed, so the samples are indicative.
+- [x] Raise only MCP initialization timeout to 20s; retain 30s global, 35s route/UI, and 10s per-tool caps. Explain free-tier cold starts in pt-BR UI only when AI is enabled.
+- [ ] Confirm cold-start suitability and Vercel runtime-to-Render; the observed 13.889s handshake exceeded the old 10s init limit, and longer wakeups remain possible.
 - [ ] Confirm Google account/model access, Free Tier billing eligibility, end-user privacy, and explicit live-test approval before any provider request. No paid usage is authorized.
 
-**Phase 6 remains open** until the remaining integration, latency, hosted-admission configuration/verification, and operator gates above are resolved. Keep `/discover` and generation disabled.
+**Phase 6 remains open** until cold-start suitability, Vercel runtime-to-Render, hosted account settings, and provider/privacy/operator gates above are resolved. Keep `/discover` generation disabled.
