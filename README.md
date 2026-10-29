@@ -10,7 +10,7 @@
 
 **A movie discovery platform built on React 19, Next.js App Router Server Components, and Server Actions.**
 
-> **Current checkpoint: Phase 6.8 free-tier admission implemented locally; generation disabled.** Shared admission limits are one request per 60 seconds and ten per rolling 24 hours across the whole demo, using approved Upstash Redis Free (no payment method). Local atomic Redis and mocked HTTP/UI tests pass; hosted configuration/verification is still pending. Next.js→Render integration, Render cold-start suitability, provider/billing/privacy review, and final hardening remain open before Phase 6 closure or Phase 7.
+> **Current checkpoint: Phase 6 release preparation; real generation still disabled.** The operator in Brazil accepts Google's unpaid-service data policy and wants direct public access without invitations. Google/model remain approved; Free/no-payment and disabled Upstash eviction are user-confirmed. Local production wiring, privacy disclosure and a real quota countdown with catalog access are prepared; lint/types/build and 349 tests pass. Shared limits remain one admission/60s and ten/rolling 24h, with manual retry only. Public distribution compatibility, protected Vercel runtime verification, cold-start acceptance and the scoped live test remain open. [Plan and next steps](docs/AI_DEMO_DECISION.md); Phase 7 has not started.
 
 ---
 

@@ -35,6 +35,14 @@ Static copy is centralized in `src/i18n/messages.ts` (`pt-BR`). Styling is scope
 
 ## Verification — 2026-10-22
 
+### Subsequent quota UX verification — 2026-10-29
+
+The operator in Brazil accepts Google unpaid-service data use and chooses direct public demo access without invitations/accounts. The pt-BR privacy notice now explains improvement use/possible human review and links to Google's terms. Production composition is prepared using server-owned availability, still false.
+
+On 429, the panel converts bounded `Retry-After` to an absolute expiry and displays a real hours/minutes/seconds countdown outside the live status region (`role="timer"`, `aria-live="off"`). It catches up on tab visibility changes, provides a catalog link, and announces manual retry availability at expiry. Shared rolling-window limits remain unchanged; no midnight reset, automatic requests, polling or reserved slot is implied. The server rechecks admission on every submission, including after page reload. Public distribution/runtime checks remain pending; no geographic restriction or inference was enabled.
+
+Lint/typecheck/build and 349 tests pass, with five opt-in Redis cases skipped. UI tests cover minute countdown updates, disabled controls, expiry, timer cleanup, long waits and tab-resume synchronization; production composition tests cover trusted approval only after admission. Earlier verification below is historical.
+
 - App lint/types/build and **281 tests** pass: the previous 213 plus **24 reader/contract**, **29 handler**, and **15 UI** cases. These cover malformed/trailing streams, split UTF-8, caps/deadlines/cancellation, cross-origin/extra-field rejection, disabled production route, real Orchestrator/Quality with mocked planning/Search, all UI outcomes, explicit selection/retry, stale responses, and cleanup. All **77 Quality** regressions still pass after DTO extraction.
 - MCP lint/types/build and all **45 tests** pass; no MCP contracts/runtime were changed in 6.7.
 - Chromium against a local **production standalone build**: `/discover` → HTTP 200, expected disabled controls, same-origin POST → HTTP 503 with only `{"type":"error","code":"disabled"}`, no-store headers, no page errors or external requests. Browser verification found/fixed a standalone Origin/URL mismatch and added a regression test.

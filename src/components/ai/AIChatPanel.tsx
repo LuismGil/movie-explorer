@@ -7,6 +7,7 @@ import { readAiStream } from '@/lib/ai/read-stream';
 import { aiStages, type AiStage, type AiTerminalEvent } from '@/lib/ai/stream-contract';
 import { aiTheme } from './theme';
 import styles from './AIChatPanel.module.css';
+import { AIQuotaCountdown } from './AIQuotaCountdown';
 
 type SearchRequest = { message: string; referenceMovieId?: number };
 const copy = messages.ai;
@@ -17,19 +18,21 @@ export function AIChatPanel({ enabled }: { enabled: boolean }) {
   const [pending, setPending] = useState(false);
   const [stage, setStage] = useState<AiStage>();
   const [terminal, setTerminal] = useState<AiTerminalEvent>();
-  const [retryAfterSeconds, setRetryAfterSeconds] = useState<number>();
+  const [retryAt, setRetryAt] = useState<number>();
   const active = useRef<AbortController | null>(null);
   const activeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [lastRequest, setLastRequest] = useState<SearchRequest>();
   useEffect(() => () => { active.current?.abort(); active.current = null; clearTimeout(activeTimer.current); }, []);
   useEffect(() => {
-    if (retryAfterSeconds === undefined) return;
-    const timer = setTimeout(() => setRetryAfterSeconds(undefined), retryAfterSeconds * 1000);
-    return () => clearTimeout(timer);
-  }, [retryAfterSeconds]);
+    if (retryAt === undefined) return;
+    const expire = () => { if (Date.now() >= retryAt) setRetryAt(undefined); };
+    const timer = setTimeout(expire, Math.max(0, retryAt - Date.now()));
+    document.addEventListener('visibilitychange', expire);
+    return () => { clearTimeout(timer); document.removeEventListener('visibilitychange', expire); };
+  }, [retryAt]);
 
   async function search(input: SearchRequest) {
-    if (!enabled || active.current || retryAfterSeconds !== undefined) return;
+    if (!enabled || active.current || retryAt !== undefined) return;
     if (!input.message.trim() || input.message.length > 1000) {
       setTerminal({ type: 'error', code: 'invalid_request' });
       return;
@@ -56,7 +59,7 @@ export function AIChatPanel({ enabled }: { enabled: boolean }) {
         if (result.type === 'error' && result.code === 'rate_limited') {
           const header = response.headers.get('retry-after') ?? '';
           const seconds = /^\d{1,5}$/.test(header) ? Number(header) : 0;
-          setRetryAfterSeconds(seconds >= 1 && seconds <= 86_400 ? seconds : 60);
+          setRetryAt(Date.now() + (seconds >= 1 && seconds <= 86_400 ? seconds : 60) * 1000);
         }
         setTerminal(result);
       }
@@ -90,9 +93,11 @@ export function AIChatPanel({ enabled }: { enabled: boolean }) {
         <textarea id="ai-message" rows={3} maxLength={1000} required value={message} disabled={!enabled || pending}
           onChange={event => setMessage(event.target.value)} placeholder={copy.placeholder}
           aria-describedby="ai-privacy" className={`${styles.input} ${focus}`} />
-        <p id="ai-privacy" className={styles.muted}>{copy.privacy}</p>
+        <p id="ai-privacy" className={styles.muted}>{copy.privacy}{' '}
+          <a href="https://ai.google.dev/gemini-api/terms#unpaid-services" target="_blank" rel="noopener noreferrer" className={`${styles.link} ${focus}`}>{copy.privacyTerms}</a>
+        </p>
         <div className={styles.actions}>
-          <button type="submit" disabled={!enabled || pending || retryAfterSeconds !== undefined || !message.trim()} className={`${styles.button} ${focus}`}>{copy.submit}</button>
+          <button type="submit" disabled={!enabled || pending || retryAt !== undefined || !message.trim()} className={`${styles.button} ${focus}`}>{copy.submit}</button>
           {pending && <button type="button" onClick={cancel} className={`${styles.link} ${focus}`}>{copy.cancel}</button>}
         </div>
       </form>
@@ -103,11 +108,15 @@ export function AIChatPanel({ enabled }: { enabled: boolean }) {
         {pending && <p>{stage ? copy.stages[stage] : copy.connecting}</p>}
         {!pending && !terminal && enabled && <p className={styles.muted}>{copy.idle}</p>}
         {terminal?.type === 'unsupported' && <p>{copy.unsupported}</p>}
-        {terminal?.type === 'error' && <p className={styles.error}>{copy.errors[terminal.code]}</p>}
-        {retryAfterSeconds !== undefined && <p>{copy.rateLimitWait(retryAfterSeconds)}</p>}
+        {terminal?.type === 'error' && <p className={styles.error}>{terminal.code === 'rate_limited' && retryAt === undefined ? copy.rateLimitReady : copy.errors[terminal.code]}</p>}
         {result && <p>{result.status === 'needs_selection' ? copy.selectionTitle : result.presentation.movies.length ? copy.resultTitle : copy.empty}</p>}
       </div>
-      {terminal?.type === 'error' && enabled && lastRequest && !pending && retryAfterSeconds === undefined && terminal.code !== 'disabled' && (
+      {terminal?.type === 'error' && terminal.code === 'rate_limited' && <div className={styles.notice}>
+        {retryAt !== undefined && <AIQuotaCountdown key={retryAt} until={retryAt} />}
+        <p>{copy.rateLimitShared}</p>
+        <Link href="/" className={`${styles.link} ${focus}`}>{copy.browse}</Link>
+      </div>}
+      {terminal?.type === 'error' && enabled && lastRequest && !pending && retryAt === undefined && terminal.code !== 'disabled' && (
         <div><button type="button" onClick={() => { void search(lastRequest); }} className={`${styles.link} ${focus}`}>{copy.retry}</button></div>
       )}
       {result && <div className={styles.results} aria-busy={pending}>
@@ -124,7 +133,7 @@ export function AIChatPanel({ enabled }: { enabled: boolean }) {
             {movie.runtime !== null && <p>{messages.movie.durationLabel(movie.runtime)}</p>}
             <div className={styles.actions}>
               <Link href={`/movie/${movie.id}`} className={`${styles.link} ${focus}`}>{copy.details}</Link>
-              {result.status === 'needs_selection' && <button type="button" disabled={pending || !enabled || retryAfterSeconds !== undefined} className={`${styles.button} ${focus}`}
+              {result.status === 'needs_selection' && <button type="button" disabled={pending || !enabled || retryAt !== undefined} className={`${styles.button} ${focus}`}
                 onClick={() => { if (lastRequest) void search({ message: lastRequest.message, referenceMovieId: movie.id }); }}>{copy.select(movie.title)}</button>}
             </div>
           </div>

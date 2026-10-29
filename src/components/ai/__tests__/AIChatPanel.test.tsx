@@ -156,16 +156,48 @@ describe('AIChatPanel', () => {
     await act(async () => { submit(); });
     expect(screen.getByText(copy.errors.rate_limited)).toBeInTheDocument();
     expect(screen.getByText(copy.rateLimitWait(60))).toBeInTheDocument();
+    expect(screen.getByRole('timer')).toHaveAttribute('aria-live', 'off');
+    expect(screen.getByRole('status')).not.toContainElement(screen.getByRole('timer'));
+    expect(screen.getByRole('link', { name: copy.browse })).toHaveAttribute('href', '/');
     expect(screen.getByRole('button', { name: copy.submit })).toBeDisabled();
     expect(screen.queryByRole('button', { name: copy.retry })).not.toBeInTheDocument();
-    await act(async () => { await vi.advanceTimersByTimeAsync(59_999); });
+    await act(async () => { await vi.advanceTimersByTimeAsync(1_000); });
+    expect(screen.getByRole('timer')).toHaveTextContent('Você poderá tentar novamente em 59 s.');
+    await act(async () => { await vi.advanceTimersByTimeAsync(58_999); });
     expect(screen.getByRole('button', { name: copy.submit })).toBeDisabled();
     await act(async () => { await vi.advanceTimersByTimeAsync(1); });
     expect(screen.getByRole('button', { name: copy.submit })).toBeEnabled();
     expect(screen.getByRole('button', { name: copy.retry })).toBeInTheDocument();
+    expect(screen.queryByRole('timer')).not.toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent(copy.rateLimitReady);
     expect(fetch).toHaveBeenCalledTimes(1);
     await act(async () => { fireEvent.click(screen.getByRole('button', { name: copy.retry })); });
     view.unmount();
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('shows a long rolling-window wait and catches up after an inactive tab without network polling', async () => {
+    vi.useFakeTimers();
+    const start = Date.now();
+    fetch.mockResolvedValue(new Response(ndjson([{ type: 'error', code: 'rate_limited' }]), {
+      status: 429, headers: { 'Content-Type': 'application/x-ndjson', 'Retry-After': '86400' },
+    }));
+    render(<AIChatPanel enabled />);
+    await act(async () => { submit(); });
+    expect(screen.getByRole('timer')).toHaveTextContent('24 h 0 min 0 s');
+    await act(async () => {
+      vi.setSystemTime(start + 3_600_000);
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    expect(screen.getByRole('timer')).toHaveTextContent('23 h 0 min 0 s');
+    expect(screen.getByRole('button', { name: copy.submit })).toBeDisabled();
+    await act(async () => {
+      vi.setSystemTime(start + 86_400_000);
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    expect(screen.queryByRole('timer')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: copy.retry })).toBeEnabled();
+    expect(fetch).toHaveBeenCalledTimes(1);
     expect(vi.getTimerCount()).toBe(0);
   });
 

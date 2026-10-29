@@ -82,8 +82,18 @@ export const messages = {
     submit: 'Buscar com IA',
     cancel: 'Cancelar busca',
     retry: 'Tentar novamente',
-    rateLimitWait: (seconds: number) => `Aguarde até ${seconds} segundos antes de tentar novamente. O limite é compartilhado por toda a demonstração.`,
-    privacy: 'Quando ativada, a busca envia seu pedido ao Google. Não inclua dados pessoais ou segredos.',
+    rateLimitWait: (seconds: number) => {
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const remainder = seconds % 60;
+      const duration = hours > 0 ? `${hours} h ${minutes} min ${remainder} s`
+        : minutes > 0 ? `${minutes} min ${remainder} s` : `${remainder} s`;
+      return `Você poderá tentar novamente em ${duration}.`;
+    },
+    rateLimitShared: 'A demonstração permite uma busca por minuto e até 10 em 24 horas, compartilhadas entre todos os visitantes. A disponibilidade será conferida novamente ao enviar. Enquanto isso, explore o catálogo.',
+    rateLimitReady: 'O tempo de espera terminou. Você pode tentar novamente; a disponibilidade será conferida ao enviar.',
+    privacy: 'Quando ativada, a busca envia seu pedido ao Google Gemini. No serviço gratuito, o Google pode usar as entradas e respostas para melhorar seus produtos, e revisores humanos podem analisá-las. Não inclua dados pessoais, sensíveis, confidenciais ou segredos.',
+    privacyTerms: 'Termos de uso e tratamento de dados do Google',
     disabled: 'A busca com IA ainda não está ativada. Você pode continuar buscando por título no início.',
     browse: 'Buscar no catálogo',
     idle: 'Seu pedido começa aqui. Os filmes só aparecem depois da conferência dos dados.',

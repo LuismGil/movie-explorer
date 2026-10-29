@@ -1,4 +1,4 @@
-# Deployment Checkpoint — 2026-10-22
+# Deployment Checkpoint — 2026-10-29
 
 ## Deployed Services
 
@@ -30,6 +30,8 @@ Expected Render settings: allow origin `https://movie-explorer-luis.vercel.app`,
 - Free-tier idle wake-up behavior is sampled but may be affected by unobserved external traffic; load testing and production suitability remain unverified.
 
 ### Vercel
+
+**Latest AI checkpoint (2026-10-29):** Commit `5419f86` is pushed and Vercel Ready is user-confirmed. The subsequent smoke returned `/discover` 200 with the startup hint hidden, and same-origin `POST /api/ai/search` 503 with only `error/disabled` and `no-store, no-transform`. This verifies the deployed disabled boundary, not Vercel→Upstash/Render/Google execution. No Google request occurred.
 
 A headless Chromium smoke test verified:
 
@@ -139,13 +141,20 @@ References: [Gemini API keys](https://ai.google.dev/gemini-api/docs/api-key), [G
 - **Cost/privacy condition:** do not enable billing or make live generative calls without confirming the project's Free Tier status. Model selection does not force free billing on a paid project. The published Free Tier table also allows submitted data to be used to improve Google's products; do not submit secrets/private data. Broader end-user privacy requirements must be reviewed before a public AI flow.
 - Entry approval is complete, **not** a runtime/provider-authentication or billing certification. No provider authentication/generation test has been run. Older alternative model labels/cost estimates are superseded by this policy, not current approval for other models.
 
+**Review clarification (2026-10-29):** Google/model approval remains in force. The user's privacy questions neither reject it nor select a replacement. Applicable Google data-use, age/audience and regional distribution conditions were not closed by initial architecture approval. Establish developer location/intended audience and explain those conditions before requesting an informed decision. In code, public availability is false and production composition also omits the planner's separate trusted Google assertion; changing only the public boolean would not enable inference. This is remaining activation work, not an observed provider rejection. See the review, alternatives and exact release sequence in [`AI_DEMO_DECISION.md`](AI_DEMO_DECISION.md).
+
 Sources checked on 2026-10-22: [model capabilities/status](https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-lite), [Free Tier/pricing](https://ai.google.dev/gemini-api/docs/pricing).
 
 ## Next Work, in Order
 
-1. **Upstash Free approved (2026-10-23):** user reports creating a Free Redis admission store and configuring Vercel Production; global policy is one admission per 60 seconds and ten per rolling 24 hours. Local real-Redis tests pass; a hosted PING and isolated temporary-key atomic EVAL also passed without touching the production key or Google. Confirm dashboard Free/no-card/eviction-disabled settings. AI/Google gates remain disabled.
-2. Root production dependency audit is clear after targeted same-major security updates. The full development audit still contains advisories whose available remediation requires a Tailwind 4 or Lighthouse CI major change; those changes were not applied. MCP production audit is clear; one low development-only `esbuild` advisory remains under triage.
-3. Local `npm run verify:mcp:remote` authenticated all five read-only Render tools (3.253s); an initialize-only cold handshake took 13.889s after a 16-minute no-agent-request window. External traffic could not be observed. The MCP init cap is raised to 20s; 30/35s total bounds remain. Vercel runtime-to-Render, cold-start suitability, Google project/account/model Free status, privacy and live-test approval remain outstanding. No Google/paid use is authorized.
+**Latest progress (2026-10-29):** operator in Brazil accepts Google's unpaid-service data policy. Local production wiring and expanded pt-BR disclosure are now prepared with availability false; lint/types/build and 348 tests pass. No deployment or inference occurred. The remaining part of D1–D2 is visitor audience/access, not repeating operator privacy acceptance; D3 preparation is verified. Continue with protected runtime verification and the scoped live test once their prerequisites are resolved.
+
+1. **D1–D2: clarify, do not restart.** Keep approved Google/model and completed architecture. Establish developer region/intended audience, explain actual transmitted data/applicable policy, and obtain an informed privacy decision. Existing services Free/no-payment and Upstash eviction-disabled are operator-confirmed; reported AI Studio quotas are recorded. Clarify only missing model/account/audience facts. Alternatives are contingencies, not a planned automatic migration.
+2. **D3: after approval, finish minimal composition with mocks.** Wire both server-owned interlocks deliberately and expand the existing pt-BR privacy notice. Preserve all token/admission/time/schema ceilings. Lint/types/tests/build without provider calls; do not turn on generation yet.
+3. **D4: agree on a protected runtime check.** Verify Vercel→Render and isolated Upstash without generation; the local five-tool check does not prove this path. No public diagnostics, browser secrets, production-key resets or keep-alive polling. Accept an honest bounded demo cold-start policy; the observed 13.889s does not guarantee every wake-up fits 20s.
+4. **D5: separate live-test and release authorization.** Only after the applicable gates, obtain approval for one public-film-only inference and verify the complete pipeline. Then approve public activation with accurate disclosure and the existing global one/60s, ten/rolling-24h policy. No inference, paid use, new provider/model or Phase 7 is currently authorized by this review.
+
+Earlier dependency checkpoint: root/MCP production audits were clear after same-major updates. Development advisories requiring Tailwind/Lighthouse major changes remain documented; this documentation review does not claim a fresh audit or silently schedule those major upgrades.
 
 Official docs reviewed 2026-10-23: [Gemini quotas](https://ai.google.dev/gemini-api/docs/rate-limits) apply per project and actual RPM/TPM/RPD must be viewed in AI Studio; [billing status](https://ai.google.dev/gemini-api/docs/billing) belongs to the project/billing account, not the key. [Render Free](https://render.com/docs/free) sleeps after 15 minutes and may take about a minute to wake; local files disappear and Free Key Value state is lost on restart. Free compute alone does not prevent bandwidth/build overage charges if a payment method exists. Do not add payment details or keep-alive polling. [Upstash pricing](https://upstash.com/docs/redis/overall/pricing) lists a persistent Free plan with 500K commands/month and warns that adding a card upgrades it to pay-as-you-go. Limits are provider-published, not inspected account entitlements.
 

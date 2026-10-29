@@ -1,9 +1,11 @@
 # Phase 6 — MCP Server + Multi-Agent System
 
 ## Active Phase
-- Phase 6.5 Quality/Safety is implemented and verified; all 6.0 entry approvals are complete, including the explicit `gemini-3.1-flash-lite`/no-alternate-fallback policy.
+- **Latest UX decision:** direct public demo access, no invitations/accounts/link-request flow. Shared quota denial now has a real countdown and catalog access; expiry permits manual retry, not a reserved slot. Lint/types/build and 349 tests pass. No geographic restriction or public activation was implemented; distribution/runtime release checks remain open.
+- **Latest decision (2026-10-29):** operator confirms Brazil and accepts Google unpaid-service data use for the demo; proceed with Google. Local route wiring and expanded pt-BR disclosure are prepared with availability false. Verify preparation, then resolve visitor audience/access and protected runtime/live-test scope. Privacy acceptance is no longer pending.
+- Phase 6.1–6.8 implementations exist; 6.9 release verification remains open. Google/`gemini-3.1-flash-lite`/no-alternate-fallback approval remains valid; operator privacy acceptance is complete, visitor audience/access and separately scoped live inference remain pending.
 - Phase 5 production verification is closed: the deployed hydration fix passes user and agent live browser checks without React errors.
-- Next agent task: 6.6 Orchestrator (intent planning, sequencing, and runtime budgets). No live Google calls or UI wiring were added in 6.5.
+- Latest timeout/UI commit `5419f86` is deployed; AI remains deliberately disabled. Subsequent local composition/disclosure preparation passes lint/types/build and 348 tests. Next: visitor audience/access and protected runtime verification, not a provider migration or reimplementation of 6.6.
 
 ## Previous Completed Phases
 - [x] Phase 1 — Stabilization & Code Quality
@@ -13,7 +15,7 @@
 - [x] Phase 5 — Next.js App Router Migration and core-flow production verification (2026-10-22)
 
 ## Current Goal
-- Continue with 6.6 while preserving the implemented Search→Quality contracts and strict presentation gate. The approved model policy does not authorize paid usage; Google account/Free Tier eligibility must be confirmed before live generation. Actual provider/Next.js-to-MCP integration remains unverified.
+- Complete a usable, honestly disclosed real-AI portfolio demo using the approved architecture where eligible. Preserve Search→Quality and conservative limits. Clarify remaining Google terms/audience, finish server-only production activation wiring with mocks, then perform protected runtime checks and separately authorized inference. No paid use, implicit privacy acceptance, or automatic provider/model switch.
 
 ## Tasks
 
@@ -118,6 +120,24 @@ docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:lat
 **Status:** In Progress
 **Goal:** Introduce a standalone MCP server for TMDB and a validated three-agent AI orchestration flow without exposing secrets or rendering raw LLM output.
 
+## Active next work — 2026-10-29
+
+The goal is a usable portfolio demo with real inference, not permanent disabled availability. Google/model approval remains valid; operator in Brazil now accepts unpaid-service data use. Source of truth: the D1–D5 sequence in [PLAN.md](PLAN.md) and [AI demo decision](../docs/AI_DEMO_DECISION.md).
+
+- [x] Record deployment of `5419f86`: user confirmed Vercel Ready; post-deploy smoke passed `/discover` 200 and AI 503 `disabled`/`no-store`; startup hint hidden. No Vercel→MCP/Upstash/provider execution was exercised.
+- [x] Record operator Free/no-payment confirmation for existing services and Upstash eviction disabled; isolated hosted checks passed locally, not in Vercel.
+- [x] Record AI Studio values as user-reported usage/limits: 60 RPM, 100K input TPM, 100 RPD, all showing zero use; exact model/project access not independently verified.
+- [x] Review original/execution plans and Google terms; distinguish approved architecture/model from unresolved release conditions. Find stale task summaries and unfinished production Google-assertion wiring; no live provider failure has been observed.
+- [x] Document alternatives as contingencies only. Presets do not remove Google policy/eligibility constraints or silently replace free-text scope.
+- [x] **D1 operator decision:** Brazil/LatAm confirmed; Google unpaid-service data policy accepted; proceed with approved provider/model.
+- [ ] **D1 visitor audience:** clarify intended visitor regions/adult audience and access; a Brazil operator and demo label do not establish visitor eligibility.
+- [ ] **D2:** Reuse current Google implementation and confirmed Free/no-payment setup; clarify only missing model/account/audience facts and the minimal eligible release design.
+- [x] **D3 implementation:** wire trusted Google assertion from server-owned availability (false) and expand pt-BR disclosure with terms link.
+- [x] **D3 verification:** production-composition mocks and existing suite pass (348 tests; five opt-in Redis cases skipped), along with lint/types/build; no live provider calls.
+- [x] **D3 quota UX:** real countdown in hours/minutes/seconds, absolute expiry/tab-resume synchronization, non-live timer for accessibility, expiry message, catalog link and no automatic requests. Updated total: 349 passing tests, five opt-in Redis cases skipped; lint/types/build pass.
+- [ ] **D4:** Approve and execute protected Vercel→Render/isolated Upstash checks without generation; agree on bounded demo cold-start behavior.
+- [ ] **D5:** Separately authorize one controlled real inference, verify end-to-end, then approve/deploy public activation after applicable gates pass. Retain 1 global admission/60s, 10/rolling 24h; no Phase 7 yet.
+
 ## Architecture and Entry Gates
 
 - [x] Phase 5 production deployment verified: user-confirmed watchlist retest and agent live core-flow smoke without React errors.
@@ -140,8 +160,8 @@ Explicit user approvals recorded on 2026-10-22, including the default model/no-a
 - [x] Record user-reported local Inspector tool listing/TMDB search success and Vercel MCP environment configuration/redeployment; no secret values inspected.
 - [x] Record corrected Vercel environment scope and redeploy: MCP variables are now in Production, not only Development; Google Production configuration is also user-confirmed.
 - [x] Confirm authenticated remote tools via user-provided Inspector 1.0.3 output: all five tools listed; `search_movies(query=Inception, page=1)` returned real TMDB data including movie 27205 without an MCP error.
-- [ ] Verify Next.js-to-Render MCP execution; the current UI does not invoke the MCP adapter.
-- [ ] Evaluate free-tier cold starts against request timeouts.
+- [x] Verify the local Next.js server adapter against Render: all five read-only tools passed; this does not prove Vercel runtime access.
+- [ ] Verify Vercel-to-Render with a separately approved protected method and agree on the remaining cold-start limitation.
 
 #### Standalone MCP Server Foundation
 **Status**: `Complete`
@@ -224,7 +244,8 @@ Contract/limits: [`docs/STREAMING_UI.md`](../docs/STREAMING_UI.md). Enabled data
 - [x] Verify actual atomic Lua/concurrency/window/expiry behavior with isolated local Redis; add the local integration check to CI without hosted credentials.
 - [x] Verify 342 app tests plus five opt-in real Redis cases, app lint/types/build, MCP checks/45 tests, local production axe, and disabled Discover 320px browser smoke; no live Google/Upstash, no external requests on Discover, and no client-chunk Upstash markers.
 - [x] Operator reports hosted Upstash creation and Vercel Production variables; local PING and isolated temporary-key atomic EVAL passed, with no Google call or production-counter mutation.
-- [ ] Confirm Free/no-card/eviction-disabled dashboard settings and Vercel runtime access. No account entitlement or production-key test has been certified.
+- [x] Record operator confirmation: existing services Free/no-payment and Upstash eviction disabled; no independent dashboard inspection claimed.
+- [ ] Verify Vercel runtime access using an approved protected method. The production counter key was not exercised by isolated local checks.
 
 See [`docs/AI_OPERATIONS.md`](../docs/AI_OPERATIONS.md). No model calls, user identifiers, prompts, results, movie IDs, or raw errors are included in telemetry.
 
@@ -237,7 +258,7 @@ See [`docs/AI_OPERATIONS.md`](../docs/AI_OPERATIONS.md). No model calls, user id
 - [x] Run authenticated server-only MCP adapter against Render: all five read-only tools succeeded in 3,253 ms; no Google call. The verifier now sets its validated remote endpoint when local `MCP_SERVER_URL` is absent.
 - [x] Measure `/health` and an MCP initialize-only handshake after 16-minute windows with no agent requests: 12,542 ms and 13,889 ms; external traffic could not be observed, so the samples are indicative.
 - [x] Raise only MCP initialization timeout to 20s; retain 30s global, 35s route/UI, and 10s per-tool caps. Explain free-tier cold starts in pt-BR UI only when AI is enabled.
-- [ ] Confirm cold-start suitability and Vercel runtime-to-Render; the observed 13.889s handshake exceeded the old 10s init limit, and longer wakeups remain possible.
-- [ ] Confirm Google account/model access, Free Tier billing eligibility, end-user privacy, and explicit live-test approval before any provider request. No paid usage is authorized.
+- [ ] Confirm Vercel runtime-to-Render without generation and approve an honest bounded cold-start policy; 20s init is not guaranteed to cover all Render Free wake-ups.
+- [ ] Close D1–D5 for the approved Google/model path: applicable privacy/audience/region, production composition and separate live-test/public-activation gates. No new provider/model, paid use or live inference is authorized.
 
-**Phase 6 remains open** until cold-start suitability, Vercel runtime-to-Render, hosted account settings, and provider/privacy/operator gates above are resolved. Keep `/discover` generation disabled.
+**Phase 6 remains open** until D1–D5 and remaining runtime/cold-start gates pass or scope is explicitly amended. Keep `/discover` generation disabled temporarily; a usable real-AI demo, not permanent unavailability, is the final objective.
