@@ -2,7 +2,7 @@
 
 Independent Node.js runtime exposing five TMDB tools through **Streamable HTTP**. It has its own dependencies, build, tests, Dockerfile, and deployment lifecycle; it is not embedded in Next.js.
 
-**Status:** MCP foundation/tools, the Next.js adapter, deterministic 6.4 Search, 6.5 Quality/Safety, 6.6 Orchestrator, and [6.7 gated UI](../../docs/STREAMING_UI.md) are implemented. Orchestrator compiles tools and sequences Search→Quality with runtime budgets; its Google adapter and public availability remain disabled. Enabled data flows are tested only with mocks. Existing movie pages still use their original Server Actions; real provider/Next.js→MCP integration remains unverified.
+**Status:** MCP foundation/tools, the Next.js adapter, deterministic 6.4 Search, 6.5 Quality/Safety, 6.6 Orchestrator, and [6.7 gated UI](../../docs/STREAMING_UI.md) are implemented. Orchestrator compiles tools and sequences Search→Quality with runtime budgets; public availability remains disabled. Mocked tests cover enabled composition; one separately authorized local live-handler invocation also verified Google→MCP→Quality and stream validation. The enabled Vercel/browser path remains unverified. Existing movie pages still use their original Server Actions. [Sanitized live evidence](../../docs/AI_LIVE_CHECK.md).
 
 ## Local Setup
 
@@ -141,7 +141,7 @@ Add these environment variables to the Render service. Enter secrets directly in
 
 Render supplies `PORT` automatically. Do not set `MCP_PORT` unless you intentionally want to override it. After deployment, test `https://<render-service>.onrender.com/health` and `/ready`; the MCP endpoint is `https://<render-service>.onrender.com/mcp`.
 
-Then, in Vercel → Project → Settings → Environment Variables, set `MCP_SERVER_URL` to the HTTPS `/mcp` URL and `MCP_INTERNAL_API_KEY` to the same secret configured in Render. These values prepare the server-only adapter; the current movie UI does not yet call the MCP/Search Agent.
+Then, in Vercel → Project → Settings → Environment Variables, set `MCP_SERVER_URL` to the HTTPS `/mcp` URL and `MCP_INTERNAL_API_KEY` to the same secret configured in Render. These values prepare the server-only adapter. Existing movie pages still use TMDB Server Actions; the separate `/discover` AI flow uses the gated Orchestrator/Search pipeline.
 
 **Free plan caveat:** Render spins down a free web service after 15 minutes without inbound traffic; waking it can take about a minute. This is suitable for a demo, but the first Vercel-to-MCP call after idle may time out. Verify this before treating the free deployment as production-ready.
 
@@ -149,11 +149,10 @@ The image uses a non-root distroless runner. Keep remote traffic on HTTPS and ne
 
 ## Remaining Work
 
-- Confirm Google account/Free Tier eligibility before live generation. All 6.0 entry approvals, including the default model/no-alternate-fallback policy, are complete; provider access/billing remain unverified.
+- Resolve visitor audience/region eligibility and bounded Render cold-start acceptance before public activation. Operator privacy acceptance and one local live Google test are recorded; the test is complete and must not be repeated automatically. Billing dashboards were not inspected.
 - Verify the Next.js adapter's redirect rejection, bounded/shared initialization, cancellation, and reconnect behavior remotely; unit regression tests pass. Triage dependency security advisories before recommending deployment.
-- Implement 6.8 rate limits, caching, and observability before public activation. Do not bypass Quality's strict presentation gate or treat mocked tests/disabled-UI browser checks as production AI integration evidence.
-- Test the other four tools remotely and review Render build/image evidence and free-tier reliability; public health checks, authenticated listing, and remote search already passed their smoke checks.
-- Verify real Next.js-to-MCP tool execution.
+- Deliberately scope the enabled Vercel/browser AI-path test after release decisions. D4 verified isolated Vercel→Upstash and one fixed Vercel→MCP search; D5 verified the full live handler locally, not from Vercel. Preserve the existing bounds and do not bypass Quality's strict presentation gate.
+- Review Render build/image evidence and broader failure/reliability behavior; limited authenticated tool and runtime samples do not certify production reliability.
 - Resolve UI contract coverage before retiring duplicate server-side TMDB access.
 
 Architecture: [`.ai/ARCHITECTURE.md`](../../.ai/ARCHITECTURE.md). Tool specification: [`.ai/MCP_INTERFACE.md`](../../.ai/MCP_INTERFACE.md). Application setup: [root README](../../README.md).

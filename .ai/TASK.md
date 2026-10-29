@@ -1,13 +1,14 @@
 # Phase 6 — MCP Server + Multi-Agent System
 
 ## Active Phase
+- **D5 single real test passed:** explicit operator authorization consumed by one private local-handler run against real Google/Upstash/Render. One shared admission, one token preflight and one generation (HTTP 200), one movie search; Quality approved 12 results including Inception and clean-EOF streaming passed. **237 tokens**, **4,275ms**. No source/env changes, retries, public activation or further inference authorization. [Evidence](../docs/AI_LIVE_CHECK.md).
 - **D4 runtime passed:** operator output confirms Vercel→Upstash PING/isolated EVAL 83ms and Vercel→Render/MCP search 928ms, 1,015ms total, after deployment/configuration corrections. No Google or real-counter access. Cold-start reliability is not certified by this sample. Evidence: [`AI_RUNTIME_CHECK.md`](../docs/AI_RUNTIME_CHECK.md).
-- **D4 retirement prepared locally:** diagnostic route, implementation/tests, caller/helper/tests, package command and example key removed; lint/types/build and 349 remaining tests pass. Compiled local diagnostic GET/POST return 404 and AI remains 503/disabled. Next: commit/push/deploy removal, operator deletes only the dedicated diagnostic key locally/Vercel, verify hosted retirement and address older diagnostic deployments with approval. Private env files are untouched.
+- **D4 route retired:** `e8b314c` is pushed and production diagnostic GET/POST return 404. Last full checks: 349 tests/lint/types/build and compiled local 404/disabled-AI smoke. A presence-only recheck confirms `AI_RUNTIME_CHECK_API_KEY` is absent from local `.env`; Vercel and older-deployment cleanup remain unverified. No token value was read; the agent has not edited private env files.
 - **Latest UX decision:** direct public demo access, no invitations/accounts/link-request flow. Shared quota denial now has a real countdown and catalog access; expiry permits manual retry, not a reserved slot. Lint/types/build and 349 tests pass. No geographic restriction or public activation was implemented; distribution/runtime release checks remain open.
-- **Latest decision (2026-10-29):** operator confirms Brazil and accepts Google unpaid-service data use for the demo; proceed with Google. Local route wiring and expanded pt-BR disclosure are prepared with availability false. Verify preparation, then resolve visitor audience/access and protected runtime/live-test scope. Privacy acceptance is no longer pending.
-- Phase 6.1–6.8 implementations exist; 6.9 release verification remains open. Google/`gemini-3.1-flash-lite`/no-alternate-fallback approval remains valid; operator privacy acceptance is complete, visitor audience/access and separately scoped live inference remain pending.
+- **Decision/execution (2026-10-29):** operator in Brazil accepts Google unpaid-service data use; one authorized real test passed. Keep Google/model, public availability false, and do not repeat the single consumed test. Remaining: audience/access, cold-start acceptance and deliberately scoped public/Vercel release verification.
+- Phase 6.1–6.8 implementations exist; 6.9 release verification remains open. Google/model approval, operator privacy acceptance and one separately authorized local live test are complete. Visitor audience/access, cold-start acceptance and public activation/full Vercel/browser execution remain pending.
 - Phase 5 production verification is closed: the deployed hydration fix passes user and agent live browser checks without React errors.
-- Diagnostic reporting commit `811d956` is deployed and runtime checks pass per operator output; AI remains deliberately disabled. Next: hosted diagnostic retirement, cold-start acceptance and remaining live-test/release work, not a provider migration or reimplementation of 6.6.
+- Public AI remains deliberately disabled. Next: bounded-startup and public-release decisions, then explicitly scoped enabled Vercel/browser verification; do not repeat the completed local live test automatically.
 
 ## Previous Completed Phases
 - [x] Phase 1 — Stabilization & Code Quality
@@ -17,7 +18,7 @@
 - [x] Phase 5 — Next.js App Router Migration and core-flow production verification (2026-10-22)
 
 ## Current Goal
-- Complete a usable, honestly disclosed real-AI portfolio demo using the approved architecture where eligible. Preserve Search→Quality and conservative limits. Clarify remaining Google terms/audience, finish server-only production activation wiring with mocks, then perform protected runtime checks and separately authorized inference. No paid use, implicit privacy acceptance, or automatic provider/model switch.
+- Complete a usable, honestly disclosed real-AI portfolio demo using the approved architecture where eligible. Preserve Search→Quality and conservative limits. Operator privacy acceptance, production-composition mocks, D4 hosted dependency checks and one separately authorized real local inference are complete. Resolve visitor eligibility and bounded startup, then deliberately scope public activation/full Vercel verification. No paid use, implicit consent, repeated inference or automatic provider/model switch.
 
 ## Tasks
 
@@ -140,8 +141,10 @@ The goal is a usable portfolio demo with real inference, not permanent disabled 
 - [x] **D4 method/preparation:** user approved the temporary token-protected method; implement fixed-target, bounded/sanitized probes and caller. Verify lint/types/build, 394 tests and local production auth/override/disabled-AI smoke with no hosted calls.
 - [x] **D4 execution:** operator-supplied output confirms both checks passed: Upstash 83ms, MCP 928ms, total 1,015ms; no Google or real admission-counter access.
 - [x] **D4 local retirement:** remove temporary diagnostic/caller/helper/tests/command/example key. Lint/types/build, 349 remaining tests and local production route-removal/disabled-AI smoke pass.
-- [ ] **D4 hosted retirement/acceptance:** publish removal, operator deletes only the diagnostic token locally/Vercel, verify hosted route absence and address older deployments with approval; explicitly accept bounded cold-start behavior.
-- [ ] **D5:** Separately authorize one controlled real inference, verify end-to-end, then approve/deploy public activation after applicable gates pass. Retain 1 global admission/60s, 10/rolling 24h; no Phase 7 yet.
+- [x] **D4 hosted route retirement:** `e8b314c` pushed and production diagnostic GET/POST both return 404.
+- [ ] **D4 remaining cleanup/acceptance:** confirm operator token/old-deployment handling and explicitly accept bounded cold-start behavior.
+- [x] **D5 one authorized local live test:** real handler/admission/Google/Search/Quality/stream execution passed with one admitted generation, 237 tokens and 12 approved movies. No retry or public activation. [Evidence](../docs/AI_LIVE_CHECK.md).
+- [ ] **D5 public release:** resolve remaining audience/startup decisions, obtain activation approval and scope enabled Vercel/browser verification. Retain 1 global admission/60s, 10/rolling 24h; no Phase 7 yet.
 
 ## Architecture and Entry Gates
 

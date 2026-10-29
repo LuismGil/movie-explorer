@@ -1,12 +1,12 @@
 # AI Portfolio Demo — Privacy and Activation Decision
 
-Reviewed: **2026-10-29**. **Latest decision: operator in Brazil accepts Google's unpaid-service data use and asks to proceed with the demo.** Google/model approval remains valid. Local activation wiring/disclosure are prepared with public availability off; visitor audience/access and runtime release checks remain pending. No inference has been performed.
+Reviewed: **2026-10-29**. **Latest execution: the operator separately authorized one real test, which passed.** A private local-handler invocation used live Google/Upstash/Render, consumed one admission and returned 12 Quality-approved movies with 237 model tokens in 4.275s. No retries or public activation; that single-test permission is consumed. Visitor distribution, cold-start acceptance and enabled Vercel/browser release verification remain open. [Evidence](AI_LIVE_CHECK.md).
 
 This decision supersedes the earlier clarification-stage narrative below. Do not repeatedly ask for privacy acceptance or infer a demo exemption. The operator's location does not establish visitor location or age.
 
 **Subsequent UX decision:** the user chooses direct public demo access, rejecting invitations, account creation and contacting the owner for a link. Keep that requirement. A Brazil-only restriction was suggested but not approved or implemented. This settles the intended UX, not worldwide provider eligibility; do not silently introduce access friction or claim the quota solves distribution conditions.
 
-**Implemented quota experience:** shared admission remains one/60s and ten/rolling 24h. A denied request shows a real hours/minutes/seconds countdown using server `Retry-After`, explains the shared limit, and offers the normal catalog. It updates after tab suspension and enables manual retry when the wait ends. No polling, automatic inference, midnight reset or guaranteed available slot. The countdown is outside the live status region to avoid announcing every second. Lint/types/build and 349 tests pass (five opt-in Redis cases skipped); generation is still disabled and no provider call was made.
+**Implemented quota experience:** shared admission remains one/60s and ten/rolling 24h. A denied request shows a real hours/minutes/seconds countdown using server `Retry-After`, explains the shared limit, and offers the normal catalog. It updates after tab suspension and enables manual retry when the wait ends. No polling, automatic inference, midnight reset or guaranteed available slot. The countdown is outside the live status region to avoid announcing every second. Last full local lint/types/build and 349 tests pass (five opt-in Redis cases skipped); generation remains publicly disabled. One separately authorized live provider call subsequently passed; see [`AI_LIVE_CHECK.md`](AI_LIVE_CHECK.md).
 
 ## Plan review: what is actually incomplete?
 
@@ -21,8 +21,8 @@ The planning/communication gap was reporting “entry approvals complete” with
 | Architecture/model | Approved; implemented with mocked provider tests | Retain Google; do not reopen or migrate by default. |
 | Existing Free/no-payment plans and eviction | Operator confirmed | Record that confirmation; do not repeatedly request the same confirmation. |
 | Google privacy/distribution | Operator in Brazil accepts unpaid-service data use; visitor audience/access unresolved | Establish eligible visitor audience/access; do not repeat the operator's privacy decision. |
-| Public activation wiring | Route now supplies the Google assertion from server-owned availability, still false | Verify production-composition mocks and close release gates before enabling. |
-| Live provider/runtime behavior | Google never called; Vercel→Upstash/Render check passed per operator output (83ms/928ms, 1,015ms total) | Complete diagnostic hosted retirement and one separately authorized inference; do not label untested Google behavior a provider failure. |
+| Public activation wiring | Route supplies the Google assertion from server-owned availability; production-composition mocks pass; public gate remains false | Close release gates and obtain explicit activation approval before enabling. |
+| Live provider/runtime behavior | Vercel dependency checks passed; one authorized real local Google→Search→Quality/stream invocation passed (237 tokens, 4.275s) | Diagnostic route retired and local key absence confirmed; confirm Vercel/old-deployment cleanup and deliberately scope full enabled Vercel/browser verification after release decisions. |
 | Render startup | Observed 13.889s; init cap now 20s | Agree on bounded demo startup behavior; no need to promise a production SLA or replace hosting automatically. |
 
 **Direct answer:** Gemini must receive the submitted prompt to perform hosted inference. In the general Unpaid Services arrangement Google also uses content for improvement and may have humans review it; the regional exception below matters. There is no application-code switch that overrides those terms. If the user declines the applicable content-use terms, that **Google Free arrangement** cannot be activated under the current constraints. It does not disable the movie application or rule out all AI. Clarify the applicable terms first; only then consider a different route if necessary.
@@ -33,18 +33,18 @@ Deliver a usable portfolio demonstration of **real inference**, not permanently 
 
 - Free Tier only: no card, bank/debit payment method, paid upgrade, or expiring-credit dependency.
 - The user in Brazil has accepted Google's unpaid-service data use and asked to proceed. Record that decision without assuming every future visitor is eligible or treating demo status as an exemption.
-- No provider switch, model download, new account, dependency or production diagnostic is authorized. The earlier plan calls for separately scoped permission for the first real inference; no inference is performed during this preparation.
+- No provider switch, model download, new account, dependency or new production diagnostic is authorized. The separately approved first real inference is complete; additional inference/public activation needs deliberate scope, not automatic repetition.
 - Keep both public AI availability and Google activation disabled until the selected route's gates pass. No automatic provider/model fallback.
 - Phase 6 stays open; Phase 7 does not start. Any different phase order requires explicit approval.
 
 ## Evidence already available
 
-- Commit `5419f86` is pushed; the user confirmed Vercel Ready. The subsequent production smoke returned `/discover` HTTP 200 and `POST /api/ai/search` HTTP 503 `disabled`, with `no-store, no-transform`. The startup hint was hidden. This did **not** exercise Upstash, MCP, or Google from Vercel.
+- Commit `5419f86` is pushed; the user confirmed Vercel Ready. That historical smoke returned `/discover` HTTP 200 and `POST /api/ai/search` HTTP 503 `disabled`, with `no-store, no-transform`, and did not exercise dependencies. D4 later checked Vercel→Upstash/Render; the separate D5 real inference was local, not from Vercel.
 - The user confirms all currently configured services are Free with no cards/payment methods, and Upstash eviction is disabled. Dashboards were not independently inspected; do not repeatedly treat the operator's confirmation as missing.
-- Hosted Upstash PING and isolated temporary-key EVAL passed locally, without touching the production admission key. All five authenticated read-only Render tools passed through the local app adapter.
+- Hosted Upstash PING and isolated temporary-key EVAL passed locally, without touching the production admission key. D4 later passed isolated Upstash checks and a fixed authenticated Render/MCP search from Vercel; D5 consumed one production admission for the one authorized local live-handler test. Separately, all five authenticated read-only Render tools passed through the local app adapter.
 - The observed initialize-only Render handshake took 13.889s after a 16-minute no-agent-request window; outside traffic was unobservable. Initialization is now capped at 20s, inside the unchanged 30s pipeline and 35s route/UI bounds. Longer wake-ups remain possible.
 - AI Studio values reported by the user: `0 / 60`, `0 / 100K`, `0 / 100`, apparently usage/limits for RPM, input TPM, and RPD respectively. This is not an independent check of the selected model/project or provider access.
-- No live Google token-counting or generation request has been performed. The last runtime verification passed lint, typecheck, build, and 344 tests; this document does not claim a fresh test run.
+- One live Google token-counting request and one generation both returned HTTP 200 in the separately authorized local test. Real shared admission, Search/Quality and stream validation passed; no public availability/source/env change occurred. Last full source verification remains lint/types/build and 349 tests; this evidence-only update does not claim a new suite run.
 
 ## What the current Google adapter would transmit
 
@@ -112,19 +112,21 @@ If an alternative is explicitly chosen later, revise D2–D3 for that provider f
 - [x] Operator explicitly approved a temporary token-protected check: fixed Upstash PING/isolated-key EVAL (5s expiry), fixed Inception search through the Render app adapter, no Google/real-counter access, caller-selected targets, retries or availability change. Implemented locally with a new optional server-only `AI_RUNTIME_CHECK_API_KEY`; lint/types/build and 394 mocked tests plus local production auth/override/disabled-AI smoke pass. [Setup and mandatory retirement](AI_RUNTIME_CHECK.md).
 - [x] Hosted execution passed after `811d956` deployment and private settings corrections: operator output reports Upstash 83ms, MCP 928ms, total 1,015ms. A preceding attempt had Upstash failed/133ms and MCP passed/12,393ms; its precise failure cause is unknown. Both runtime paths now have successful evidence. No Google or real-counter access. [Evidence](AI_RUNTIME_CHECK.md).
 - [x] Remove temporary diagnostic route, implementation/tests, caller/helper/tests, command and example key locally. Lint/types/build, 349 remaining tests and local production 404/disabled-AI smoke pass.
-- [ ] Publish retirement, operator removes only the diagnostic token locally/Vercel, and verify hosted route absence. Handle diagnostic-containing older deployments with operator approval.
+- [x] Publish retirement `e8b314c` and verify credential-free production GET/POST to the diagnostic route both return 404.
+- [x] Confirm local diagnostic-key removal by presence-only check; the key is absent from `.env` and its value was not read.
+- [ ] Confirm Vercel diagnostic-key removal and handle older diagnostic deployments with approval for destructive cleanup.
 - [ ] Choose an explicit demo cold-start policy using the recorded evidence. The successful hosted check had no confirmed quiet window; bounded first-request failure may be acceptable **only with operator acceptance and honest UI**. Do not promise all Render Free wake-ups fit in 20s, increase time budgets silently, or add automatic retries. Any additional live measurement needs deliberate scope rather than restoring the retired diagnostic by default.
 
 ### D5 — One controlled inference, then a deliberate public release
 
-- [ ] Obtain **separate explicit authorization** for one real inference using a public-film-only example and the selected provider/model. This authorization is not supplied by the plan update or by authorization for MCP checks. Reserve admission if using the enabled route; do not bypass/reset shared limits to test.
-- [ ] Verify planner→Render/MCP→Quality, schema-only presentation, latency and reported usage; do not log prompts, credentials or raw errors. Stop on failure rather than retrying automatically.
+- [x] Obtain **separate explicit authorization** for one real Inception search with the selected Google/model, quota enforced, public availability off and no retries. One real admission was consumed; no bypass/reset/refund.
+- [x] Verify the real local handler's planner→Render/MCP→Quality flow and stream consumer: completed/approved, 12 movies including the expected film, 214 input/23 output/237 total tokens, 4,275ms overall, exactly one token preflight and generation. No raw data logged, no retries, executable removed after use. [Detailed scope](AI_LIVE_CHECK.md). This test was local, not an enabled Vercel/browser invocation.
 - [ ] Close applicable provider/privacy/audience/region and cold-start gates, then obtain public activation approval. Keep one global admission/60s and ten/rolling 24h, no refunds or fallback.
 - [ ] Deploy and smoke-test the actual enabled path, quota errors and disable/rollback switch. Close Phase 6 only with an honestly documented usable demo and accepted limitations, or an explicitly approved scope amendment.
 
 ## Primary sources
 
-Read-only documentation reviewed on 2026-10-29; no inference endpoint was called:
+The source review itself was read-only and made no inference request; the separately authorized D5 execution is documented above:
 
 - [Gemini Additional Terms — age, regions, unpaid/paid data use](https://ai.google.dev/gemini-api/terms)
 - [Gemini rate limits — RPM, input TPM, RPD, project scope](https://ai.google.dev/gemini-api/docs/rate-limits)

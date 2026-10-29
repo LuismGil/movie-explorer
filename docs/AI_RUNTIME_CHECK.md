@@ -1,6 +1,6 @@
 # Temporary Protected Vercel Runtime Check — Evidence and Retirement
 
-Status (2026-10-29): **hosted checks passed**, as shown by the operator's sanitized CLI output below after correcting the deployed settings. The temporary route, implementation/tests, caller/helper/tests, package script and example variable have now been removed locally; the operator has requested the retirement commit. Push/deployment, confirmed private token removal and older-deployment handling remain pending. Public AI generation is still disabled; no Google request occurred.
+Status (2026-10-29): **hosted checks passed and the route is retired**. Removal commit `e8b314c` is pushed; credential-free production GET/POST to the diagnostic both return 404. A presence-only recheck confirms the dedicated key is absent from local `.env`; its value was not read. Vercel token removal and older-deployment handling are unverified. Public AI is disabled. D4 itself made no Google request; the subsequent separately authorized [D5 local live test](AI_LIVE_CHECK.md) passed without restoring this diagnostic.
 
 ## Hosted evidence
 
@@ -46,9 +46,10 @@ The historical caller used a fixed production URL, rejected redirects, bounded r
 
 - [x] Remove the diagnostic route, implementation/tests, caller/helper/tests, package script and example variable locally; preserve sanitized evidence here and in the plan/deployment docs. The additional local-only Upstash failure-detail experiment was removed with the diagnostic, never deployed.
 - [x] Verify local retirement: lint/typecheck/build and **349 remaining tests** pass (five opt-in Redis cases skipped). A compiled standalone smoke with synthetic values and outbound fetch blocked returned 404 for diagnostic GET/POST and 503/disabled for public AI. Its temporary server was stopped. The test count drops because temporary diagnostic tests were retired with their implementation.
-- [ ] Publish and deploy the retirement (commit requested by the operator).
-- [ ] Operator removes **only** `AI_RUNTIME_CHECK_API_KEY` from local env and Vercel. Cleanup is being handled by the operator; the last presence-only local check still found this variable in `.env`, and Vercel removal is unverified. The existing MCP, Upstash, Google and telemetry credentials are not diagnostic tokens and must remain intact. No private env file was edited during local code retirement.
-- [ ] After deployment, verify the diagnostic route is gone (404/405) and the public AI route remains disabled. Local retirement is not proof of hosted retirement.
+- [x] Publish retirement `e8b314c`; production diagnostic GET/POST both return 404.
+- [x] Local cleanup: a presence-only check confirms `AI_RUNTIME_CHECK_API_KEY` is absent from `.env`; its value was not read, and the agent did not edit any private env file.
+- [ ] Vercel cleanup: confirm removal of **only** `AI_RUNTIME_CHECK_API_KEY` from Vercel. Existing MCP, Upstash, Google and telemetry credentials are not diagnostic tokens and must remain intact.
+- [x] Verify the hosted diagnostic route is gone (GET/POST 404); source public availability stays false and was not changed for the separate local live test. The public disabled-boundary HTTP smoke below was local, not a new hosted AI request.
 - [ ] Address older diagnostic-containing deployments through the operator's controls, with explicit approval for destructive cleanup.
 
 **Older immutable deployment URLs can retain their code and environment values.** Remove or protect diagnostic-containing deployments through the operator's Vercel controls as appropriate; deleting a token from settings alone does not prove older deployments stopped accepting it. This key must never be reused. Destructive deployment cleanup requires explicit operator approval. Do not leave the diagnostic deployed as a public test feature or add keep-alive monitoring.
