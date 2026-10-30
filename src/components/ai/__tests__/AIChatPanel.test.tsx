@@ -31,6 +31,14 @@ describe('AIChatPanel', () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 
+  it('keeps AI unavailable in an unsupported or unverified region while leaving catalog navigation available', () => {
+    render(<AIChatPanel enabled={false} regionUnavailable />);
+    expect(screen.getByText(copy.regionUnavailable)).toBeInTheDocument();
+    expect(screen.getByLabelText(copy.label)).toBeDisabled();
+    expect(screen.getByRole('link', { name: copy.browse })).toHaveAttribute('href', '/');
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
   it('sets a calm expectation for free-tier startup only when AI search is available', () => {
     render(<AIChatPanel enabled />);
     expect(screen.getByText(copy.coldStartHint)).toBeInTheDocument();
@@ -66,7 +74,7 @@ describe('AIChatPanel', () => {
   });
 
   it.each([
-    { type: 'error', code: 'quota_exceeded' }, { type: 'error', code: 'disabled' }, { type: 'error', code: 'timeout' },
+    { type: 'error', code: 'quota_exceeded' }, { type: 'error', code: 'disabled' }, { type: 'error', code: 'region_unavailable' }, { type: 'error', code: 'timeout' },
     { type: 'error', code: 'unsafe_result' }, { type: 'unsupported' },
   ])('renders controlled terminal state with no automatic retry: %j', async terminal => {
     fetch.mockResolvedValue(response([terminal]));
@@ -75,6 +83,10 @@ describe('AIChatPanel', () => {
     expect(await screen.findByText(text)).toBeInTheDocument();
     expect(fetch).toHaveBeenCalledTimes(1);
     expect(screen.queryByRole('heading', { name: approvedPresentation.movies[0].title })).not.toBeInTheDocument();
+    if (terminal.type === 'error' && terminal.code === 'region_unavailable') {
+      expect(screen.getByRole('link', { name: copy.browse })).toHaveAttribute('href', '/');
+      expect(screen.queryByRole('button', { name: copy.retry })).not.toBeInTheDocument();
+    }
   });
 
   it('renders successful empty and partial states distinctly', async () => {

@@ -57,6 +57,16 @@ describe('same-origin AI streaming boundary', () => {
     expect(rateLimit).not.toHaveBeenCalled();
   });
 
+  it('denies restricted or unknown regions before reading the body or touching shared admission', async () => {
+    const isAiRegionAllowed = vi.fn(() => false);
+    const response = await createAiSearchHandler({ enabled: true, isAiRegionAllowed, run })(request(undefined, { body: 'not-json' }));
+    expect(response.status).toBe(403);
+    expect(await parse(response)).toEqual({ type: 'error', code: 'region_unavailable' });
+    expect(isAiRegionAllowed).toHaveBeenCalledOnce();
+    expect(rateLimit).not.toHaveBeenCalled();
+    expect(run).not.toHaveBeenCalled();
+  });
+
   it('uses the actual Host when standalone Next normalizes Request.url to localhost', async () => {
     const req = request(undefined, { headers: { host: '127.0.0.1', origin: 'http://127.0.0.1', 'content-type': 'application/json' } });
     expect(await parse(await createAiSearchHandler({ enabled: false, run })(req))).toEqual({ type: 'error', code: 'disabled' });

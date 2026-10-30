@@ -149,7 +149,7 @@ The image uses a non-root distroless runner. Keep remote traffic on HTTPS and ne
 
 ## Remaining Work
 
-- Resolve visitor audience/region eligibility and bounded Render cold-start acceptance before public activation. Operator privacy acceptance and one local live Google test are recorded; the test is complete and must not be repeated automatically. Billing dashboards were not inspected.
+- Resolve adult-audience eligibility and bounded Render cold-start acceptance before public activation. The AI-only EEA/CH/UK/unknown-country gate is implemented. Operator privacy acceptance and one local live Google test are recorded; the test is complete and must not be repeated automatically. Billing dashboards were not inspected.
 - Verify the Next.js adapter's redirect rejection, bounded/shared initialization, cancellation, and reconnect behavior remotely; unit regression tests pass. Triage dependency security advisories before recommending deployment.
 - Deliberately scope the enabled Vercel/browser AI-path test after release decisions. D4 verified isolated Vercel→Upstash and one fixed Vercel→MCP search; D5 verified the full live handler locally, not from Vercel. Preserve the existing bounds and do not bypass Quality's strict presentation gate.
 - Review Render build/image evidence and broader failure/reliability behavior; limited authenticated tool and runtime samples do not certify production reliability.

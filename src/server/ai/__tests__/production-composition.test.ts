@@ -8,12 +8,14 @@ vi.mock('../rate-limit', async importOriginal => ({
   ...await importOriginal<typeof import('../rate-limit')>(), enforceAiRateLimit: mocks.admission,
 }));
 
-async function invoke(enabled: boolean, extra: Record<string, unknown> = {}) {
+async function invoke(enabled: boolean, extra: Record<string, unknown> = {}, country: string | null = 'BR') {
   mocks.enabled = enabled;
   vi.resetModules();
   const { POST } = await import('../../../../app/api/ai/search/route');
+  const headers = new Headers({ Origin: 'https://demo.test', 'Content-Type': 'application/json' });
+  if (country !== null) headers.set('x-vercel-ip-country', country);
   return POST(new Request('https://demo.test/api/ai/search', {
-    method: 'POST', headers: { Origin: 'https://demo.test', 'Content-Type': 'application/json' },
+    method: 'POST', headers,
     body: JSON.stringify({ message: 'Busque Matrix', ...extra }),
   }));
 }
@@ -53,6 +55,22 @@ describe('production AI composition (mocked activation only)', () => {
   it('rejects browser-supplied provider approval before admission', async () => {
     const response = await invoke(true, { google: { freeTierConfirmed: true } });
     expect(response.status).toBe(400);
+    expect(mocks.admission).not.toHaveBeenCalled();
+    expect(mocks.run).not.toHaveBeenCalled();
+  });
+
+  it.each(['DE', 'CH', 'GB', 'XX', null])('blocks restricted or unknown country %s before shared admission', async country => {
+    const response = await invoke(true, {}, country);
+    expect(response.status).toBe(403);
+    expect(await response.text()).toBe('{"type":"error","code":"region_unavailable"}\n');
+    expect(mocks.admission).not.toHaveBeenCalled();
+    expect(mocks.run).not.toHaveBeenCalled();
+  });
+
+  it('keeps the global disabled switch in force even for an otherwise eligible country', async () => {
+    const response = await invoke(false, {}, 'BR');
+    expect(response.status).toBe(503);
+    expect(await response.text()).toBe('{"type":"error","code":"disabled"}\n');
     expect(mocks.admission).not.toHaveBeenCalled();
     expect(mocks.run).not.toHaveBeenCalled();
   });

@@ -13,7 +13,7 @@ type SearchRequest = { message: string; referenceMovieId?: number };
 const copy = messages.ai;
 const focus = 'focus-visible:ring-2';
 
-export function AIChatPanel({ enabled }: { enabled: boolean }) {
+export function AIChatPanel({ enabled, regionUnavailable = false }: { enabled: boolean; regionUnavailable?: boolean }) {
   const [message, setMessage] = useState('');
   const [pending, setPending] = useState(false);
   const [stage, setStage] = useState<AiStage>();
@@ -87,7 +87,7 @@ export function AIChatPanel({ enabled }: { enabled: boolean }) {
         <p className={styles.muted}>{copy.description}</p>
         {enabled && <p className={styles.muted}>{copy.coldStartHint}</p>}
       </header>
-      {!enabled && <div className={styles.notice}><p>{copy.disabled}</p><Link href="/" className={`${styles.link} ${focus}`}>{copy.browse}</Link></div>}
+      {!enabled && <div className={styles.notice}><p>{regionUnavailable ? copy.regionUnavailable : copy.disabled}</p><Link href="/" className={`${styles.link} ${focus}`}>{copy.browse}</Link></div>}
       <form className={styles.form} onSubmit={event => { event.preventDefault(); void search({ message }); }}>
         <label htmlFor="ai-message">{copy.label}</label>
         <textarea id="ai-message" rows={3} maxLength={1000} required value={message} disabled={!enabled || pending}
@@ -116,7 +116,11 @@ export function AIChatPanel({ enabled }: { enabled: boolean }) {
         <p>{copy.rateLimitShared}</p>
         <Link href="/" className={`${styles.link} ${focus}`}>{copy.browse}</Link>
       </div>}
-      {terminal?.type === 'error' && enabled && lastRequest && !pending && retryAt === undefined && terminal.code !== 'disabled' && (
+      {terminal?.type === 'error' && terminal.code === 'region_unavailable' && <div className={styles.notice}>
+        <Link href="/" className={`${styles.link} ${focus}`}>{copy.browse}</Link>
+      </div>}
+      {terminal?.type === 'error' && enabled && lastRequest && !pending && retryAt === undefined
+        && terminal.code !== 'disabled' && terminal.code !== 'region_unavailable' && (
         <div><button type="button" onClick={() => { void search(lastRequest); }} className={`${styles.link} ${focus}`}>{copy.retry}</button></div>
       )}
       {result && <div className={styles.results} aria-busy={pending}>

@@ -59,13 +59,21 @@ async function readRequest(request: Request, signal: AbortSignal): Promise<unkno
 }
 
 /** Dependencies/activation are trusted server configuration, not request parameters. */
-export function createAiSearchHandler(options: { enabled: boolean; run?: typeof runOrchestrator; rateLimit?: AiRateLimiter }) {
+export function createAiSearchHandler(options: {
+  enabled: boolean;
+  isAiRegionAllowed?: (request: Request) => boolean;
+  run?: typeof runOrchestrator;
+  rateLimit?: AiRateLimiter;
+}) {
   return async (request: Request): Promise<Response> => {
     if (!sameOrigin(request)
       || request.headers.get('sec-fetch-site') === 'cross-site') return failure('invalid_request', 403);
     if (!/^application\/json(?:\s*;|$)/i.test(request.headers.get('content-type') ?? '')) return failure('invalid_request', 415);
     const length = request.headers.get('content-length');
     if (length !== null && (!/^\d+$/.test(length) || Number(length) > 8192)) return failure('invalid_request', 413);
+    if (options.enabled && options.isAiRegionAllowed && !options.isAiRegionAllowed(request)) {
+      return failure('region_unavailable', 403);
+    }
     const deadline = createDeadline(35000, request.signal);
     let input;
     try {

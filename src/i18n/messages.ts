@@ -114,6 +114,7 @@ export const messages = {
     errors: {
       invalid_request: 'Revise seu pedido: use até 1.000 caracteres e não inclua credenciais.',
       disabled: 'A busca com IA ainda não está ativada. Use a busca por título no início.',
+      region_unavailable: 'Não foi possível confirmar a disponibilidade da busca com IA nesta região. O catálogo continua aberto para você.',
       unavailable: 'A busca está indisponível agora. Tente novamente mais tarde ou use a busca por título.',
       quota_exceeded: 'O limite de uso da IA foi atingido. Tente mais tarde; nenhum outro modelo será usado.',
       rate_limited: 'O limite desta demonstração gratuita foi atingido. Aguarde ou use a busca por título no início.',
@@ -122,5 +123,6 @@ export const messages = {
       unsafe_result: 'Não foi possível conferir o resultado. Reformule seu pedido ou use a busca por título.',
       invalid_stream: 'A resposta foi interrompida ou não pôde ser conferida. Tente novamente.',
     },
+    regionUnavailable: 'Não foi possível confirmar a disponibilidade da busca com IA nesta região. O catálogo continua aberto para você.',
   },
 } as const;

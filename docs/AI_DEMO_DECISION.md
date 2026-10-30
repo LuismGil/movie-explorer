@@ -1,12 +1,14 @@
 # AI Portfolio Demo — Privacy and Activation Decision
 
-Reviewed: **2026-10-29**. **Latest execution: the operator separately authorized one real test, which passed.** A private local-handler invocation used live Google/Upstash/Render, consumed one admission and returned 12 Quality-approved movies with 237 model tokens in 4.275s. No retries or public activation; that single-test permission is consumed. Visitor distribution, cold-start acceptance and enabled Vercel/browser release verification remain open. [Evidence](AI_LIVE_CHECK.md).
+Updated: **2026-10-30**. **Latest execution: the operator separately authorized one real test, which passed.** A private local-handler invocation used live Google/Upstash/Render, consumed one admission and returned 12 Quality-approved movies with 237 model tokens in 4.275s. No retries or public activation; that single-test permission is consumed. The AI-only geographic gate is now implemented; adult-audience eligibility, cold-start acceptance and enabled Vercel/browser release verification remain open. [Evidence](AI_LIVE_CHECK.md).
 
 This decision supersedes the earlier clarification-stage narrative below. Do not repeatedly ask for privacy acceptance or infer a demo exemption. The operator's location does not establish visitor location or age.
 
 **Subsequent UX decision:** the user chooses direct public demo access, rejecting invitations, account creation and contacting the owner for a link. Keep that requirement. A Brazil-only restriction was suggested but not approved or implemented. This settles the intended UX, not worldwide provider eligibility; do not silently introduce access friction or claim the quota solves distribution conditions.
 
-**Implemented quota experience:** shared admission remains one/60s and ten/rolling 24h. A denied request shows a real hours/minutes/seconds countdown using server `Retry-After`, explains the shared limit, and offers the normal catalog. It updates after tab suspension and enables manual retry when the wait ends. No polling, automatic inference, midnight reset or guaranteed available slot. The countdown is outside the live status region to avoid announcing every second. Last full local lint/types/build and 349 tests pass (five opt-in Redis cases skipped); generation remains publicly disabled. One separately authorized live provider call subsequently passed; see [`AI_LIVE_CHECK.md`](AI_LIVE_CHECK.md).
+**Geographic gate approved and implemented (2026-10-30):** keep the movie catalog public worldwide; restrict only AI requests from the EEA, Switzerland and the United Kingdom. Missing, malformed or unknown Vercel country data fails closed for AI only. The server applies this check before shared admission, and `/discover` explains the restriction with a catalog link. The public AI flag remains false. This country/IP policy is an approximation, does not verify a visitor's age/residency, and does not close the separate adult-audience terms gate.
+
+**Implemented quota experience:** shared admission remains one/60s and ten/rolling 24h. A denied request shows a real hours/minutes/seconds countdown using server `Retry-After`, explains the shared limit, and offers the normal catalog. It updates after tab suspension and enables manual retry when the wait ends. No polling, automatic inference, midnight reset or guaranteed available slot. The countdown is outside the live status region to avoid announcing every second. Latest local lint/types/build and 369 tests pass (five opt-in Redis cases skipped); generation remains publicly disabled. One separately authorized live provider call subsequently passed; see [`AI_LIVE_CHECK.md`](AI_LIVE_CHECK.md).
 
 ## Plan review: what is actually incomplete?
 
@@ -20,9 +22,9 @@ The planning/communication gap was reporting “entry approvals complete” with
 |---|---|---|
 | Architecture/model | Approved; implemented with mocked provider tests | Retain Google; do not reopen or migrate by default. |
 | Existing Free/no-payment plans and eviction | Operator confirmed | Record that confirmation; do not repeatedly request the same confirmation. |
-| Google privacy/distribution | Operator in Brazil accepts unpaid-service data use; visitor audience/access unresolved | Establish eligible visitor audience/access; do not repeat the operator's privacy decision. |
+| Google privacy/distribution | Operator in Brazil accepts unpaid-service data use; AI-only EEA/CH/UK/unknown-country block implemented; adult-audience eligibility unresolved | Resolve adult-audience/terms eligibility; do not repeat the operator's privacy decision or widen restrictions without approval. |
 | Public activation wiring | Route supplies the Google assertion from server-owned availability; production-composition mocks pass; public gate remains false | Close release gates and obtain explicit activation approval before enabling. |
-| Live provider/runtime behavior | Vercel dependency checks passed; one authorized real local Google→Search→Quality/stream invocation passed (237 tokens, 4.275s) | Diagnostic route retired and local key absence confirmed; confirm Vercel/old-deployment cleanup and deliberately scope full enabled Vercel/browser verification after release decisions. |
+| Live provider/runtime behavior | Vercel dependency checks passed; one authorized real local Google→Search→Quality/stream invocation passed (237 tokens, 4.275s); new geo gate unit/composition tests pass | Confirm Vercel/old-diagnostic-deployment cleanup and verify geolocation behavior in a non-generative Vercel check; deliberately scope full enabled AI verification only after release decisions. |
 | Render startup | Observed 13.889s; init cap now 20s | Agree on bounded demo startup behavior; no need to promise a production SLA or replace hosting automatically. |
 
 **Direct answer:** Gemini must receive the submitted prompt to perform hosted inference. In the general Unpaid Services arrangement Google also uses content for improvement and may have humans review it; the regional exception below matters. There is no application-code switch that overrides those terms. If the user declines the applicable content-use terms, that **Google Free arrangement** cannot be activated under the current constraints. It does not disable the movie application or rule out all AI. Clarify the applicable terms first; only then consider a different route if necessary.
@@ -90,7 +92,8 @@ Paid Gemini is outside the current constraints. Simply leaving AI disabled is a 
 
 - [x] Developer confirms Brazil/LatAm and accepts unpaid-service content improvement/possible human review after the explanation. Keep Google and the approved model.
 - [x] Establish intended UX: public access without invitations/accounts/link requests; expected audience is recruiters, not a verified visitor restriction.
-- [ ] Resolve compatibility of that public distribution with the provider's audience/region conditions. Do not equate the operator's Brazil location or low traffic with restricted eligible access; no geographic restriction has been approved.
+- [x] Operator approves and implementation adds an AI-only block for the EEA, Switzerland, the United Kingdom, and unknown geolocation; the catalog remains public worldwide. No inference/public activation is enabled by this policy change.
+- [ ] Resolve adult-audience eligibility and verify in a non-generative Vercel check that the country signal is platform-derived and cannot be overridden by a client header. The operator's Brazil location and the country gate do not establish visitor age or residency.
 - [ ] Only if Google is declined or unsuitable: choose the acceptable external-processing boundary and obtain explicit approval before evaluating a migration/architecture change as execution work. Alternatives below are reference material, not the default next task.
 
 ### D2 — Complete the approved Google release design without inference
@@ -121,7 +124,7 @@ If an alternative is explicitly chosen later, revise D2–D3 for that provider f
 
 - [x] Obtain **separate explicit authorization** for one real Inception search with the selected Google/model, quota enforced, public availability off and no retries. One real admission was consumed; no bypass/reset/refund.
 - [x] Verify the real local handler's planner→Render/MCP→Quality flow and stream consumer: completed/approved, 12 movies including the expected film, 214 input/23 output/237 total tokens, 4,275ms overall, exactly one token preflight and generation. No raw data logged, no retries, executable removed after use. [Detailed scope](AI_LIVE_CHECK.md). This test was local, not an enabled Vercel/browser invocation.
-- [ ] Close applicable provider/privacy/audience/region and cold-start gates, then obtain public activation approval. Keep one global admission/60s and ten/rolling 24h, no refunds or fallback.
+- [ ] Close applicable provider/privacy/adult-audience and cold-start gates, then obtain public activation approval. The AI-only region gate is in place. Keep one global admission/60s and ten/rolling 24h, no refunds or fallback.
 - [ ] Deploy and smoke-test the actual enabled path, quota errors and disable/rollback switch. Close Phase 6 only with an honestly documented usable demo and accepted limitations, or an explicitly approved scope amendment.
 
 ## Primary sources
