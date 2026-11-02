@@ -41,8 +41,23 @@ describe('MovieCard', () => {
 
     expect(screen.getByTestId('count')).toHaveTextContent('0');
 
-    await user.click(screen.getByRole('button', { name: messages.watchlist.addAriaLabel }));
+    await user.click(screen.getByRole('button', { name: messages.watchlist.addAriaLabel(sampleMovie.title) }));
 
     expect(screen.getByTestId('count')).toHaveTextContent('1');
+    expect(screen.getByRole('button', { name: messages.watchlist.removeAriaLabel(sampleMovie.title) })).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('keeps the poster link and named watchlist action separately keyboard accessible', async () => {
+    const user = userEvent.setup();
+    render(<WatchlistProvider><MovieCard movie={sampleMovie} /></WatchlistProvider>);
+    const link = screen.getByRole('link');
+    const button = screen.getByRole('button', { name: messages.watchlist.addAriaLabel(sampleMovie.title) });
+    expect(link).not.toContainElement(button);
+    await user.tab();
+    expect(link).toHaveFocus();
+    await user.tab();
+    expect(button).toHaveFocus();
+    await user.keyboard(' ');
+    expect(button).toHaveAttribute('aria-pressed', 'true');
   });
 });

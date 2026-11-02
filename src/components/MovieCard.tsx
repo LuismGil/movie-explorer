@@ -22,6 +22,7 @@ export function MovieCard({ movie, index = 0, eager = false }: MovieCardProps) {
     : undefined;
   const { isInWatchlist, toggleWatchlist } = useWatchlist();
   const inWatchlist = isInWatchlist(movie.id);
+  const toggleLabel = inWatchlist ? messages.watchlist.removeAriaLabel(movie.title) : messages.watchlist.addAriaLabel(movie.title);
 
   return (
     <article className="movie-card glass cinema-reveal" style={{ '--reveal-delay': `${Math.min(index, 5) * 45}ms` } as CSSProperties}>
@@ -58,9 +59,9 @@ export function MovieCard({ movie, index = 0, eager = false }: MovieCardProps) {
       </Link>
       <button
         type="button"
-        aria-label={inWatchlist ? messages.watchlist.removeAriaLabel : messages.watchlist.addAriaLabel}
+        aria-label={toggleLabel}
         aria-pressed={inWatchlist}
-        title={inWatchlist ? messages.watchlist.removeAriaLabel : messages.watchlist.addAriaLabel}
+        title={toggleLabel}
         onClick={(e) => {
           e.preventDefault();
           toggleWatchlist(movie);
