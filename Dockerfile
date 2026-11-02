@@ -16,12 +16,11 @@ FROM gcr.io/distroless/nodejs20-debian12 AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# Copy Next.js standalone output and static/public assets
+# npm run build assembles the server and its optional public/static assets.
 COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/public ./public
 
 EXPOSE 3000
 CMD ["server.js"]

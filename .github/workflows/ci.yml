@@ -8,7 +8,7 @@ on:
 
 jobs:
   quality-gate:
-    name: Quality Gate (Vite/Express)
+    name: Quality Gate (Next.js standalone)
     runs-on: ubuntu-latest
 
     steps:
@@ -36,23 +36,27 @@ jobs:
       - name: Atomic AI Rate Limit (isolated local Redis)
         run: npm run test:ai:rate-limit
 
-      - name: Build Client & Server
+      - name: Build and Assemble Standalone Server
         run: npm run build
 
       - name: Install Playwright Browsers
         run: npx playwright install chromium --with-deps
 
       - name: Run Accessibility Audit
+        timeout-minutes: 5
         run: |
           npm run start &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
           # Wait for server to be responsive on port 3000
-          until $(curl --output /dev/null --silent --head --fail http://localhost:3000); do
-            printf '.'
+          for attempt in $(seq 1 30); do
+            if curl --output /dev/null --silent --head --fail http://localhost:3000; then
+              break
+            fi
             sleep 1
           done
+          curl --output /dev/null --silent --head --fail http://localhost:3000
           npm run test:a11y
-          # Terminate background server
-          kill $(jobs -p)
         env:
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY || 'dummy' }}
 
