@@ -6,9 +6,9 @@ import { messages } from '@/i18n';
 import { cinemaTheme } from '@/theme/cinema';
 import '@/index.css';
 
-const display = Sora({ subsets: ['latin'], variable: '--font-display', display: 'swap' });
+const display = Sora({ subsets: ['latin'], variable: '--font-display', display: 'optional' });
 const body = Hanken_Grotesk({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
-const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap', preload: false });
+const mono = JetBrains_Mono({ subsets: ['latin'], weight: '500', variable: '--font-mono', display: 'optional', preload: false });
 
 export const metadata: Metadata = {
   title: 'Movie Explorer',

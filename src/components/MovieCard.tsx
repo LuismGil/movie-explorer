@@ -12,11 +12,14 @@ type MovieCardProps = {
   eager?: boolean;
 };
 
-const TMDB_POSTER_BASE = 'https://image.tmdb.org/t/p/w342';
+const TMDB_POSTER_BASE = 'https://image.tmdb.org/t/p';
 
 export function MovieCard({ movie, index = 0, eager = false }: MovieCardProps) {
   const year = movie.release_date ? movie.release_date.split('-')[0] : '—';
-  const posterUrl = movie.poster_path ? `${TMDB_POSTER_BASE}${movie.poster_path}` : null;
+  const posterUrl = movie.poster_path ? `${TMDB_POSTER_BASE}/w342${movie.poster_path}` : null;
+  const posterSrcSet = movie.poster_path
+    ? [185, 342, 500].map(width => `${TMDB_POSTER_BASE}/w${width}${movie.poster_path} ${width}w`).join(', ')
+    : undefined;
   const { isInWatchlist, toggleWatchlist } = useWatchlist();
   const inWatchlist = isInWatchlist(movie.id);
 
@@ -30,6 +33,8 @@ export function MovieCard({ movie, index = 0, eager = false }: MovieCardProps) {
           {posterUrl ? (
             <img
               src={posterUrl}
+              srcSet={posterSrcSet}
+              sizes="(max-width: 640px) calc((100vw - 44px) / 2), (max-width: 900px) calc((100vw - 64px) / 3), (max-width: 1280px) calc((100vw - 152px) / 4), 282px"
               alt=""
               width={342}
               height={513}

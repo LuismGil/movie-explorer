@@ -1,21 +1,35 @@
 'use client';
 
-import { useSyncExternalStore } from 'react';
-import { QRCodeSVG } from 'qrcode.react';
+import { lazy, Suspense, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { messages } from '@/i18n';
 
 const subscribe = () => () => {};
 const getOrigin = () => window.location.origin;
 const serverOrigin = () => '';
+const QRCodeSVG = lazy(() => import('qrcode.react').then(module => ({ default: module.QRCodeSVG })));
 
 export function QRDemo() {
   const origin = useSyncExternalStore(subscribe, getOrigin, serverOrigin);
+  const target = useRef<HTMLDivElement>(null);
+  const [nearby, setNearby] = useState(false);
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'production' || !target.current) return;
+    if (!('IntersectionObserver' in window)) {
+      const timer = setTimeout(() => setNearby(true), 0);
+      return () => clearTimeout(timer);
+    }
+    const observer = new IntersectionObserver(entries => {
+      if (entries.some(entry => entry.isIntersecting)) { setNearby(true); observer.disconnect(); }
+    }, { rootMargin: '200px' });
+    observer.observe(target.current);
+    return () => observer.disconnect();
+  }, []);
   if (process.env.NODE_ENV !== 'production') return null;
   return <aside className="qr-demo glass" aria-labelledby="qr-title">
-    <div className="qr-code" aria-busy={!origin}>
-      {origin && <QRCodeSVG value={`${origin}/discover`} size={104} marginSize={4} level="M"
-        title={messages.qr.codeTitle} role="img" />}
+    <div className="qr-code" ref={target} aria-busy={!origin || !nearby}>
+      {origin && nearby && <Suspense fallback={null}><QRCodeSVG value={`${origin}/discover`} size={104} marginSize={4} level="M"
+        title={messages.qr.codeTitle} role="img" /></Suspense>}
     </div>
     <div>
       <p className="cinema-eyebrow">{messages.qr.eyebrow}</p>

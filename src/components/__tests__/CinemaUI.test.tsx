@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ErrorBoundary } from '../ErrorBoundary';
 import { QRDemo } from '../QRDemo';
@@ -9,7 +9,7 @@ vi.mock('qrcode.react', () => ({
   QRCodeSVG: ({ value, title }: { value: string; title: string }) => <svg role="img" aria-label={title} data-value={value} />,
 }));
 
-afterEach(() => { cleanup(); vi.unstubAllEnvs(); });
+afterEach(() => { cleanup(); vi.unstubAllEnvs(); vi.unstubAllGlobals(); });
 
 describe('cinema presentation', () => {
   it('keeps the catalog and the gated AI demo as distinct navigation actions', () => {
@@ -35,11 +35,29 @@ describe('cinema presentation', () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it('encodes only the current origin plus gated Discover, not query/path or a third-party QR service', () => {
+  it('encodes only the current origin plus gated Discover, not query/path or a third-party QR service', async () => {
     vi.stubEnv('NODE_ENV', 'production');
     render(<QRDemo />);
-    expect(screen.getByRole('img', { name: messages.qr.codeTitle })).toHaveAttribute('data-value', `${window.location.origin}/discover`);
+    expect(await screen.findByRole('img', { name: messages.qr.codeTitle })).toHaveAttribute('data-value', `${window.location.origin}/discover`);
     expect(screen.getByRole('link', { name: messages.qr.link })).toHaveAttribute('href', '/discover');
     expect(screen.getByText(messages.qr.description)).toBeInTheDocument();
+  });
+
+  it('defers QR rendering until the reserved placeholder approaches the viewport', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    let notify!: IntersectionObserverCallback;
+    const disconnect = vi.fn();
+    vi.stubGlobal('IntersectionObserver', class {
+      constructor(callback: IntersectionObserverCallback) { notify = callback; }
+      observe() {}
+      disconnect = disconnect;
+    });
+    const view = render(<QRDemo />);
+    expect(screen.queryByRole('img', { name: messages.qr.codeTitle })).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: messages.qr.link })).toHaveAttribute('href', '/discover');
+    await act(async () => { notify([{ isIntersecting: true } as IntersectionObserverEntry], {} as IntersectionObserver); });
+    expect(await screen.findByRole('img', { name: messages.qr.codeTitle })).toBeInTheDocument();
+    expect(disconnect).toHaveBeenCalled();
+    view.unmount();
   });
 });
