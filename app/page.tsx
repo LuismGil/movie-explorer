@@ -10,6 +10,8 @@ import {
   searchMovies,
 } from '@/server/actions/tmdb';
 import { messages } from '@/i18n';
+import { CatalogIntro } from '@/components/CatalogIntro';
+import { QRDemo } from '@/components/QRDemo';
 
 interface PageProps {
   searchParams: Promise<{
@@ -22,7 +24,7 @@ interface PageProps {
 
 function MovieGridSkeleton() {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    <div className="movie-grid" role="status" aria-label={messages.common.loading}>
       {Array.from({ length: 8 }).map((_, index) => (
         <MovieCardSkeleton key={`skeleton-${index}`} />
       ))}
@@ -32,12 +34,9 @@ function MovieGridSkeleton() {
 
 function SearchBarSkeleton() {
   return (
-    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between py-2">
-      <div className="space-y-2">
-        <div className="h-8 w-48 rounded bg-slate-800 animate-pulse" />
-        <div className="h-4 w-64 rounded bg-slate-800 animate-pulse" />
-      </div>
-      <div className="h-10 w-full max-w-md rounded-full bg-slate-800 animate-pulse" />
+    <div className="catalog-toolbar" aria-hidden="true">
+      <div className="shimmer h-12 w-48 rounded-lg" />
+      <div className="shimmer h-12 w-full max-w-md rounded-full" />
     </div>
   );
 }
@@ -104,7 +103,9 @@ export default async function HomePage({ searchParams }: PageProps) {
   const key = `${query}-${viewMode}-${trendingWindow}-${page}`;
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8">
+    <div className="catalog-page">
+      <CatalogIntro />
+      <section id="catalog" className="catalog-section" aria-label={messages.home.selection}>
       <Suspense fallback={<SearchBarSkeleton />}>
         <SearchBar />
       </Suspense>
@@ -117,6 +118,8 @@ export default async function HomePage({ searchParams }: PageProps) {
           page={page}
         />
       </Suspense>
+      </section>
+      {process.env.NODE_ENV === 'production' && <QRDemo />}
     </div>
   );
 }

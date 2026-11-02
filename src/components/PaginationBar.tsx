@@ -20,17 +20,17 @@ export function PaginationBar({ page, totalPages }: PaginationBarProps) {
   };
 
   return (
-    <div className="mt-6 flex items-center justify-center gap-4">
+    <nav className="cinema-pagination" aria-label={messages.pagination.label}>
       <button
         type="button"
         onClick={() => handlePageChange(page - 1)}
         disabled={page === 1}
         aria-label={messages.pagination.goToPage(page - 1)}
-        className="rounded-full border border-slate-700 px-4 py-2 text-sm text-slate-100 disabled:opacity-40 focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
+        className="pagination-button"
       >
         {messages.pagination.previous}
       </button>
-      <span className="text-sm text-slate-300">
+      <span className="pagination-info">
         {messages.pagination.pageInfo(page, totalPages)}
       </span>
       <button
@@ -38,11 +38,11 @@ export function PaginationBar({ page, totalPages }: PaginationBarProps) {
         onClick={() => handlePageChange(page + 1)}
         disabled={page === totalPages}
         aria-label={messages.pagination.goToPage(page + 1)}
-        className="rounded-full border border-slate-700 px-4 py-2 text-sm text-slate-100 disabled:opacity-40 focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
+        className="pagination-button"
       >
         {messages.pagination.next}
       </button>
-    </div>
+    </nav>
   );
 }
 

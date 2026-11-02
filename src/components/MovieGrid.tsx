@@ -2,6 +2,7 @@ import { MovieCard } from './MovieCard';
 import { MovieCardSkeleton } from './MovieCardSkeleton';
 import type { MovieListItem } from '@/types/movie';
 import { messages } from '@/i18n';
+import Link from 'next/link';
 
 interface MovieGridProps {
   movies: MovieListItem[];
@@ -11,7 +12,7 @@ interface MovieGridProps {
 export function MovieGrid({ movies, isLoading }: MovieGridProps) {
   if (isLoading) {
     return (
-      <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div className="movie-grid" role="status" aria-label={messages.common.loading}>
         {Array.from({ length: 8 }).map((_, index) => (
           <MovieCardSkeleton key={`skeleton-${index}`} />
         ))}
@@ -21,16 +22,19 @@ export function MovieGrid({ movies, isLoading }: MovieGridProps) {
 
   if (movies.length === 0) {
     return (
-      <div className="rounded-2xl border border-slate-800 bg-slate-900 px-6 py-10 text-center text-slate-200">
-        {messages.home.noMoviesFound}
+      <div className="cinema-empty glass">
+        <p className="cinema-eyebrow">{messages.home.searchHint}</p>
+        <h2>{messages.home.noMoviesFound}</h2>
+        <p>{messages.home.emptyHint}</p>
+        <Link href="/" className="cinema-button">{messages.common.backToCatalog}</Link>
       </div>
     );
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-      {movies.map((movie) => (
-        <MovieCard key={movie.id} movie={movie} />
+    <div className="movie-grid">
+      {movies.map((movie, index) => (
+        <MovieCard key={movie.id} movie={movie} index={index} eager={index < 4} />
       ))}
     </div>
   );

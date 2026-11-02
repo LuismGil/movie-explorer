@@ -3,6 +3,8 @@
 > Agents MUST read this before any code action. Update task status in-place as work completes.
 > When this plan is fully executed, archive it to `.ai/context/archive/` and regenerate from the roadmap.
 
+**Active phase: 7, explicitly approved 2026-11-02.** User reports activation `8819583` Ready and approves UI polish with unverified Phase 6 limitations carried forward. This supersedes the older phase-order/keep-disabled instructions where conflicting; it does not turn unknown release checks into passes. See the Phase 7 block and `docs/UI_POLISH.md` for current work. No live inference or hosted diagnostic is requested.
+
 ---
 
 ## Mission Statement
@@ -416,6 +418,10 @@ npm run test        # agent mock tests pass
 
 > **Goal**: The UI communicates senior-level design sensibility. Every interaction feels intentional.
 
+> **Started 2026-11-02 with explicit operator approval:** the user reports activation deployment `8819583` Ready and approves starting Phase 7 while earlier unverified release limitations remain documented, not passed. This explicitly amends the sequential-phase rule for this work. No new inference, hosted diagnostics, credential/quota changes or provider migration. Design refinement: reuse the canonical shared obsidian/gold/purple palette and Sora/Hanken Grotesk/JetBrains Mono typography instead of introducing the older illustrative cyan/pink palette and a competing font system. Scope: catalog/header/cards, responsive loading/error/empty states, AI presentation only, production mobile QR, reduced motion. Do not change AI access/admission/runtime contracts.
+
+**First increment implemented:** 7.1–7.7 and 7.9 below, using the canonical palette/font refinement above. Build/lint and 35 focused UI tests pass. Local production review across five desktop/mobile states has no axe A/AA violations, page errors, overflow or AI requests; reduced-motion cards have no animation/transition. One compatible transitive security patch clears the production audit. Lighthouse budget work 7.8 is unmeasured, not passed. Detailed scope/evidence: [`UI_POLISH.md`](../docs/UI_POLISH.md). Work is local; no commit/push/deployment.
+
 ### Design System Tokens (add to `tailwind.config.ts`)
 
 ```ts
@@ -434,28 +440,28 @@ npm run test        # agent mock tests pass
 
 ### Tasks
 
-- [ ] **7.1** Apply base tokens above to `tailwind.config.ts`. Add `.glass` as a Tailwind component class in `globals.css`.
-- [ ] **7.2** Update `MovieCard.tsx`:
+- [x] **7.1** Connect canonical shared tokens to `tailwind.config.js`/layout theme variables; add `.glass` in `src/index.css` (existing stylesheet convention).
+- [x] **7.2** Update `MovieCard.tsx`:
   - Replace flat dark card with `.glass` class.
   - Add `transition-transform duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(56,189,248,0.12)]` for hover lift.
   - Poster image: `object-cover` with a gradient overlay `from-void/0 to-void/90` revealing title on hover (CSS-only using `group` and `group-hover`).
   - Rating badge: pill with `bg-accent/10 text-accent border border-accent/20`.
-- [ ] **7.3** Update `Header.tsx`:
+- [x] **7.3** Update `Header.tsx` (canonical gold palette and Sora/Hanken/JetBrains refinement supersedes the older font examples):
   - Sticky header with `backdrop-blur-md bg-void/80 border-b border-rim`.
   - Logo text in a distinctive font (load `DM Serif Display` via `next/font/google` for the logo, `Inter` body already acceptable here as supporting font — use `Geist Mono` for metadata labels instead).
   - Active nav link: `text-accent` with an animated underline `after:` pseudo-element.
-- [ ] **7.4** Update `AIChatPanel.tsx`:
+- [x] **7.4** Update `AIChatPanel.tsx`:
   - Chat input: full-width pill with `.glass`, `border-rim`, focus state `border-accent ring-2 ring-accent/20`.
   - Streaming indicator: three dots animated with staggered `animation-delay` (CSS keyframes).
   - Results grid: staggered reveal using `animation-delay: calc(var(--index) * 60ms)` on each card.
-- [ ] **7.5** `MovieCardSkeleton.tsx`: replace with shimmer animation — `bg-gradient-to-r from-surface via-rim to-surface bg-[length:200%_100%] animate-[shimmer_1.5s_infinite]`. Add `@keyframes shimmer` to `globals.css`.
-- [ ] **7.6** Add custom error boundary `src/components/ErrorBoundary.tsx` with a branded fallback UI (film-reel icon, actionable retry button, not a generic "Something went wrong").
-- [ ] **7.7** Add dynamic QR code component `src/components/QRDemo.tsx`:
+- [x] **7.5** `MovieCardSkeleton.tsx`: matching reserved poster/caption geometry, shared-color shimmer and reduced-motion protection in `src/index.css`.
+- [x] **7.6** Add branded `src/components/ErrorBoundary.tsx` and wire the real App Router `app/error.tsx` boundary, with film mark, reset/catalog actions and no raw exception display.
+- [x] **7.7** Add dynamic QR code component `src/components/QRDemo.tsx`:
   - On the landing page, renders a QR code (use `qrcode.react` library) encoding the current deployment URL.
   - Label: "Scan to demo the AI agent on mobile".
   - Visible only in production (`process.env.NODE_ENV === 'production'`).
 - [ ] **7.8** Run Lighthouse in dev mode. Verify LCP < 1.2s, CLS < 0.05. Fix any regressions introduced by animations (use `prefers-reduced-motion` media query to disable transforms for users who opt out).
-- [ ] **7.9** Add `prefers-reduced-motion` guard to all CSS `transition` and `animation` declarations:
+- [x] **7.9** Add `prefers-reduced-motion` guard to all CSS `transition` and `animation` declarations:
   ```css
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }

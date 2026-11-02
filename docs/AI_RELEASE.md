@@ -1,5 +1,7 @@
 # AI activation — 2026-11-02
 
+**Subsequent publication:** commit `8819583` was created and pushed to `main`; the user reports its Vercel deployment **Ready**. This is operator-reported deployment state, not a new agent-run inference or certification of the known limitations. The user explicitly approved beginning Phase 7 with these limits carried forward. Source-preparation descriptions below predate that publication.
+
 ## Authorization and actual deployment state
 
 The operator explicitly delegated the startup policy and age-control implementation, and authorized turning on AI. `src/server/ai/availability.ts` now exports `true` in the working tree. This supersedes earlier instructions to wait for activation authorization; it is **not evidence of a deployed release or provider-policy certification**. The operator reported the previous geo-gate commit pushed and its tests successful.

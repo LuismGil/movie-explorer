@@ -1,5 +1,13 @@
 # Project Context
 
+## Current: 2026-11-02 — Phase 7 First Visual Increment
+
+User reports `8819583` Ready and explicitly approves moving to Phase 7 while unverified Phase 6 release limitations remain documented. This amends the phase-order rule, not those unknown verdicts. The activation/age/startup changes are committed/pushed; no need to re-ask activation approval.
+
+Implemented canonical shared obsidian/gold/purple palette and self-hosted next/font Sora/Hanken Grotesk/JetBrains Mono; new catalog intro/search/filter presentation, poster cards/grid, sticky responsive navigation, skeletons, watchlist/empty/error states, real App Router error boundary, production-only current-origin Discover QR and global reduced-motion handling. AI changes are CSS/markup only: typography/input/buttons/pending dots/result reveal/inline terms; no change to server access, quota or inference. Planned `qrcode.react@4.2.0` added. A newly surfaced existing `follow-redirects` production advisory was fixed narrowly, 1.16.1→1.16.2; production audit now zero, dev advisories remain.
+
+Build/lint and 35 focused UI tests pass. Local production screenshots/axe at Home 1440/390px, Watchlist 320px and Discover 1440/320px show zero violations, page errors, overflow and AI requests; reduced-motion cards have no animation/transition. Normal public-catalog TMDB/poster reads occurred; local Discover used synthetic BR solely for presentation, not geographic trust evidence. Screenshots `/tmp/opencode/cinema-*.png`; browser/server stopped. Refined terms link and adult legend after visual review. Lighthouse performance budgets unmeasured, full Phase 7 not closed. No live inference/hosted diagnostics, quota/credential change, commit/push/deployment for this UI work. `PRD.md` remains untouched. [Scope and evidence](../docs/UI_POLISH.md).
+
 ## Current: 2026-11-02 — Activation Authorized; Adult Declaration and Demand-Driven Startup
 
 The operator reports `b547a44` pushed and previous tests successful. They declined more repetitive tests/Vercel diagnostics, delegated selection of startup policy and implementation of age controls, and explicitly authorized turning on AI. Implemented an unchecked, memory-only adult self-declaration; the public server requires the exact versioned declaration header before body/shared admission. No DOB/documents, identity service, account or persistent age record. This is not age verification or certification of Google's broader under-18 audience restriction; actual eligibility remains unestablished.

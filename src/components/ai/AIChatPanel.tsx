@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { messages } from '@/i18n';
 import { AI_ADULT_DECLARATION_HEADER, AI_ADULT_DECLARATION_VALUE } from '@/lib/ai/audience';
@@ -113,7 +113,7 @@ export function AIChatPanel({ enabled, regionUnavailable = false }: { enabled: b
           onChange={event => setMessage(event.target.value)} placeholder={copy.placeholder}
           aria-describedby="ai-privacy" className={`${styles.input} ${focus}`} />
         <p id="ai-privacy" className={styles.muted}>{copy.privacy}{' '}
-          <a href="https://ai.google.dev/gemini-api/terms#unpaid-services" target="_blank" rel="noopener noreferrer" className={`${styles.link} ${focus}`}>{copy.privacyTerms}</a>
+          <a href="https://ai.google.dev/gemini-api/terms#unpaid-services" target="_blank" rel="noopener noreferrer" className={`${styles.termsLink} ${focus}`}>{copy.privacyTerms}</a>
         </p>
         <div className={styles.actions}>
           <button type="submit" disabled={!enabled || !adultConfirmed || pending || retryAt !== undefined || !message.trim()} className={`${styles.button} ${focus}`}>{copy.submit}</button>
@@ -124,7 +124,7 @@ export function AIChatPanel({ enabled, regionUnavailable = false }: { enabled: b
         {aiStages.map((item, index) => <li key={item} data-reached={index <= stageIndex} aria-current={pending && stage === item ? 'step' : undefined}>{copy.stages[item]}</li>)}
       </ol>
       <div role="status" aria-live="polite" aria-atomic="true">
-        {pending && <p>{stage ? copy.stages[stage] : copy.connecting}</p>}
+        {pending && <p className={styles.pending}><span className={styles.dots} aria-hidden="true"><i /><i /><i /></span>{stage ? copy.stages[stage] : copy.connecting}</p>}
         {!pending && !terminal && enabled && <p className={styles.muted}>{copy.idle}</p>}
         {terminal?.type === 'unsupported' && <p>{copy.unsupported}</p>}
         {terminal?.type === 'error' && <p className={styles.error}>{terminal.code === 'rate_limited' && retryAt === undefined ? copy.rateLimitReady : copy.errors[terminal.code]}</p>}
@@ -146,7 +146,7 @@ export function AIChatPanel({ enabled, regionUnavailable = false }: { enabled: b
       {result && <div className={styles.results} aria-busy={pending}>
         {result.presentation.status === 'partial' && <p className={styles.notice}>{copy.partial}</p>}
         {result.status === 'needs_selection' && <p>{copy.selectionHint}</p>}
-        {result.presentation.movies.map(movie => <article key={movie.id} className={styles.card} data-has-poster={Boolean(movie.poster_path)}>
+        {result.presentation.movies.map((movie, index) => <article key={movie.id} className={styles.card} data-has-poster={Boolean(movie.poster_path)} style={{ '--reveal-delay': `${Math.min(index, 5) * 60}ms` } as CSSProperties}>
           {movie.poster_path && <img src={`https://image.tmdb.org/t/p/w342${movie.poster_path}`} alt="" width={342} height={513} loading="lazy" className={styles.poster} />}
           <div className={styles.cardContent}>
             <p className={styles.source}>{copy.source}</p>

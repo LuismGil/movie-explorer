@@ -17,7 +17,7 @@ export function WatchlistToggle({ movie }: WatchlistToggleProps) {
       type="button"
       onClick={() => toggleWatchlist(movie)}
       aria-pressed={inWatchlist}
-      className="inline-flex items-center gap-2 rounded-full border border-slate-600 px-4 py-2 text-sm font-medium text-slate-100 hover:border-sky-500 hover:text-sky-400 focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
+      className="pagination-button text-text-hi hover:border-accent hover:text-accent"
     >
       {inWatchlist ? messages.watchlist.remove : messages.watchlist.add}
     </button>

@@ -14,7 +14,7 @@ export function SimilarMovies({ movies }: SimilarMoviesProps) {
       <h3 className="text-lg font-semibold text-white">{messages.movie.similarMovies}</h3>
       <div className="flex gap-4 overflow-x-auto pb-2 snap-x">
         {movies.map((movie) => (
-          <div key={movie.id} className="min-w-[180px] snap-center">
+          <div key={movie.id} className="w-[180px] shrink-0 snap-center">
             <MovieCard movie={movie} />
           </div>
         ))}

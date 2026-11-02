@@ -9,5 +9,8 @@ describe('Header', () => {
 
     expect(screen.getByRole('link', { name: messages.navigation.home })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: messages.navigation.watchlist })).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: messages.navigation.label })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: messages.navigation.home })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByRole('link', { name: messages.navigation.discover })).not.toHaveAttribute('aria-current');
   });
 });

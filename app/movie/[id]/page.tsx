@@ -89,7 +89,7 @@ export default async function MovieDetailsPage({ params }: PageProps) {
 
   return (
     <div className="flex flex-col gap-10 py-6">
-      <section className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-2xl shadow-black/40">
+      <section className="relative overflow-hidden rounded-3xl border border-rim bg-surface shadow-2xl shadow-black/40">
         {backdropUrl ? (
           <div className="relative z-0 h-64 w-full overflow-hidden">
             <img
@@ -100,7 +100,7 @@ export default async function MovieDetailsPage({ params }: PageProps) {
               className="h-full w-full object-cover opacity-70"
               loading="lazy"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60" />
+            <div className="absolute inset-0 detail-backdrop-fade" />
           </div>
         ) : (
           <div className="h-40 w-full bg-gradient-to-r from-slate-800 to-slate-900" />
@@ -108,7 +108,7 @@ export default async function MovieDetailsPage({ params }: PageProps) {
 
         <div className="relative z-10 grid gap-8 px-6 pb-8 -mt-12 md:-mt-16 md:grid-cols-[240px,1fr] md:px-10">
           <div className="relative">
-            <div className="overflow-hidden rounded-2xl border border-slate-800 shadow-xl shadow-black/40">
+            <div className="overflow-hidden rounded-2xl border border-rim shadow-xl shadow-black/40">
               {posterUrl ? (
                 <img
                   src={posterUrl}
@@ -126,7 +126,7 @@ export default async function MovieDetailsPage({ params }: PageProps) {
             </div>
             <Link
               href="/"
-              className="mt-4 inline-flex items-center gap-2 rounded-full bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:-translate-y-0.5 hover:bg-slate-700 focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
+              className="cinema-text-link mt-4"
             >
               {messages.movie.goBack}
             </Link>
@@ -134,7 +134,7 @@ export default async function MovieDetailsPage({ params }: PageProps) {
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <h1 className="text-3xl font-semibold text-white">{data.title}</h1>
+              <h1 className="font-display text-3xl font-semibold tracking-tight text-text-hi">{data.title}</h1>
               <p className="text-slate-300">{data.tagline}</p>
               <div className="flex flex-wrap gap-2">
                 <InfoChip label={messages.movie.ratingLabel(data.vote_average, data.vote_count ?? 0)} />
@@ -170,7 +170,7 @@ export default async function MovieDetailsPage({ params }: PageProps) {
                 href={data.homepage}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-sky-500 px-4 py-2 text-sm font-semibold text-slate-950 shadow-lg shadow-sky-500/30 transition hover:-translate-y-0.5 hover:bg-sky-400 focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
+                className="cinema-button"
               >
                 {messages.movie.visitOfficialSite}
               </a>

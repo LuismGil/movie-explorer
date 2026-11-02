@@ -1,4 +1,12 @@
-# Phase 6 — MCP Server + Multi-Agent System
+# Phase 7 — Premium UI Polish
+
+## Current work — 2026-11-02
+
+User reports activation commit `8819583` deployed Ready and explicitly approves Phase 7 despite documented Phase 6 limitations. Do not reopen activation approval or repeat live AI/hosted diagnostics. Implemented the first visual increment: shared obsidian/gold theme, self-hosted canonical fonts, catalog intro/search/filter/card/grid polish, mobile header, watchlist/empty/error states, real App Router error reset, production-only same-origin QR, AI presentation-only refinements and reduced motion. Added only planned `qrcode.react@4.2.0`; patched existing transitive `follow-redirects` 1.16.1→1.16.2, production audit now zero. No AI access/quota/runtime/provider change. Build/lint and 35 focused UI tests pass; five local production responsive/axe states pass with zero AI requests. Lighthouse budgets remain unmeasured; Phase 7 is not fully closed. Changes not committed/published; pre-existing `PRD.md` untouched. [Full evidence](../docs/UI_POLISH.md).
+
+The Phase 6 notes below are historical where they say Phase 7 has not started or publication is pending; actual deployment status is user-reported, not agent-certified.
+
+# Phase 6 — MCP Server + Multi-Agent System (history)
 
 ## Active Phase
 - **Latest instruction — 2026-11-02:** user delegated startup/age controls and explicitly authorized AI activation. Source flag is now true. Added adult self-declaration in UI plus mandatory server header check before body/admission; no DOB/documents/accounts or persistence. Production prepares/reuses MCP before Google within existing 20/30/35s bounds, with real preparation progress and slow-start/catalog guidance, no polling/retries. This is not verified age or provider-policy certification. Publication and unverified geographic/audience/diagnostic/hosted limitations are recorded in [`AI_RELEASE.md`](../docs/AI_RELEASE.md). Older “keep disabled / ask for activation” notes below are historical and superseded. Do not repeat live tests, touch quota/credentials or start Phase 7 implicitly.

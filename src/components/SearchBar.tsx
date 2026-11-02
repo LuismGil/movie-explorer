@@ -73,12 +73,13 @@ export function SearchBar() {
 
   return (
     <>
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-semibold text-white">{title}</h1>
-          <p className="text-slate-400">{messages.home.subtitle}</p>
+      <div className="catalog-toolbar">
+        <div>
+          <p className="cinema-eyebrow">{messages.home.selection}</p>
+          <h2 className="catalog-heading">{title}</h2>
         </div>
-        <div className="w-full max-w-md">
+        <div className="catalog-search glass">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" strokeWidth="1.5" /><path d="m16 16 5 5" stroke="currentColor" strokeWidth="1.5" /></svg>
           <label htmlFor="movie-search" className="sr-only">
             {messages.home.searchLabel}
           </label>
@@ -88,57 +89,46 @@ export function SearchBar() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={messages.home.searchPlaceholder}
-            className="w-full rounded-full border border-slate-700 bg-slate-900 px-4 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 focus-visible:ring-2 focus-visible:ring-sky-400"
+            className="catalog-search-input"
           />
+          {search && <button type="button" className="clear-search" onClick={() => setSearch('')} aria-label={messages.home.clearSearch}>×</button>}
         </div>
       </div>
       {!isSearchActive && (
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900 p-1">
+        <div className="catalog-filters">
+          <div className="filter-group" role="group" aria-label={messages.home.selection}>
             <button
               type="button"
               onClick={() => setViewMode('popular')}
-              className={`rounded-full px-3 py-1.5 text-xs font-semibold transition focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none ${
-                viewParam === 'popular'
-                  ? 'bg-sky-500 text-slate-950'
-                  : 'text-slate-300 hover:text-white'
-              }`}
+              aria-pressed={viewParam === 'popular'}
+              className="filter-button"
             >
               {messages.home.popular}
             </button>
             <button
               type="button"
               onClick={() => setViewMode('trending')}
-              className={`rounded-full px-3 py-1.5 text-xs font-semibold transition focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none ${
-                viewParam === 'trending'
-                  ? 'bg-sky-500 text-slate-950'
-                  : 'text-slate-300 hover:text-white'
-              }`}
+              aria-pressed={viewParam === 'trending'}
+              className="filter-button"
             >
               {messages.home.trending}
             </button>
           </div>
           {viewParam === 'trending' && (
-            <div className="flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900 p-1">
+            <div className="filter-group filter-secondary" role="group" aria-label={messages.home.trending}>
               <button
                 type="button"
                 onClick={() => setTrendingWindow('day')}
-                className={`rounded-full px-3 py-1.5 text-xs font-semibold transition focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none ${
-                  windowParam === 'day'
-                    ? 'bg-slate-800 text-slate-100'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
+                aria-pressed={windowParam === 'day'}
+                className="filter-button"
               >
                 {messages.home.today}
               </button>
               <button
                 type="button"
                 onClick={() => setTrendingWindow('week')}
-                className={`rounded-full px-3 py-1.5 text-xs font-semibold transition focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none ${
-                  windowParam === 'week'
-                    ? 'bg-slate-800 text-slate-100'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
+                aria-pressed={windowParam === 'week'}
+                className="filter-button"
               >
                 {messages.home.week}
               </button>

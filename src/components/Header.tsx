@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { messages } from '@/i18n';
+import { FilmMark } from './FilmMark';
 
 export function Header() {
   const pathname = usePathname();
@@ -11,31 +12,28 @@ export function Header() {
   const isDiscoverActive = pathname === '/discover';
 
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-800 bg-slate-950/80 backdrop-blur">
-      <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-3">
-        <Link href="/" className="text-lg font-semibold text-slate-100 transition hover:text-sky-400">
-          <span aria-hidden="true">🎬</span> {messages.navigation.appTitle}
+    <header className="site-header">
+      <div className="header-inner">
+        <Link href="/" className="brand" aria-label={messages.navigation.appTitle}>
+          <FilmMark />
+          <span>{messages.navigation.appTitle}<span className="brand-tagline">{messages.navigation.tagline}</span></span>
         </Link>
-        <nav className="flex flex-wrap items-center gap-3">
+        <nav className="main-nav" aria-label={messages.navigation.label}>
           <Link
             href="/"
             aria-current={isHomeActive ? 'page' : undefined}
-            className={`text-sm font-medium transition hover:text-sky-400 ${
-              isHomeActive ? 'font-semibold text-sky-400' : 'text-slate-300'
-            }`}
+            className="nav-link"
           >
             {messages.navigation.home}
           </Link>
           <Link href="/discover" aria-current={isDiscoverActive ? 'page' : undefined}
-            className={`text-sm font-medium hover:text-sky-400 focus-visible:ring-2 ${isDiscoverActive ? 'font-semibold text-sky-400' : 'text-slate-300'}`}>
+            className="nav-link nav-ai">
             {messages.navigation.discover}
           </Link>
           <Link
             href="/watchlist"
             aria-current={isWatchlistActive ? 'page' : undefined}
-            className={`text-sm font-medium transition hover:text-sky-400 ${
-              isWatchlistActive ? 'font-semibold text-sky-400' : 'text-slate-300'
-            }`}
+            className="nav-link"
           >
             {messages.navigation.watchlist}
           </Link>

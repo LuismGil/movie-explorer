@@ -1,5 +1,7 @@
 # Movie Explorer: Architecture & Structural Truth
 
+**Latest state — 2026-11-02:** operator authorized activation, `8819583` is committed/pushed and the user reports deployment Ready. Source enables AI behind region/adult-self-declaration/shared-admission gates and prepares MCP on demand before Google. Self-declaration is not verified age/provider certification, and enabled hosted/geographic-trust limitations remain documented in `docs/AI_RELEASE.md`. User explicitly approved Phase 7 with those limits carried forward; first visual increment uses shared tokens/self-hosted fonts and leaf-only QR/error UI without changing server boundaries. Older disabled/pending-approval checkpoints below are historical. `docs/UI_POLISH.md` records local UI evidence, not new inference.
+
 This document records the current and approved target architecture for Movie Explorer. It serves as the structural truth of the system. Any AI agent operating in this repository MUST read and adhere to these architectural guidelines before touching the code.
 
 ## 1. Frontend Topology (React 19 & Next.js)

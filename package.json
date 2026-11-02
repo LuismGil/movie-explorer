@@ -28,6 +28,7 @@
     "axios": "^1.13.2",
     "dotenv": "^17.4.2",
     "next": "^16.2.9",
+    "qrcode.react": "^4.2.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "server-only": "^0.0.1",

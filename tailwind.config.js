@@ -4,10 +4,17 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        display: ['"Space Grotesk"', 'Inter', 'system-ui', 'sans-serif'],
-        body: ['"Inter"', 'system-ui', 'sans-serif'],
+        display: ['var(--font-display)', 'system-ui', 'sans-serif'],
+        body: ['var(--font-body)', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-mono)', 'monospace'],
       },
       colors: {
+        void: 'var(--cinema-void)',
+        surface: 'var(--cinema-surface)',
+        rim: 'var(--cinema-rim)',
+        'text-hi': 'var(--cinema-text)',
+        'text-lo': 'var(--cinema-muted)',
+        'accent-hot': 'var(--cinema-purple)',
         ink: {
           50: '#f6f8fb',
           100: '#e9edf5',
@@ -22,6 +29,7 @@ export default {
           950: '#1e2230',
         },
         accent: {
+          DEFAULT: 'var(--cinema-accent)',
           50: '#fef6e7',
           100: '#fde8c2',
           200: '#fbd288',
