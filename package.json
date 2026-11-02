@@ -9,6 +9,7 @@
     "start": "node .next/standalone/server.js",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "check:client-bundle": "node scripts/check-client-bundle.mjs",
     "test": "vitest",
     "test:a11y": "node scripts/a11y-audit.js",
     "test:ai:rate-limit": "node --import tsx scripts/test-ai-rate-limit.ts",

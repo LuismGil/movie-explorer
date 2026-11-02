@@ -39,6 +39,11 @@ jobs:
       - name: Build and Assemble Standalone Server
         run: npm run build
 
+      - name: Check Browser Bundle Boundaries
+        run: npm run check:client-bundle
+        env:
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+
       - name: Install Playwright Browsers
         run: npx playwright install chromium --with-deps
 
