@@ -44,6 +44,7 @@ The public movie catalog is worldwide. Its pages still use server-side TMDB acti
 | Styling | `shared/tokens` → layout theme/Tailwind/AI theme; self-hosted fonts, reduced-motion guards |
 | Mobile demo | Same-origin production QR; encoder chunk deferred until its reserved placeholder approaches the viewport |
 | Route failure | App Router `app/error.tsx` with branded reset/catalog actions, not raw exception text |
+| Trailer | Client leaf; native load button and external link, privacy-enhanced YouTube iframe only on visitor intent |
 
 An adult declaration is user-controlled and ephemeral, **not verified age, authentication or proof of provider-policy eligibility**. The geolocation policy is approximate and its deployed spoof resistance remains unverified. Neither control replaces the global quota.
 
@@ -66,7 +67,7 @@ Next.js calls it only through `src/server/mcp`. The process-local connection sin
 
 ## Build and deployment
 
-Next.js deploys on Vercel; MCP deploys separately on Render Free. `npm run build` creates the standalone output and assembles static assets plus optional public files. `npm start` and Docker consume that same assembled output. No private environment file is copied by the assembly helper.
+Next.js deploys on Vercel; MCP deploys separately on Render Free. `npm run build` creates the standalone output and assembles static assets plus optional public files. `npm start` and Docker consume that same assembled output. No private environment file is copied by the assembly helper; nested dependency/build/env artifacts are excluded from Docker context.
 
 CI covers application/MCP checks, isolated **local** Redis, production assembly, a scoped browser-bundle boundary check, browser accessibility, Lighthouse budgets and Docker build. Provider keys stay server-side. Environment setup, historical evidence and rollback: [deployment](docs/DEPLOYMENT.md), [AI release](docs/AI_RELEASE.md), [operations](docs/AI_OPERATIONS.md).
 

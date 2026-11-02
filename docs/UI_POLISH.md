@@ -2,11 +2,13 @@
 
 Started **2026-11-02**, after the user reported deployment `8819583` Ready and explicitly approved proceeding with UI work while earlier release limitations remain documented. This is an approved phase-order amendment, **not** retroactive certification of Phase 6's unverified items.
 
+**Subsequent closeout:** first visual delivery `b6a9af0` is committed/pushed; later work is in local atomic commits. Resource loading, accessible movie-specific save actions, intent-driven trailer loading, standalone packaging and CI/bundle protection are complete. Final local results: **398 app + 5 isolated Redis + 45 MCP tests**, build/lint/typechecking, browser/keyboard and Docker smoke pass. Desktop Lighthouse is 100 with LCP 0.596s; simulated mobile is 96 with LCP 2.669s; both have accessibility 100 and CLS 0. The strict mobile LCP target is still open, not an unmeasured or passed result. [Current release checklist](RELEASE_CHECKLIST.md) supersedes the earlier local-only/unmeasured statements below.
+
 ## Direction
 
 The existing `shared/tokens` are the visual source of truth: obsidian `#0E0E0E`, canvas `#131313`, elevated surfaces `#1C1B1B`, gold `#F5C518`, warm text `#E5E2E1`/`#D1C5AC`, purple `#DAB9FF` for saved state. The older plan's example cyan/pink palette was not introduced as a second competing theme.
 
-Sora display, Hanken Grotesk body and JetBrains Mono utility typography now load through `next/font/google`, self-hosted by Next.js after build, with Latin subsets and swap. Mono is not preloaded. Shared theme variables also connect these fonts to the AI panel. No runtime Google Fonts stylesheet is added.
+Sora display, Hanken Grotesk body and JetBrains Mono utility typography load through `next/font/google`, self-hosted after build with Latin subsets. Body uses swap; display/mono now use optional rendering so slow connections can keep the adjusted system fallback instead of forcing a late swap. Mono is one weight and not preloaded. Shared theme variables connect these fonts to the AI panel. No runtime Google Fonts stylesheet is added.
 
 The catalog is poster-led, with a typographic “Menos rolagem. Mais cinema.” opening, restrained gold navigation and monospaced year/rating details. Titles, ratings and save controls remain visible without hover; no fictitious curation, streaming availability, user counts or AI results are presented.
 

@@ -1,5 +1,13 @@
 # Project Context
 
+## Current: 2026-11-02 — Reachable Closeout Committed; Explicit Remaining Limits
+
+Operator asks to finish reachable tasks, commit atomically per COMMIT_GUIDE and defer validation until the end. Implemented/committed optional display/mono fonts, responsive posters and viewport-deferred QR; named movie save actions/44px touch targets; automatic standalone asset assembly, bounded CI startup and bundle guard; root architecture/checklist. Final UI review found inaccessible controls inside automatically loaded YouTube: replaced it with an explicit native trailer loader, privacy-enhanced iframe only after intent, external fallback link and per-video state reset. Excluding nested Docker dependencies/env/build artifacts cut context141.3MB→1.331MB.
+
+Final checks pass: root lint/build TypeScript,398 app tests (five opt-in cases skipped there but pass in a separate isolated Redis run),45 MCP tests plus its lint/types/build,17 browser chunks with zero credential/endpoint issues, root/MCP production audits zero, Docker build and isolated HTML/CSS200/200 smoke. Initial keyboard test fixture cleanup was corrected in a dedicated test commit. Local Home desktop/mobile, saved Watchlist, Details and Discover review has no native-page axe/focus/overflow defects; skiplink focuses main, declaration enables input, QR really renders after scroll. Details was specifically rechecked after trailer fix with zero external players loaded, violations, page/asset errors and AI requests. A review-only redundant networkidle navigation timed out; final focused review waits for actual content instead. No live inference, hosted probes, shared-quota/env/credential changes, push or deployment.
+
+Lighthouse12.6.1 simulated desktop100/accessibility100/LCP0.596s/CLS0; mobile96/100/LCP2.669s/CLS0 (before last trailer-only correction, initial mobile2.832s). Mobile strict1.2s goal remains unmet, so 7.8 and full closure stay open. Real NVDA/VoiceOver, Vercel geolocation trust, actual adult eligibility and diagnostic cleanup remain unverified; do not certify/restore diagnostics. No full-plan archive or v2.0.0 tag. Preserve pre-existing PRD.md and restored dev-reference next-env.d.ts outside commits. Temporary servers/browser/Redis/smoke containers stopped. [Evidence](../docs/RELEASE_CHECKLIST.md). Earlier delivery b6a9af0 is pushed; closeout commits are local only.
+
 ## Current: 2026-11-02 — Phase 7 First Visual Increment
 
 User reports `8819583` Ready and explicitly approves moving to Phase 7 while unverified Phase 6 release limitations remain documented. This amends the phase-order rule, not those unknown verdicts. The activation/age/startup changes are committed/pushed; no need to re-ask activation approval.

@@ -10,7 +10,7 @@
 
 **A movie discovery platform built on React 19, Next.js App Router Server Components, and Server Actions.**
 
-> **Phase 7 started — 2026-11-02.** User reports activation deployment `8819583` Ready and approves UI work with earlier release limitations carried forward. First visual increment is implemented locally: shared cinema theme/self-hosted typography, responsive catalog/cards/header, watchlist/empty/error/loading states, production mobile QR and reduced motion. AI controls are unchanged. [Visual scope and local evidence](docs/UI_POLISH.md). Lighthouse budgets are unmeasured; this is not a claim of full phase closure or a published UI deployment.
+> **Phase 7 closeout — 2026-11-02.** First visual delivery `b6a9af0` is committed/pushed; subsequent performance/accessibility/packaging work is in local atomic commits. Final checks pass: **398 app + 5 isolated Redis + 45 MCP tests**, lint/build/types, local browser/keyboard review, browser-bundle boundary check and Docker smoke. Lighthouse: desktop **100**, simulated mobile **96**, accessibility **100** and CLS **0**; strict mobile LCP is still **2.669s**, above the 1.2s goal. AI controls are unchanged; no new inference or release certification. [Evidence and remaining boundaries](docs/RELEASE_CHECKLIST.md).
 
 > **AI activation — 2026-11-02:** `8819583` is committed/pushed and the user reports its deployment Ready. AI requires an explicit adult self-declaration, allowed region and shared admission; the catalog stays public worldwide. The backend is prepared on demand before Google, within unchanged time limits and without automatic retries. Self-declaration is **not verified age or provider-compliance certification**. Country-header trust, actual audience eligibility, diagnostic cleanup and full enabled hosted behavior remain unverified. Limits remain one admission/60s and ten/rolling 24h. [Activation details and rollback](docs/AI_RELEASE.md) · [Earlier live evidence](docs/AI_LIVE_CHECK.md).
 
@@ -314,6 +314,8 @@ Rotate credentials if they have been exposed. Ignoring a file does not revoke a 
 ---
 
 ## 13. Performance Budgets
+
+Latest local Lighthouse samples: desktop LCP **0.596s** and mobile LCP **2.669s** under default simulated throttling, both CLS **0**. Desktop meets the strict LCP goal; mobile does not. Performance scores are 100/96 and accessibility 100/100. No thresholds were loosened or production SLA inferred. See [closeout evidence](docs/RELEASE_CHECKLIST.md).
 
 | Metric | Target | Enforcement |
 |---|---|---|
