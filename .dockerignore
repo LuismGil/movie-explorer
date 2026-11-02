@@ -1,15 +1,22 @@
 node_modules
+**/node_modules
 .git
 .gitignore
 
 .env
 .env.*
 !.env.example
+**/.env
+**/.env.*
+!**/.env.example
 
 dist
 dist-server
 coverage
 .next
+**/dist
+**/coverage
+**/.next
 
 .ai
 
@@ -27,3 +34,4 @@ testsprite_tests
 playwright-report
 test-results
 *.tsbuildinfo
+**/*.tsbuildinfo
