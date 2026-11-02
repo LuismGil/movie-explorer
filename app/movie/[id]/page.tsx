@@ -185,7 +185,7 @@ export default async function MovieDetailsPage({ params }: PageProps) {
             <h2 className="text-xl font-semibold text-white">{messages.movie.trailer}</h2>
             <p className="text-sm text-slate-400">{videos[0].name}</p>
           </div>
-          <TrailerPlayer videoKey={videos[0].key} />
+          <TrailerPlayer key={videos[0].key} videoKey={videos[0].key} />
         </section>
       ) : null}
 

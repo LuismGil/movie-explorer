@@ -96,6 +96,9 @@ export const messages = {
     goBack: '← Voltar',
     trailer: 'Trailer',
     trailerTitle: 'Trailer do filme',
+    loadTrailer: 'Carregar trailer',
+    trailerPrivacy: 'O player do YouTube só é carregado quando você escolhe assistir.',
+    externalTrailer: 'Abrir trailer no YouTube ↗',
     mainCast: 'Elenco principal',
     similarMovies: 'Filmes semelhantes',
     ratingLabel: (avg: number, count: number) =>

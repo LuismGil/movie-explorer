@@ -96,6 +96,13 @@
   .qr-demo > a { flex-shrink: 0; }
   .shimmer { background: linear-gradient(100deg, var(--cinema-raised) 20%, var(--cinema-rim) 45%, var(--cinema-raised) 65%); background-size: 250% 100%; }
   .detail-backdrop-fade { background: linear-gradient(transparent, var(--cinema-surface)); }
+  .trailer-stage { aspect-ratio: 16 / 9; border-radius: 1rem; overflow: hidden; }
+  .trailer-stage:focus-within { outline: 2px solid var(--cinema-accent); outline-offset: 4px; }
+  .trailer-frame, .trailer-load { width: 100%; height: 100%; }
+  .trailer-load { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1rem; color: var(--cinema-accent); font-weight: 600; background: radial-gradient(ellipse at center, rgba(245,197,24,.06), transparent 65%); }
+  .trailer-load > svg { width: 56px; height: 56px; }
+  .trailer-load:focus-visible { outline-offset: -4px; }
+  .trailer-caption { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; padding-block: .75rem; color: var(--cinema-muted); font-size: .8125rem; }
 }
 
 @media (hover: hover) {
