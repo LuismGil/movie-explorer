@@ -5,6 +5,8 @@
 
 **Active phase: 7, explicitly approved 2026-11-02.** User reports activation `8819583` Ready and approves UI polish with unverified Phase 6 limitations carried forward. This supersedes the older phase-order/keep-disabled instructions where conflicting; it does not turn unknown release checks into passes. See the Phase 7 block and `docs/UI_POLISH.md` for current work. No live inference or hosted diagnostic is requested.
 
+**Closeout instruction:** operator asks to finish reachable remaining work, create atomic `type(scope): description` commits per `.ai/COMMIT_GUIDE.md`, and group validations at the end. Performance/resource loading, keyboard/touch semantics, standalone packaging/CI and a scoped bundle-boundary guard are implemented in successive commits; final checks are batched, not repeated as separate gates. Public [architecture](../ARCHITECTURE.md) and [release checklist](../docs/RELEASE_CHECKLIST.md) distinguish evidence from unverified external conditions. Do not infer a push, live AI call, quota reset, full-plan archive or release tag from local closeout.
+
 ---
 
 ## Mission Statement
@@ -490,7 +492,7 @@ After all 7 phases pass:
 - [ ] Screen-reader audit: run VoiceOver or NVDA on `MovieCard`, `AIChatPanel`, `Header` — confirm no confusing announcements
 - [ ] Security review: `npm run build` output — confirm no `api_key` string appears in any `.js` chunk
 - [ ] Archive this file to `.ai/context/archive/PLAN_v2_complete.md`
-- [ ] Update `ARCHITECTURE.md` to reflect the final system structure
+- [x] Update root `ARCHITECTURE.md` to reflect implemented system boundaries, alongside existing agent guardrails and honest release limitations.
 - [ ] Tag release: `git tag v2.0.0 -m "Movie Explorer v2 — AI-native, RSC, MCP, WCAG AA"`
 
 ---

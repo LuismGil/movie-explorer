@@ -285,17 +285,17 @@ The workflow runs on pushes to `main`/`master` and pull requests targeting them.
 | Area | Implementation |
 |---|---|
 | Interactive nesting | `<button>` extracted from `<Link>` into sibling elements with CSS `z-index` layering |
-| Focus visibility | Global `focus-visible:ring-2 focus-visible:ring-sky-400` on all interactive elements |
-| Decorative content | `aria-hidden="true"` on the `🎬` emoji in the header |
+| Focus visibility | Shared gold `:focus-visible` outlines and scoped component focus states |
+| Decorative content | Film mark, save glyphs and pending dots hidden from assistive technology |
 | Navigation state | `aria-current="page"` on active navigation items |
 | Form labels | Localized accessible name matching the input placeholder language |
-| Touch targets | High visibility touch targets sized to `w-8 h-8` (32x32px) on mobile |
+| Touch targets | Watchlist buttons and catalog filters have 44px minimum targets; each save button names its movie |
 | Pagination | Contextual `aria-label="Go to page N"` on every pagination button |
 | Loading states | `role="status"` and `aria-live="polite"` on `LoadingSpinner` |
 | Document language | `lang="pt-BR"` set on `<html>` to match Portuguese content |
 | Skip navigation | "Skip to Main Content" link at the top of the body |
 
-Automated axe-core checks enforce **zero critical or serious violations** on **Home and Watchlist**. Movie Details is not included in the current audit script. Keyboard-only and screen-reader verification remain necessary, especially for future chat UI changes.
+Automated axe-core checks enforce **zero critical or serious violations** on **Home, Watchlist and Discover**. Movie Details is not included in the committed audit script. Local checks and real screen-reader auditing are distinct; see the [release checklist](docs/RELEASE_CHECKLIST.md).
 
 ---
 
@@ -309,7 +309,7 @@ Automated axe-core checks enforce **zero critical or serious violations** on **H
 | Key rotation | API keys managed via environment secrets (GitHub Actions secrets, runtime env injection). |
 | Local tooling | `.env*` (except templates), `opencode.json`, generated TestSprite files, coverage, and browser-test reports are excluded from Git; local config/reports are also excluded from Docker build context. |
 
-Rotate credentials if they have been exposed. Ignoring a file does not revoke a secret. The MCP adapter now rejects redirects and shares bounded initialization with cancellation/recovery; real integration and cold-start testing remain pending. Dependency-audit triage is required before recommending deployment: the root production audit reports **16 findings, including 2 critical** (2026-10-22); no broad automatic fixes were attempted. Details: [`docs/ORCHESTRATOR.md`](docs/ORCHESTRATOR.md#activation-gate-and-remaining-verification).
+Rotate credentials if they have been exposed. Ignoring a file does not revoke a secret. The MCP adapter rejects redirects and shares bounded initialization with cancellation/recovery. The Phase 7 production dependency audit reports zero findings after a narrow `follow-redirects` patch; development-tool advisories remain documented, not force-fixed. `npm run check:client-bundle` checks browser chunks for configured server credential values (when supplied) and server-only endpoints without logging matches. Merely finding an `api_key` denial regex is not credential exposure. This is not a full security certification. Details: [release checklist](docs/RELEASE_CHECKLIST.md).
 
 ---
 
@@ -330,9 +330,11 @@ Rotate credentials if they have been exposed. Ignoring a file does not revoke a 
 Application tests use **Vitest** and **React Testing Library**. MCP has its own unit/integration suite with mocked upstream requests:
 
 ```bash
-# Single run
+# Single run — mocked services, no live model inference
 npm run test -- --run
 npm run mcp:verify
+npm run build
+npm run check:client-bundle
 ```
 
 For accessibility checks, install Chromium with `npx playwright install chromium`, start the application on port 3000 in another terminal, then run `npm run test:a11y`. These checks do not replace full end-to-end or manual production verification.
@@ -382,15 +384,16 @@ Generated TestSprite scripts/reports are local artifacts, not part of the commit
 - [x] **6.3** Server-only Next.js MCP client adapter.
 - [x] **6.4** Deterministic Search Agent: execute MCP plans, validate/normalize results, deduplicate by TMDB ID, and handle partial failures.
 - [x] **6.5** Deterministic Quality/Safety: ground typed claims, reject unsupported/contradictory data, sanitize strict presentation DTOs, and preserve valid partial results; 77 focused tests.
-- [ ] **6.6** Orchestrator: intent planning, agent sequencing, and execution budgets.
-- [ ] **6.7** Accessible streaming UI for validated data and controlled progress events.
-- [ ] **6.8** Cache, limits, and token/latency observability.
+- [x] **6.6** Orchestrator: intent planning, agent sequencing, and execution budgets.
+- [x] **6.7** Accessible streaming UI for validated data and controlled progress events.
+- [x] **6.8** Cache policy, distributed admission, and token/latency observability.
 - [ ] **6.9** Hardening, integration verification, deployment checks, and documentation closure.
 
-Before removing existing TMDB actions, resolve MCP coverage for popular movies, trailers, and trending pagination. The current five tools do not replace every UI request. Phase 5 and 6.0 entry approvals are complete, but approval is not proof of provider/billing or end-to-end AI integration. Continue with 6.6, then validated streaming. Synchronize `.ai/CONTEXT.md` and `.ai/TASK.md` as work proceeds.
+Before removing existing TMDB actions, resolve MCP coverage for popular movies, trailers, and trending pagination. The current five tools do not replace every UI request. User-authorized AI activation is implemented and its deployment Ready is user-reported; remaining release limitations are retained rather than blocking the explicitly approved Phase 7 work. See [architecture](ARCHITECTURE.md) and [closeout](docs/RELEASE_CHECKLIST.md).
 
 ### Phase 7 — Premium UI Polish 🔄
-- [ ] Apply Immersive Minimalism design system — fluid grid, glassmorphic cards, micro-animations.
-- [ ] Refined skeleton loading visualizers.
-- [ ] Custom visual error boundaries.
-- [ ] Dynamic QR code component linking to live agent demo deployment.
+- [x] Shared cinema design system — fluid grid, poster-led cards, reduced-motion-safe micro-interactions.
+- [x] Refined skeleton loading visualizers.
+- [x] Real App Router visual error boundary with reset/catalog actions.
+- [x] Deferred production-only mobile QR linking to the existing gated AI page.
+- [ ] Close measured performance/release goals; evidence and remaining limitations are explicit in the release checklist.
