@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, beforeEach } from 'vitest';
+import { afterEach, describe, expect, it, beforeEach } from 'vitest';
 import { MovieCard } from '@/components/MovieCard';
 import { useWatchlist } from '@/context/WatchlistContext';
 import { WatchlistProvider } from '@/context/WatchlistProvider';
@@ -26,6 +26,7 @@ function MovieCardHarness() {
 }
 
 describe('MovieCard', () => {
+  afterEach(cleanup);
   beforeEach(() => {
     localStorage.clear();
   });
