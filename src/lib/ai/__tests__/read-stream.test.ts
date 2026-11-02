@@ -14,7 +14,7 @@ describe('validated NDJSON reader', () => {
     const progress = vi.fn();
     const result = await readAiStream(new Response(body, { headers: { 'Content-Type': 'application/x-ndjson; charset=utf-8' } }), progress, signal());
     expect(result).toEqual(resultEvent);
-    expect(progress.mock.calls).toEqual([['planning'], ['searching'], ['validating']]);
+    expect(progress.mock.calls).toEqual([['preparing'], ['planning'], ['searching'], ['validating']]);
   });
 
   it('does not publish a result until the stream ends', async () => {

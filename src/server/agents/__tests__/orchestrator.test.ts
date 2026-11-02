@@ -147,7 +147,7 @@ describe('runOrchestrator', () => {
     expect(searchAgent).not.toHaveBeenCalled();
   });
 
-  it('reserves the complete plan budget before opening MCP, without truncation or retries', async () => {
+  it('reserves the complete plan budget before executing MCP tools, without truncation or retries', async () => {
     planner.mockResolvedValue({ decision: decision({ intent: 'details', queries: [], movieId: 42 }), usage: reportedUsage });
     expect(await runOrchestrator({ message: 'details', referenceMovieId: 42 }, { planner, searchAgent, limits: { maxToolCalls: 1 } })).toMatchObject({
       status: 'failed', code: 'tool_budget_exceeded', usage: { plannerCalls: 1, toolCallsReserved: 0 },
@@ -230,6 +230,51 @@ describe('runOrchestrator', () => {
   it('does not activate the real provider without the server/operator approval flag', async () => {
     expect(await runOrchestrator({ message: 'find' })).toMatchObject({ status: 'failed', code: 'provider_disabled' });
     expect(globalThis.fetch).not.toHaveBeenCalled();
+  });
+
+  it('prepares the search backend on demand before sending a prompt to the planner', async () => {
+    const prepareSearch = vi.fn().mockResolvedValue(undefined);
+    const onProgress = vi.fn();
+    const result = await runOrchestrator({ message: 'find' }, { planner, searchAgent, prepareSearch, onProgress });
+    expect(result.status).toBe('completed');
+    expect(prepareSearch).toHaveBeenCalledExactlyOnceWith({ signal: expect.any(AbortSignal) });
+    expect(prepareSearch.mock.invocationCallOrder[0]).toBeLessThan(planner.mock.invocationCallOrder[0]);
+    expect(onProgress.mock.calls).toEqual([['preparing'], ['planning'], ['searching'], ['validating']]);
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+  });
+
+  it('does not transmit a prompt or retry when backend preparation fails', async () => {
+    const prepareSearch = vi.fn().mockRejectedValue(new Error('private startup error'));
+    const result = await runOrchestrator({ message: 'find' }, { planner, searchAgent, prepareSearch });
+    expect(result).toMatchObject({ code: 'search_unavailable', usage: { plannerCalls: 0, totalTokens: null } });
+    expect(prepareSearch).toHaveBeenCalledTimes(1);
+    expect(planner).not.toHaveBeenCalled();
+    expect(searchAgent).not.toHaveBeenCalled();
+    expect(JSON.stringify(result)).not.toContain('private startup error');
+  });
+
+  it('includes preparation in the unchanged global deadline and never starts late planning', async () => {
+    vi.useFakeTimers();
+    let complete!: () => void;
+    const prepareSearch = vi.fn(() => new Promise<void>(resolve => { complete = resolve; }));
+    const pending = runOrchestrator({ message: 'find' }, { planner, searchAgent, prepareSearch, limits: { timeoutMs: 50 } });
+    await vi.advanceTimersByTimeAsync(50);
+    expect(await pending).toMatchObject({ code: 'deadline_exceeded', usage: { plannerCalls: 0 } });
+    complete();
+    await Promise.resolve();
+    expect(planner).not.toHaveBeenCalled();
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('cancels preparation without ever invoking Google', async () => {
+    const controller = new AbortController();
+    const prepareSearch = vi.fn(() => new Promise<void>(() => {}));
+    const pending = runOrchestrator({ message: 'find' }, { planner, prepareSearch, signal: controller.signal });
+    await vi.waitFor(() => expect(prepareSearch).toHaveBeenCalledTimes(1));
+    controller.abort();
+    expect(await pending).toMatchObject({ code: 'cancelled', usage: { plannerCalls: 0 } });
+    expect(prepareSearch).toHaveBeenCalledTimes(1);
+    expect(planner).not.toHaveBeenCalled();
   });
 
   it.each(['provider_quota', 'provider_auth', 'provider_unavailable'] as const)('does not retry or fall back on %s', async code => {

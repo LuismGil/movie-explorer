@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { POST } from '../../../../app/api/ai/search/route';
 import { approvedPresentation } from '@/lib/ai/__tests__/fixtures';
 import { readAiStream } from '@/lib/ai/read-stream';
+import { AI_ADULT_DECLARATION_HEADER, AI_ADULT_DECLARATION_VALUE } from '@/lib/ai/audience';
 import { createAiSearchHandler as createHandler } from '../search-handler';
 import type { AiRateLimiter } from '../rate-limit';
 import { runOrchestrator } from '../../agents/orchestrator';
@@ -11,7 +12,10 @@ import type { OrchestratorResult } from '../../agents/orchestrator.schemas';
 const usage = { plannerCalls: 1, toolCallsReserved: 1, inputTokens: 100, outputTokens: 40, totalTokens: 140 };
 const completed: OrchestratorResult = { status: 'completed', intent: 'search', presentation: approvedPresentation, usage };
 const request = (body: unknown = { message: 'Find a movie' }, overrides: RequestInit = {}) => new Request('http://localhost/api/ai/search', {
-  method: 'POST', headers: { Origin: 'http://localhost', 'Content-Type': 'application/json' }, body: JSON.stringify(body), ...overrides,
+  method: 'POST', headers: {
+    Origin: 'http://localhost', 'Content-Type': 'application/json',
+    [AI_ADULT_DECLARATION_HEADER]: AI_ADULT_DECLARATION_VALUE,
+  }, body: JSON.stringify(body), ...overrides,
 });
 const parse = (response: Response) => readAiStream(response, () => {}, new AbortController().signal);
 
@@ -23,7 +27,7 @@ describe('same-origin AI streaming boundary', () => {
     rateLimit = vi.fn<AiRateLimiter>().mockResolvedValue({ status: 'allowed' });
     vi.stubGlobal('fetch', vi.fn(() => { throw new Error('Live HTTP forbidden in tests'); }));
     run = vi.fn<typeof runOrchestrator>().mockImplementation(async (_, options) => {
-      options?.onProgress?.('planning'); options?.onProgress?.('searching'); options?.onProgress?.('validating');
+      options?.onProgress?.('preparing'); options?.onProgress?.('planning'); options?.onProgress?.('searching'); options?.onProgress?.('validating');
       return completed;
     });
   });
@@ -34,7 +38,7 @@ describe('same-origin AI streaming boundary', () => {
     expect(response.headers.get('cache-control')).toBe('no-store, no-transform');
     expect(response.headers.get('x-content-type-options')).toBe('nosniff');
     const text = await response.text();
-    expect(text.split('\n').filter(Boolean).map(line => JSON.parse(line).type)).toEqual(['progress', 'progress', 'progress', 'result']);
+    expect(text.split('\n').filter(Boolean).map(line => JSON.parse(line).type)).toEqual(['progress', 'progress', 'progress', 'progress', 'result']);
     expect(text).not.toMatch(/usage|inputTokens|model|outcomes|toolCalls/);
     expect(run).toHaveBeenCalledWith({ message: 'Find a movie' }, { signal: expect.any(AbortSignal), onProgress: expect.any(Function) });
     expect(rateLimit).toHaveBeenCalledTimes(1);
@@ -42,12 +46,12 @@ describe('same-origin AI streaming boundary', () => {
     expect(globalThis.fetch).not.toHaveBeenCalled();
   });
 
-  it('keeps the actual public route disabled regardless of configured credentials', async () => {
+  it('keeps the actual enabled public route closed for unknown geolocation regardless of credentials', async () => {
     vi.stubEnv('UPSTASH_REDIS_REST_URL', 'https://test-db.upstash.io');
     vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', 'synthetic-rest-token-with-at-least-32-characters');
     const response = await POST(request());
-    expect(response.status).toBe(503);
-    expect(await parse(response)).toEqual({ type: 'error', code: 'disabled' });
+    expect(response.status).toBe(403);
+    expect(await parse(response)).toEqual({ type: 'error', code: 'region_unavailable' });
     expect(globalThis.fetch).not.toHaveBeenCalled();
   });
 
@@ -65,6 +69,17 @@ describe('same-origin AI streaming boundary', () => {
     expect(isAiRegionAllowed).toHaveBeenCalledOnce();
     expect(rateLimit).not.toHaveBeenCalled();
     expect(run).not.toHaveBeenCalled();
+  });
+
+  it.each([null, '', 'false', 'true', '17', '18-or-older-v1, 18-or-older-v1'])('requires the exact adult self-declaration before reading the body/admission: %s', declaration => {
+    const headers = new Headers({ Origin: 'http://localhost', 'Content-Type': 'application/json' });
+    if (declaration !== null) headers.set(AI_ADULT_DECLARATION_HEADER, declaration);
+    return createAiSearchHandler({ enabled: true, run })(request(undefined, { headers, body: 'not-json' })).then(async response => {
+      expect(response.status).toBe(403);
+      expect(await parse(response)).toEqual({ type: 'error', code: 'adult_confirmation_required' });
+      expect(rateLimit).not.toHaveBeenCalled();
+      expect(run).not.toHaveBeenCalled();
+    });
   });
 
   it('uses the actual Host when standalone Next normalizes Request.url to localhost', async () => {

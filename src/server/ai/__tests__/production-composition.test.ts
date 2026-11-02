@@ -1,19 +1,22 @@
 // @vitest-environment node
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { AI_ADULT_DECLARATION_HEADER, AI_ADULT_DECLARATION_VALUE } from '@/lib/ai/audience';
 
-const mocks = vi.hoisted(() => ({ enabled: false, run: vi.fn(), admission: vi.fn() }));
+const mocks = vi.hoisted(() => ({ enabled: false, run: vi.fn(), admission: vi.fn(), prepare: vi.fn() }));
 vi.mock('../availability', () => ({ get aiDiscoveryEnabled() { return mocks.enabled; } }));
 vi.mock('../../agents/orchestrator', () => ({ runOrchestrator: mocks.run }));
+vi.mock('../../mcp/client', () => ({ getMcpClient: mocks.prepare }));
 vi.mock('../rate-limit', async importOriginal => ({
   ...await importOriginal<typeof import('../rate-limit')>(), enforceAiRateLimit: mocks.admission,
 }));
 
-async function invoke(enabled: boolean, extra: Record<string, unknown> = {}, country: string | null = 'BR') {
+async function invoke(enabled: boolean, extra: Record<string, unknown> = {}, country: string | null = 'BR', declaration: string | null = AI_ADULT_DECLARATION_VALUE) {
   mocks.enabled = enabled;
   vi.resetModules();
   const { POST } = await import('../../../../app/api/ai/search/route');
   const headers = new Headers({ Origin: 'https://demo.test', 'Content-Type': 'application/json' });
   if (country !== null) headers.set('x-vercel-ip-country', country);
+  if (declaration !== null) headers.set(AI_ADULT_DECLARATION_HEADER, declaration);
   return POST(new Request('https://demo.test/api/ai/search', {
     method: 'POST', headers,
     body: JSON.stringify({ message: 'Busque Matrix', ...extra }),
@@ -40,7 +43,7 @@ describe('production AI composition (mocked activation only)', () => {
     const response = await invoke(true);
     expect(await response.text()).toBe('{"type":"unsupported"}\n');
     expect(mocks.run).toHaveBeenCalledExactlyOnceWith({ message: 'Busque Matrix' }, {
-      signal: expect.any(AbortSignal), onProgress: expect.any(Function), google: { freeTierConfirmed: true },
+      signal: expect.any(AbortSignal), onProgress: expect.any(Function), google: { freeTierConfirmed: true }, prepareSearch: mocks.prepare,
     });
     expect(mocks.admission.mock.invocationCallOrder[0]).toBeLessThan(mocks.run.mock.invocationCallOrder[0]);
   });
@@ -63,6 +66,14 @@ describe('production AI composition (mocked activation only)', () => {
     const response = await invoke(true, {}, country);
     expect(response.status).toBe(403);
     expect(await response.text()).toBe('{"type":"error","code":"region_unavailable"}\n');
+    expect(mocks.admission).not.toHaveBeenCalled();
+    expect(mocks.run).not.toHaveBeenCalled();
+  });
+
+  it.each([null, 'false', 'true'])('blocks a missing/invalid adult declaration %s in an eligible country', async declaration => {
+    const response = await invoke(true, {}, 'BR', declaration);
+    expect(response.status).toBe(403);
+    expect(await response.text()).toBe('{"type":"error","code":"adult_confirmation_required"}\n');
     expect(mocks.admission).not.toHaveBeenCalled();
     expect(mocks.run).not.toHaveBeenCalled();
   });

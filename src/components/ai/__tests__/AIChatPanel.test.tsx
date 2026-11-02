@@ -3,11 +3,14 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AIChatPanel } from '../AIChatPanel';
 import { messages } from '@/i18n';
+import { AI_ADULT_DECLARATION_HEADER, AI_ADULT_DECLARATION_VALUE } from '@/lib/ai/audience';
 import { approvedPresentation, ndjson, progressEvents, resultEvent } from '@/lib/ai/__tests__/fixtures';
 
 const copy = messages.ai;
 const response = (events: unknown[]) => new Response(ndjson(events), { headers: { 'Content-Type': 'application/x-ndjson' } });
 function submit(message = 'Find Example') {
+  const declaration = screen.getByRole('checkbox', { name: copy.adultDeclaration });
+  if (!(declaration as HTMLInputElement).checked) fireEvent.click(declaration);
   fireEvent.change(screen.getByLabelText(copy.label), { target: { value: message } });
   fireEvent.click(screen.getByRole('button', { name: copy.submit }));
 }
@@ -45,6 +48,29 @@ describe('AIChatPanel', () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 
+  it('requires an unchecked adult declaration before input/submission and offers the public catalog instead', () => {
+    render(<AIChatPanel enabled />);
+    expect(screen.getByRole('checkbox', { name: copy.adultDeclaration })).not.toBeChecked();
+    expect(screen.getByLabelText(copy.label)).toBeDisabled();
+    expect(screen.getByRole('button', { name: copy.submit })).toBeDisabled();
+    expect(screen.getByRole('link', { name: copy.adultDecline })).toHaveAttribute('href', '/');
+    fireEvent.submit(screen.getByRole('button', { name: copy.submit }).closest('form')!);
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('does not persist the age declaration across remounts or leave AI available after withdrawal', () => {
+    const view = render(<AIChatPanel enabled />);
+    fireEvent.click(screen.getByRole('checkbox', { name: copy.adultDeclaration }));
+    expect(screen.getByLabelText(copy.label)).toBeEnabled();
+    fireEvent.click(screen.getByRole('checkbox', { name: copy.adultDeclaration }));
+    expect(screen.getByLabelText(copy.label)).toBeDisabled();
+    fireEvent.click(screen.getByRole('checkbox', { name: copy.adultDeclaration }));
+    view.unmount();
+    render(<AIChatPanel enabled />);
+    expect(screen.getByRole('checkbox', { name: copy.adultDeclaration })).not.toBeChecked();
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
   it('submits only the user request and renders approved data as escaped text', async () => {
     const presentation = { ...approvedPresentation, movies: [{ ...approvedPresentation.movies[0], overview: '[link](javascript:attack)' }] };
     fetch.mockResolvedValue(response([...progressEvents, { ...resultEvent, presentation }]));
@@ -53,6 +79,7 @@ describe('AIChatPanel', () => {
     expect(await screen.findByRole('heading', { name: approvedPresentation.movies[0].title })).toBeInTheDocument();
     expect(fetch).toHaveBeenCalledTimes(1);
     expect(fetch).toHaveBeenCalledWith('/api/ai/search', expect.objectContaining({ method: 'POST', body: JSON.stringify({ message: 'Find Example' }), signal: expect.any(AbortSignal) }));
+    expect(fetch.mock.calls[0][1]!.headers).toEqual(expect.objectContaining({ [AI_ADULT_DECLARATION_HEADER]: AI_ADULT_DECLARATION_VALUE }));
     expect(screen.getByText('[link](javascript:attack)')).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: 'link' })).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: copy.details })).toHaveAttribute('href', '/movie/42');
@@ -66,7 +93,7 @@ describe('AIChatPanel', () => {
     submit();
     expect(screen.getByRole('button', { name: copy.cancel })).toBeInTheDocument();
     await act(async () => { stream.enqueue(new TextEncoder().encode(ndjson([progressEvents[0]]))); });
-    expect(screen.getByRole('status')).toHaveTextContent(copy.stages.planning);
+    expect(screen.getByRole('status')).toHaveTextContent(copy.stages.preparing);
     await act(async () => { stream.enqueue(new TextEncoder().encode(ndjson([...progressEvents.slice(1), resultEvent]))); });
     expect(screen.queryByRole('heading', { name: approvedPresentation.movies[0].title })).not.toBeInTheDocument();
     await act(async () => { stream.close(); });
@@ -75,7 +102,7 @@ describe('AIChatPanel', () => {
 
   it.each([
     { type: 'error', code: 'quota_exceeded' }, { type: 'error', code: 'disabled' }, { type: 'error', code: 'region_unavailable' }, { type: 'error', code: 'timeout' },
-    { type: 'error', code: 'unsafe_result' }, { type: 'unsupported' },
+    { type: 'error', code: 'unsafe_result' }, { type: 'error', code: 'adult_confirmation_required' }, { type: 'unsupported' },
   ])('renders controlled terminal state with no automatic retry: %j', async terminal => {
     fetch.mockResolvedValue(response([terminal]));
     render(<AIChatPanel enabled />); submit();
@@ -87,6 +114,32 @@ describe('AIChatPanel', () => {
       expect(screen.getByRole('link', { name: copy.browse })).toHaveAttribute('href', '/');
       expect(screen.queryByRole('button', { name: copy.retry })).not.toBeInTheDocument();
     }
+    if (terminal.type === 'error' && terminal.code === 'adult_confirmation_required') {
+      expect(screen.getByRole('checkbox', { name: copy.adultDeclaration })).not.toBeChecked();
+      expect(screen.getByLabelText(copy.label)).toBeDisabled();
+      expect(screen.queryByRole('button', { name: copy.retry })).not.toBeInTheDocument();
+    }
+  });
+
+  it('explains a long server-reported startup without extra requests and removes the notice on cancellation', async () => {
+    vi.useFakeTimers();
+    let stream!: ReadableStreamDefaultController<Uint8Array>;
+    fetch.mockResolvedValue(new Response(new ReadableStream({ start(controller) { stream = controller; } }), {
+      headers: { 'Content-Type': 'application/x-ndjson' },
+    }));
+    const view = render(<AIChatPanel enabled />);
+    await act(async () => { submit(); });
+    await act(async () => { stream.enqueue(new TextEncoder().encode(ndjson([progressEvents[0]]))); });
+    expect(screen.queryByText(copy.startupWait)).not.toBeInTheDocument();
+    await act(async () => { await vi.advanceTimersByTimeAsync(8000); });
+    expect(screen.getByText(copy.startupWait)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: copy.browse })).toHaveAttribute('href', '/');
+    expect(fetch).toHaveBeenCalledTimes(1);
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: copy.cancel })); });
+    expect(screen.queryByText(copy.startupWait)).not.toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent(copy.errors.cancelled);
+    view.unmount();
+    expect(vi.getTimerCount()).toBe(0);
   });
 
   it('renders successful empty and partial states distinctly', async () => {

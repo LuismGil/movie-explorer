@@ -1,6 +1,10 @@
 # AI Portfolio Demo — Privacy and Activation Decision
 
-Updated: **2026-10-30**. **Latest execution: the operator separately authorized one real test, which passed.** A private local-handler invocation used live Google/Upstash/Render, consumed one admission and returned 12 Quality-approved movies with 237 model tokens in 4.275s. No retries or public activation; that single-test permission is consumed. The AI-only geographic gate is now implemented; adult-audience eligibility, cold-start acceptance and enabled Vercel/browser release verification remain open. [Evidence](AI_LIVE_CHECK.md).
+Updated: **2026-11-02**. The operator explicitly authorized activation and delegated startup/age controls. Source availability is now true with mandatory adult **self-declaration**, the existing geographic restriction and shared quota. Startup is demand-driven before Google under unchanged deadline caps. This is not verified age, established audience eligibility or a provider-policy certification. No deployment or new live inference occurred. [Current activation details, limitations and rollback](AI_RELEASE.md).
+
+**Latest live execution is still the earlier single authorized test:** a private local-handler invocation used live Google/Upstash/Render, consumed one admission and returned 12 Quality-approved movies with 237 model tokens in 4.275s. That one-test permission is consumed; activation authorization is not a request to repeat the experiment. [Evidence](AI_LIVE_CHECK.md).
+
+**Current instruction takes precedence over the earlier wait-for-approval sequence below:** do not request activation/startup authorization again or keep source disabled merely because an older paragraph says so. The user asked to stop repetitive checks and postponed the Vercel geolocation check; its trust and full enabled hosted behavior remain unverified, not passed. Actual adult-audience eligibility and Vercel diagnostic cleanup are also unverified. No Phase 7 transition is implied.
 
 This decision supersedes the earlier clarification-stage narrative below. Do not repeatedly ask for privacy acceptance or infer a demo exemption. The operator's location does not establish visitor location or age.
 

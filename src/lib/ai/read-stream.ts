@@ -18,7 +18,7 @@ export async function readAiStream(response: Response, onProgress: (stage: AiSta
       if (event.stage !== aiStages[stageIndex++]) throw new Error('Invalid progress');
       onProgress(event.stage);
     } else {
-      if (event.type === 'result' && (stageIndex !== 3 || !response.ok)) throw new Error('Invalid result');
+      if (event.type === 'result' && (stageIndex !== aiStages.length || !response.ok)) throw new Error('Invalid result');
       terminal = event;
     }
   }

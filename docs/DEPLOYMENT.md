@@ -1,5 +1,9 @@
 # Deployment Checkpoint — 2026-10-29
 
+## Source update — 2026-11-02 (not yet deployed)
+
+Operator explicitly authorized public AI activation and delegated startup/age-control implementation. The working tree enables server-owned availability with mandatory adult self-declaration, the existing AI-only regional restriction and global quota. Production prepares/reuses MCP before Google under unchanged 20/30/35s bounds; no automatic retries/keep-alive. Publication is the next operation, not another requested live test. Self-declaration is not verified age/provider certification; geographic header trust, actual audience eligibility, old diagnostic cleanup and full enabled hosted behavior remain unverified. No new deployment/provider request/credential change occurred. [Current decisions and rollback](AI_RELEASE.md). All deployed evidence below predates this activation change.
+
 ## Deployed Services
 
 | Service | Public URL | Role |

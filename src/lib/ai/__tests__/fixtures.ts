@@ -7,7 +7,8 @@ export const approvedPresentation: QualityAgentResult = {
   }],
 };
 export const progressEvents = [
-  { type: 'progress', stage: 'planning' }, { type: 'progress', stage: 'searching' }, { type: 'progress', stage: 'validating' },
+  { type: 'progress', stage: 'preparing' }, { type: 'progress', stage: 'planning' },
+  { type: 'progress', stage: 'searching' }, { type: 'progress', stage: 'validating' },
 ];
 export const resultEvent = { type: 'result', status: 'completed', presentation: approvedPresentation };
 export const ndjson = (events: unknown[]) => events.map(event => `${JSON.stringify(event)}\n`).join('');

@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { createAiRateLimiter } from '../rate-limit';
 import { AI_ADMISSION_KEY, AI_ADMISSION_LIMITS } from '../rate-limit.script';
 import { createAiSearchHandler } from '../search-handler';
+import { AI_ADULT_DECLARATION_HEADER, AI_ADULT_DECLARATION_VALUE } from '@/lib/ai/audience';
 
 const exec = promisify(execFile);
 const container = process.env.AI_RATE_LIMIT_TEST_REDIS_CONTAINER;
@@ -44,7 +45,10 @@ describe.skipIf(!container)('atomic AI admission against real local Redis', () =
       },
     }));
     const responses = await Promise.all(handlers.map(handler => handler(new Request('http://localhost/api/ai/search', {
-      method: 'POST', headers: { Origin: 'http://localhost', 'Content-Type': 'application/json' },
+      method: 'POST', headers: {
+        Origin: 'http://localhost', 'Content-Type': 'application/json',
+        [AI_ADULT_DECLARATION_HEADER]: AI_ADULT_DECLARATION_VALUE,
+      },
       body: JSON.stringify({ message: 'Find a film' }),
     }))));
     expect(responses.filter(response => response.status === 200)).toHaveLength(1);

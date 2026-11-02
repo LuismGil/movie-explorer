@@ -1,4 +1,5 @@
 import 'server-only';
+import { AI_ADULT_DECLARATION_HEADER, AI_ADULT_DECLARATION_VALUE } from '@/lib/ai/audience';
 import { AI_STREAM_MAX_BYTES, aiStreamEventSchema, type AiErrorCode, type AiStreamEvent } from '@/lib/ai/stream-contract';
 import { runOrchestrator } from '../agents/orchestrator';
 import { orchestratorRequestSchema, orchestratorResultSchema, type OrchestratorFailure } from '../agents/orchestrator.schemas';
@@ -73,6 +74,9 @@ export function createAiSearchHandler(options: {
     if (length !== null && (!/^\d+$/.test(length) || Number(length) > 8192)) return failure('invalid_request', 413);
     if (options.enabled && options.isAiRegionAllowed && !options.isAiRegionAllowed(request)) {
       return failure('region_unavailable', 403);
+    }
+    if (options.enabled && request.headers.get(AI_ADULT_DECLARATION_HEADER) !== AI_ADULT_DECLARATION_VALUE) {
+      return failure('adult_confirmation_required', 403);
     }
     const deadline = createDeadline(35000, request.signal);
     let input;

@@ -22,6 +22,7 @@ type Options = {
   limits?: unknown;
   planner?: OrchestratorPlanner;
   google?: GooglePlannerOptions;
+  prepareSearch?: (options: { signal: AbortSignal }) => Promise<unknown>;
   searchAgent?: typeof runSearchAgent;
   qualityAgent?: typeof runQualityAgent;
 };
@@ -37,6 +38,18 @@ export async function runOrchestrator(input: unknown, options: Options = {}): Pr
   const deadline = createDeadline(limits.timeoutMs, options.signal);
   try {
     deadline.check();
+    options.onProgress?.('preparing');
+    const prepareSearch = options.prepareSearch;
+    if (prepareSearch) {
+      // Wake the backend only for an admitted request, before transmitting a
+      // prompt to Google. Preparation shares the existing total deadline.
+      try {
+        await awaitWithSignal(() => prepareSearch({ signal: deadline.signal }), deadline.signal);
+      } catch {
+        return fail(deadline.signal.aborted ? deadline.failureCode() : 'search_unavailable');
+      }
+      deadline.check();
+    }
     options.onProgress?.('planning');
     usage.plannerCalls = 1;
     const planned = await measureAgent('planner', () => awaitWithSignal(() => (options.planner ?? createGooglePlanner(options.google))(

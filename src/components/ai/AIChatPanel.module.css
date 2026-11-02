@@ -50,7 +50,11 @@
   outline: 2px solid var(--ai-accent);
   outline-offset: var(--ai-xs);
 }
-.notice { display: grid; gap: var(--ai-sm); justify-items: start; background: var(--ai-input); border-radius: var(--ai-card-radius); padding: var(--ai-gutter); }
+.notice { display: grid; min-width: 0; gap: var(--ai-sm); justify-items: start; background: var(--ai-input); border-radius: var(--ai-card-radius); padding: var(--ai-gutter); }
+.audienceTitle { font-family: var(--ai-mono); color: var(--ai-accent); padding-inline: var(--ai-base); }
+.declaration { display: flex; align-items: baseline; gap: var(--ai-sm); cursor: pointer; }
+.declaration input { accent-color: var(--ai-accent); flex-shrink: 0; }
+.declaration input:focus-visible { outline: 2px solid var(--ai-accent); outline-offset: var(--ai-xs); }
 .error { color: var(--ai-error); }
 .stages {
   display: grid;
@@ -81,7 +85,7 @@
 @media (min-width: 640px) {
   .panel { padding: var(--ai-lg); }
   .title { font-size: var(--ai-title-size); line-height: var(--ai-title-line); }
-  .stages { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .stages { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .card[data-has-poster=true] { grid-template-columns: minmax(0, 1fr) minmax(0, 3fr); }
 }
 @media (prefers-reduced-motion: no-preference) {

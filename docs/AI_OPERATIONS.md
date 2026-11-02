@@ -1,5 +1,9 @@
 # AI Operations — Phase 6.8
 
+## Current source activation — 2026-11-02
+
+The user explicitly authorized activation and delegated startup/age controls. Source availability is true; publication is still pending. Enabled requests require the existing region check plus `x-ai-adult-declaration: 18-or-older-v1` before body/admission. This is self-declaration, not verified age or proof of provider eligibility, and is not retained or sent to Google. Production prepares/reuses MCP before Google, under unchanged 20s initialization/30s pipeline/35s route/UI bounds; long starts offer cancellation/catalog access, not automatic retries. Failed admitted starts still consume quota. No cron, monitoring ping, new endpoint, payment or credential is introduced. No live probe/inference or quota reset occurred. Geographic trust, actual audience eligibility, diagnostic cleanup and full enabled hosted behavior remain unverified. [Authorization, exact flow and rollback](AI_RELEASE.md). Older disabled/approval-pending notes below are historical.
+
 ## Latest operational evidence — 2026-10-29
 
 One explicitly authorized real **local-handler** AI invocation passed: the production limiter admitted/recorded one request in the existing hosted counter, Google token preflight and generation each ran once (HTTP 200), one MCP search ran, Quality approved 12 movies and the stream consumer validated clean EOF. **237 reported tokens, 4,275ms** total. No refund/reset, retry, source/env change or public activation. This is separate from D4's Vercel→Upstash/Render checks; complete generative execution on Vercel remains unverified. The single-test authorization is consumed. [Full evidence](AI_LIVE_CHECK.md).

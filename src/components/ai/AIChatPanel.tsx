@@ -3,17 +3,20 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { messages } from '@/i18n';
+import { AI_ADULT_DECLARATION_HEADER, AI_ADULT_DECLARATION_VALUE } from '@/lib/ai/audience';
 import { readAiStream } from '@/lib/ai/read-stream';
 import { aiStages, type AiStage, type AiTerminalEvent } from '@/lib/ai/stream-contract';
 import { aiTheme } from './theme';
 import styles from './AIChatPanel.module.css';
 import { AIQuotaCountdown } from './AIQuotaCountdown';
+import { AIStartupNotice } from './AIStartupNotice';
 
 type SearchRequest = { message: string; referenceMovieId?: number };
 const copy = messages.ai;
 const focus = 'focus-visible:ring-2';
 
 export function AIChatPanel({ enabled, regionUnavailable = false }: { enabled: boolean; regionUnavailable?: boolean }) {
+  const [adultConfirmed, setAdultConfirmed] = useState(false);
   const [message, setMessage] = useState('');
   const [pending, setPending] = useState(false);
   const [stage, setStage] = useState<AiStage>();
@@ -32,7 +35,7 @@ export function AIChatPanel({ enabled, regionUnavailable = false }: { enabled: b
   }, [retryAt]);
 
   async function search(input: SearchRequest) {
-    if (!enabled || active.current || retryAt !== undefined) return;
+    if (!enabled || !adultConfirmed || active.current || retryAt !== undefined) return;
     if (!input.message.trim() || input.message.length > 1000) {
       setTerminal({ type: 'error', code: 'invalid_request' });
       return;
@@ -51,11 +54,15 @@ export function AIChatPanel({ enabled, regionUnavailable = false }: { enabled: b
     activeTimer.current = timer;
     try {
       const response = await fetch('/api/ai/search', {
-        method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/x-ndjson' },
+        method: 'POST', headers: {
+          'Content-Type': 'application/json', Accept: 'application/x-ndjson',
+          [AI_ADULT_DECLARATION_HEADER]: AI_ADULT_DECLARATION_VALUE,
+        },
         body: JSON.stringify(input), signal: controller.signal, cache: 'no-store', redirect: 'error',
       });
       const result = await readAiStream(response, next => { if (active.current === controller) setStage(next); }, controller.signal);
       if (active.current === controller) {
+        if (result.type === 'error' && result.code === 'adult_confirmation_required') setAdultConfirmed(false);
         if (result.type === 'error' && result.code === 'rate_limited') {
           const header = response.headers.get('retry-after') ?? '';
           const seconds = /^\d{1,5}$/.test(header) ? Number(header) : 0;
@@ -89,15 +96,27 @@ export function AIChatPanel({ enabled, regionUnavailable = false }: { enabled: b
       </header>
       {!enabled && <div className={styles.notice}><p>{regionUnavailable ? copy.regionUnavailable : copy.disabled}</p><Link href="/" className={`${styles.link} ${focus}`}>{copy.browse}</Link></div>}
       <form className={styles.form} onSubmit={event => { event.preventDefault(); void search({ message }); }}>
+        {enabled && <fieldset className={styles.notice} disabled={pending}>
+          <legend className={styles.audienceTitle}>{copy.adultTitle}</legend>
+          <p id="ai-audience-description">{copy.adultDescription}</p>
+          <label className={styles.declaration}>
+            <input type="checkbox" required checked={adultConfirmed}
+              aria-describedby="ai-audience-description ai-audience-privacy"
+              onChange={event => { setAdultConfirmed(event.target.checked); setTerminal(undefined); setLastRequest(undefined); }} />
+            <span>{copy.adultDeclaration}</span>
+          </label>
+          <p id="ai-audience-privacy" className={styles.muted}>{copy.adultPrivacy}</p>
+          {!adultConfirmed && <Link href="/" className={`${styles.link} ${focus}`}>{copy.adultDecline}</Link>}
+        </fieldset>}
         <label htmlFor="ai-message">{copy.label}</label>
-        <textarea id="ai-message" rows={3} maxLength={1000} required value={message} disabled={!enabled || pending}
+        <textarea id="ai-message" rows={3} maxLength={1000} required value={message} disabled={!enabled || !adultConfirmed || pending}
           onChange={event => setMessage(event.target.value)} placeholder={copy.placeholder}
           aria-describedby="ai-privacy" className={`${styles.input} ${focus}`} />
         <p id="ai-privacy" className={styles.muted}>{copy.privacy}{' '}
           <a href="https://ai.google.dev/gemini-api/terms#unpaid-services" target="_blank" rel="noopener noreferrer" className={`${styles.link} ${focus}`}>{copy.privacyTerms}</a>
         </p>
         <div className={styles.actions}>
-          <button type="submit" disabled={!enabled || pending || retryAt !== undefined || !message.trim()} className={`${styles.button} ${focus}`}>{copy.submit}</button>
+          <button type="submit" disabled={!enabled || !adultConfirmed || pending || retryAt !== undefined || !message.trim()} className={`${styles.button} ${focus}`}>{copy.submit}</button>
           {pending && <button type="button" onClick={cancel} className={`${styles.link} ${focus}`}>{copy.cancel}</button>}
         </div>
       </form>
@@ -111,6 +130,7 @@ export function AIChatPanel({ enabled, regionUnavailable = false }: { enabled: b
         {terminal?.type === 'error' && <p className={styles.error}>{terminal.code === 'rate_limited' && retryAt === undefined ? copy.rateLimitReady : copy.errors[terminal.code]}</p>}
         {result && <p>{result.status === 'needs_selection' ? copy.selectionTitle : result.presentation.movies.length ? copy.resultTitle : copy.empty}</p>}
       </div>
+      {pending && stage === 'preparing' && <AIStartupNotice />}
       {terminal?.type === 'error' && terminal.code === 'rate_limited' && <div className={styles.notice}>
         {retryAt !== undefined && <AIQuotaCountdown key={retryAt} until={retryAt} />}
         <p>{copy.rateLimitShared}</p>
@@ -119,7 +139,7 @@ export function AIChatPanel({ enabled, regionUnavailable = false }: { enabled: b
       {terminal?.type === 'error' && terminal.code === 'region_unavailable' && <div className={styles.notice}>
         <Link href="/" className={`${styles.link} ${focus}`}>{copy.browse}</Link>
       </div>}
-      {terminal?.type === 'error' && enabled && lastRequest && !pending && retryAt === undefined
+      {terminal?.type === 'error' && enabled && adultConfirmed && lastRequest && !pending && retryAt === undefined
         && terminal.code !== 'disabled' && terminal.code !== 'region_unavailable' && (
         <div><button type="button" onClick={() => { void search(lastRequest); }} className={`${styles.link} ${focus}`}>{copy.retry}</button></div>
       )}
@@ -137,7 +157,7 @@ export function AIChatPanel({ enabled, regionUnavailable = false }: { enabled: b
             {movie.runtime !== null && <p>{messages.movie.durationLabel(movie.runtime)}</p>}
             <div className={styles.actions}>
               <Link href={`/movie/${movie.id}`} className={`${styles.link} ${focus}`}>{copy.details}</Link>
-              {result.status === 'needs_selection' && <button type="button" disabled={pending || !enabled || retryAt !== undefined} className={`${styles.button} ${focus}`}
+              {result.status === 'needs_selection' && <button type="button" disabled={pending || !enabled || !adultConfirmed || retryAt !== undefined} className={`${styles.button} ${focus}`}
                 onClick={() => { if (lastRequest) void search({ message: lastRequest.message, referenceMovieId: movie.id }); }}>{copy.select(movie.title)}</button>}
             </div>
           </div>
