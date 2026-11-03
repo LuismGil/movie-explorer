@@ -9,6 +9,8 @@
 
 **Closeout results:** 398 application tests pass plus five separate isolated Redis integration tests and 45 MCP tests. Lint/build TypeScript, standalone assets, 17-file browser-boundary scan, production audits, local browser/keyboard review and final Docker build/200 HTML+CSS smoke pass. Deferred QR rendering is verified; trailer iframe now requires visitor intent after final review found external-player issues. Desktop Lighthouse 100/accessibility100/LCP0.596s/CLS0; mobile96/100/LCP2.669s/CLS0 (initial mobile2.832s). Strict mobile LCP remains open; no goal relaxation or full-plan closure. Docker context reduced141.3MB→1.331MB. Original dev `next-env.d.ts` change and `PRD.md` preserved outside commits. Evidence: `docs/RELEASE_CHECKLIST.md`.
 
+**Font-loading follow-up — 2026-11-02, local `cbf00a9`:** UI subsets plus original, self-hosted complete-family fallbacks with disjoint Unicode ranges reduce initial font transfer91,112→49,272bytes (−45.9%). Fresh alternating three-run mobile comparison against preserved `eb49dcd`: median LCP2.667→2.427s (−9.0%), FCP1.062→0.910s, performance97→98; accessibility100/CLS0 throughout. Desktop sample100/LCP0.530s. 411 app tests pass (five opt-in Redis skipped); lint/types/build/bundle scan, deterministic font regeneration, glyph fidelity and local responsive/keyboard/axe/multilingual/slow-network checks pass. Original display/mono optional-font policy and dynamic glyph availability retained; no duplicate full fonts on the sampled slow initial load. Zero AI requests, no shared quota/provider/control changes, no push. Exact original `next-env.d.ts` and `PRD.md` remain outside commits. The <1.2s mobile target and earlier external release limitations remain open; no full-plan archive/tag. Evidence and sample variation: `docs/RELEASE_CHECKLIST.md`.
+
 ---
 
 ## Mission Statement
@@ -464,7 +466,7 @@ npm run test        # agent mock tests pass
   - On the landing page, renders a QR code (use `qrcode.react` library) encoding the current deployment URL.
   - Label: "Scan to demo the AI agent on mobile".
   - Visible only in production (`process.env.NODE_ENV === 'production'`).
-- [ ] **7.8** Close performance budgets. Production Lighthouse measured desktop100/LCP0.596s and simulated mobile96/LCP2.669s, both accessibility100/CLS0. Measurement and safe resource-loading optimizations are complete; the strict mobile <1.2s target remains unmet. Reduced-motion behavior is verified. Do not mark this budget passed or relax it silently.
+- [ ] **7.8** Close performance budgets. Latest local font-loading follow-up: desktop100/LCP0.530s (one sample); unchanged simulated mobile settings, three-run median98/LCP2.427s versus baseline97/2.667s, accessibility100/CLS0 throughout. Initial font transfer reduced45.9%; responsive/slow-network/font-fallback checks pass. The strict mobile <1.2s target remains unmet. Reduced-motion behavior is verified. Do not mark this budget passed or relax it silently; detailed samples/limits are in `docs/RELEASE_CHECKLIST.md`.
 - [x] **7.9** Add `prefers-reduced-motion` guard to all CSS `transition` and `animation` declarations:
   ```css
   @media (prefers-reduced-motion: reduce) {

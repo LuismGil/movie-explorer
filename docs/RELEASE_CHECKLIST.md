@@ -26,6 +26,59 @@ Final checks were grouped after implementation. A test-fixture cleanup issue and
 | Isolated Redis / Docker | **Five local Redis integration cases pass**, isolated container removed; no hosted key/counter access. Final Docker image builds and an isolated no-network container serves `/watchlist` and its stylesheet with **200/200**, then is stopped/removed. Legacy-builder deprecation is an environment warning; no BuildKit installation performed. |
 | Production dependency audit | Both application and MCP `npm audit --omit=dev` report **zero vulnerabilities**. Development-tool advisories remain, with no forced major upgrades. |
 
+## Mobile LCP follow-up — local commit `cbf00a9`
+
+The fixed headline remains the LCP element. Preload only licensed UI subsets of
+Sora/Hanken Grotesk/JetBrains Mono; retain the original complete-family assets
+for arbitrary text. Generated, disjoint Unicode ranges prevent full-font
+downloads for primary glyphs, including on slow connections. All font assets
+are now committed/self-hosted; builds no longer fetch Google Fonts. Sources,
+licenses and regeneration: [`public/fonts/README.md`](../public/fonts/README.md).
+
+Final comparison: preserved `eb49dcd` production standalone versus `cbf00a9`,
+Lighthouse **12.6.1**, unchanged default **simulated** mobile throttling. Three
+fresh-Chrome runs per variant, alternating baseline/candidate, plus one desktop
+run each. These are local samples, not field measurements or release certification.
+
+| Metric | Baseline | UI subsets |
+|---|---:|---:|
+| Mobile LCP samples (seconds) | 2.667 / 2.258 / 2.817 | 2.373 / 2.427 / 2.521 |
+| **Median mobile LCP** | **2.667s** | **2.427s (−9.0%)** |
+| Median mobile FCP | 1.062s | 0.910s (−14.4%) |
+| Median mobile performance score | 97 | 98 |
+| Initial font transfer | 91,112 bytes | 49,272 bytes (−45.9%) |
+| Median mobile total blocking time | 29.5ms | 37.5ms |
+| Desktop LCP / performance, one sample | 0.599s / 100 | 0.530s / 100 |
+| Accessibility / CLS, every run | 100 / 0 | 100 / 0 |
+| Blocking stylesheet requests | 1 | 1 |
+| HTML transfer | 15,085 bytes | 15,173 bytes |
+
+Validation in this follow-up: **411 application tests pass**, five opt-in Redis
+tests remain skipped in the ordinary suite; lint, standalone production build,
+TypeScript and the 17-file browser-bundle boundary scan pass. No server/AI/MCP
+contract changes; the earlier separate Redis/MCP results above are historical,
+not newly rerun evidence. Font regeneration is deterministic. Compared 2,049
+glyph/weight combinations with the pinned originals: maximum advance rounding
+0.5 font units and outline rounding 1 font unit, with 1,000 units per em.
+
+Local browser checks: unchanged headline geometry at **320/412/1440px**, visual
+review, no horizontal overflow, keyboard skip link and zero axe violations on
+the sampled Home, Watchlist and Discover states. Multilingual probes request the
+corresponding original Latin/extended/Greek/Cyrillic assets; display/mono retain
+their existing optional-font fallback policy, not a guaranteed first-visit swap.
+An additional **150ms RTT / 1.6Mbps / 4× CPU** browser check fetches only the three
+UI fonts on initial Home load, with no duplicate full fonts. Zero page errors
+and **zero AI requests** across the benchmark/browser checks. Temporary servers
+and browsers are stopped. Pre-existing `PRD.md` and the exact dev-reference
+`next-env.d.ts` contents are preserved outside commits; no push/deployment.
+
+Rejected experiments: global `experimental.inlineCss` increased HTML transfer
+without improving LCP; a headline-only subset and overlapping fallback ranges
+did not improve the complete critical path reliably. Neither is shipped.
+**The <1.2s mobile LCP goal remains open; no thresholds or measurement settings
+were relaxed.** Raw comparison/browser reports remain in `/tmp/opencode/` for
+this local session; the figures and conditions above are the durable record.
+
 ## Deliberately not fabricated or performed
 
 | Item | Remaining boundary |
