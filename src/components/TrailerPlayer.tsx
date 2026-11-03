@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { messages } from '@/i18n';
+import { catalogMessages as messages } from '@/i18n/catalog';
 import { FilmMark } from './FilmMark';
 
 type TrailerPlayerProps = {

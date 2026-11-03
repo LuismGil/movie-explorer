@@ -4,7 +4,7 @@ import Link from 'next/link';
 import type { CSSProperties } from 'react';
 import type { MovieListItem } from '@/types/movie';
 import { useWatchlist } from '@/context/WatchlistContext';
-import { messages } from '@/i18n';
+import { catalogMessages as messages } from '@/i18n/catalog';
 
 type MovieCardProps = {
   movie: MovieListItem;

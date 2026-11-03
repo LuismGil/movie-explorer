@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { messages } from '@/i18n';
+import { aiMessages } from '@/i18n/ai';
 
 export function AIQuotaCountdown({ until }: { until: number }) {
   const [seconds, setSeconds] = useState(() => Math.max(0, Math.ceil((until - Date.now()) / 1000)));
@@ -13,5 +13,5 @@ export function AIQuotaCountdown({ until }: { until: number }) {
   }, [until]);
 
   // Keep changing digits outside the panel's live region: do not announce every second.
-  return <p role="timer" aria-live="off">{messages.ai.rateLimitWait(seconds)}</p>;
+  return <p role="timer" aria-live="off">{aiMessages.rateLimitWait(seconds)}</p>;
 }

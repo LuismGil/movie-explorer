@@ -2,7 +2,7 @@
 
 import { useWatchlist } from '@/context/WatchlistContext';
 import type { MovieListItem } from '@/types/movie';
-import { messages } from '@/i18n';
+import { catalogMessages as messages } from '@/i18n/catalog';
 
 type WatchlistToggleProps = {
   movie: MovieListItem;

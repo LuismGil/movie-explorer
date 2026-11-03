@@ -1,4 +1,4 @@
-import { messages } from '@/i18n';
+import { catalogMessages as messages } from '@/i18n/catalog';
 import Link from 'next/link';
 import { FilmMark } from './FilmMark';
 

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { messages } from '@/i18n';
+import { catalogMessages as messages } from '@/i18n/catalog';
 import { FilmMark } from './FilmMark';
 
 /** Presentational fallback for the App Router's real error boundary. */

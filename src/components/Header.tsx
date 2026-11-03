@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { messages } from '@/i18n';
+import { catalogMessages as messages } from '@/i18n/catalog';
 import { FilmMark } from './FilmMark';
 
 export function Header() {

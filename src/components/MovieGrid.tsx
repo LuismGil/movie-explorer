@@ -1,7 +1,7 @@
 import { MovieCard } from './MovieCard';
 import { MovieCardSkeleton } from './MovieCardSkeleton';
 import type { MovieListItem } from '@/types/movie';
-import { messages } from '@/i18n';
+import { catalogMessages as messages } from '@/i18n/catalog';
 import Link from 'next/link';
 
 interface MovieGridProps {

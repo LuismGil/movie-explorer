@@ -40,8 +40,11 @@ and weights. To regenerate deliberately after a copy change:
 uv run scripts/subset-ui-fonts.py
 ```
 
-The optional maintenance script pins FontTools 4.68.0/Brotli 1.2.1 and reads
-only the committed local original fonts. It rejects unknown upstream
+The optional maintenance script reads both `src/i18n/catalog.ts` and
+`src/i18n/ai.ts` (plus the complete-dictionary bridge), so route-level code
+splitting does not reduce glyph coverage. The split preserves identical font
+binaries. It pins FontTools 4.68.0/Brotli 1.2.1 and reads only the committed
+local original fonts. It rejects unknown upstream
 font revisions rather than silently replacing typography. It is **not** a
 build dependency. Rebuild and recheck browser coverage/performance afterwards.
 Tests pin subset/original binaries, check Portuguese interface/ASCII coverage

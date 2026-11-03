@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
-import { messages } from '@/i18n';
+import { catalogMessages as messages } from '@/i18n/catalog';
+import { aiMessages as copy } from '@/i18n/ai';
 import { AI_ADULT_DECLARATION_HEADER, AI_ADULT_DECLARATION_VALUE } from '@/lib/ai/audience';
 import { readAiStream } from '@/lib/ai/read-stream';
 import { aiStages, type AiStage, type AiTerminalEvent } from '@/lib/ai/stream-contract';
@@ -12,7 +13,6 @@ import { AIQuotaCountdown } from './AIQuotaCountdown';
 import { AIStartupNotice } from './AIStartupNotice';
 
 type SearchRequest = { message: string; referenceMovieId?: number };
-const copy = messages.ai;
 const focus = 'focus-visible:ring-2';
 
 export function AIChatPanel({ enabled, regionUnavailable = false }: { enabled: boolean; regionUnavailable?: boolean }) {

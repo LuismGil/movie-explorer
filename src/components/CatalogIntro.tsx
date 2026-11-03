@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { messages } from '@/i18n';
+import { catalogMessages as messages } from '@/i18n/catalog';
 
 export function CatalogIntro() {
   const copy = messages.home;

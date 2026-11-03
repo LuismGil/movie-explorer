@@ -1,6 +1,6 @@
 import type { MovieListItem } from '@/types/movie';
 import { MovieCard } from './MovieCard';
-import { messages } from '@/i18n';
+import { catalogMessages as messages } from '@/i18n/catalog';
 
 type SimilarMoviesProps = {
   movies: MovieListItem[];

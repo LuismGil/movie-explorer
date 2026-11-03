@@ -1,0 +1,61 @@
+/** Discover-only pt-BR copy, loaded independently from the public catalog. */
+export const aiMessages = {
+  eyebrow: 'Sua próxima sessão',
+  title: 'Um pedido. Novos filmes.',
+  description: 'Busque um título, veja o que está em alta ou peça detalhes e recomendações a partir de um filme.',
+  coldStartHint: 'Demonstração gratuita: o serviço é preparado quando você envia uma busca. Após um período sem uso, isso pode levar alguns segundos. Não há novas tentativas automáticas.',
+  adultTitle: 'Demonstração de IA · 18+',
+  adultDescription: 'Demonstração técnica de portfólio para público adulto. A restrição se aplica somente à IA; o catálogo continua aberto.',
+  adultDeclaration: 'Declaro que tenho 18 anos ou mais.',
+  adultPrivacy: 'Esta é uma autodeclaração. Não solicitamos nem armazenamos sua data de nascimento ou documentos.',
+  adultDecline: 'Não confirmar — usar o catálogo',
+  startupWait: 'O serviço ainda está sendo preparado. Você pode cancelar ou continuar pelo catálogo; nenhum pedido será reenviado automaticamente.',
+  label: 'O que você quer assistir?',
+  placeholder: 'Ex.: Quais filmes estão em alta nesta semana?',
+  submit: 'Buscar com IA',
+  cancel: 'Cancelar busca',
+  retry: 'Tentar novamente',
+  rateLimitWait: (seconds: number) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainder = seconds % 60;
+    const duration = hours > 0 ? `${hours} h ${minutes} min ${remainder} s`
+      : minutes > 0 ? `${minutes} min ${remainder} s` : `${remainder} s`;
+    return `Você poderá tentar novamente em ${duration}.`;
+  },
+  rateLimitShared: 'A demonstração permite uma busca por minuto e até 10 em 24 horas, compartilhadas entre todos os visitantes. A disponibilidade será conferida novamente ao enviar. Enquanto isso, explore o catálogo.',
+  rateLimitReady: 'O tempo de espera terminou. Você pode tentar novamente; a disponibilidade será conferida ao enviar.',
+  privacy: 'Ao buscar com IA, seu pedido é enviado ao Google Gemini. No serviço gratuito, o Google pode usar as entradas e respostas para melhorar seus produtos, e revisores humanos podem analisá-las. Não inclua dados pessoais, sensíveis, confidenciais ou segredos.',
+  privacyTerms: 'Termos de uso e tratamento de dados do Google',
+  disabled: 'A busca com IA ainda não está ativada. Você pode continuar buscando por título no início.',
+  browse: 'Buscar no catálogo',
+  idle: 'Seu pedido começa aqui. Os filmes só aparecem depois da conferência dos dados.',
+  connecting: 'Iniciando busca…',
+  stages: { preparing: 'Preparando o serviço', planning: 'Entendendo o pedido', searching: 'Buscando filmes', validating: 'Conferindo dados' },
+  progressLabel: 'Etapas da busca',
+  resultTitle: 'Filmes encontrados',
+  selectionTitle: 'Qual destes filmes?',
+  selectionHint: 'Escolha o filme para continuar com seu pedido original.',
+  select: (title: string) => `Continuar com ${title}`,
+  details: 'Ver detalhes',
+  source: 'Dados do TMDB',
+  partial: 'Parte da busca não pôde ser concluída. Estes são os resultados disponíveis após a conferência.',
+  empty: 'Nenhum filme encontrado. Tente outro título ou reformule o pedido.',
+  unsupported: 'Este pedido não é atendido pela busca atual. Tente um título, filmes em alta, detalhes ou recomendações.',
+  rating: (value: number) => `Nota ${value.toFixed(1)} / 10`,
+  director: (name: string) => `Direção: ${name}`,
+  errors: {
+    invalid_request: 'Revise seu pedido: use até 1.000 caracteres e não inclua credenciais.',
+    disabled: 'A busca com IA ainda não está ativada. Use a busca por título no início.',
+    adult_confirmation_required: 'Para usar a demonstração de IA, confirme que tem 18 anos ou mais. Sem a confirmação, use o catálogo.',
+    region_unavailable: 'Não foi possível confirmar a disponibilidade da busca com IA nesta região. O catálogo continua aberto para você.',
+    unavailable: 'A busca está indisponível agora. Tente novamente mais tarde ou use a busca por título.',
+    quota_exceeded: 'O limite de uso da IA foi atingido. Tente mais tarde; nenhum outro modelo será usado.',
+    rate_limited: 'O limite desta demonstração gratuita foi atingido. Aguarde ou use a busca por título no início.',
+    timeout: 'A busca atingiu o tempo limite. Nenhuma nova tentativa foi feita. Você pode tentar manualmente mais tarde, sujeito ao limite compartilhado, ou usar o catálogo.',
+    cancelled: 'Busca cancelada. Você pode fazer um novo pedido.',
+    unsafe_result: 'Não foi possível conferir o resultado. Reformule seu pedido ou use a busca por título.',
+    invalid_stream: 'A resposta foi interrompida ou não pôde ser conferida. Tente novamente.',
+  },
+  regionUnavailable: 'Não foi possível confirmar a disponibilidade da busca com IA nesta região. O catálogo continua aberto para você.',
+} as const;

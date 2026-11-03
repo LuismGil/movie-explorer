@@ -1,5 +1,5 @@
 import type { MovieCastMember } from '@/types/movie';
-import { messages } from '@/i18n';
+import { catalogMessages as messages } from '@/i18n/catalog';
 
 type CastListProps = {
   cast: MovieCastMember[];

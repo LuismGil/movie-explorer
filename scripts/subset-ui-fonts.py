@@ -85,7 +85,7 @@ def main():
     if missing:
         raise SystemExit("Missing pinned original fonts: " + ", ".join(missing))
 
-    copy = (ROOT / "src/i18n/messages.ts").read_text()
+    copy = "".join((ROOT / "src/i18n" / name).read_text() for name in ["catalog.ts", "ai.ts", "messages.ts"])
     # Include transformed eyebrows and ASCII in arbitrary movie names/searches.
     characters = sorted({ord(char) for char in string.printable + copy + copy.upper() + copy.lower()})
     destination = ROOT / "src/theme/fonts"

@@ -2,7 +2,7 @@
 
 import { lazy, Suspense, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
-import { messages } from '@/i18n';
+import { catalogMessages as messages } from '@/i18n/catalog';
 
 const subscribe = () => () => {};
 const getOrigin = () => window.location.origin;

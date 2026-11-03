@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { messages } from '@/i18n';
+import { aiMessages } from '@/i18n/ai';
 import styles from './AIChatPanel.module.css';
 
 /** Mounted only during server-reported preparation; never warms or retries. */
@@ -14,7 +14,7 @@ export function AIStartupNotice() {
   }, []);
   if (!slow) return null;
   return <aside className={styles.notice}>
-    <p>{messages.ai.startupWait}</p>
-    <Link href="/" className={`${styles.link} focus-visible:ring-2`}>{messages.ai.browse}</Link>
+    <p>{aiMessages.startupWait}</p>
+    <Link href="/" className={`${styles.link} focus-visible:ring-2`}>{aiMessages.browse}</Link>
   </aside>;
 }
