@@ -11,6 +11,13 @@
 
 **Font-loading follow-up — 2026-11-02, local `cbf00a9`:** UI subsets plus original, self-hosted complete-family fallbacks with disjoint Unicode ranges reduce initial font transfer91,112→49,272bytes (−45.9%). Fresh alternating three-run mobile comparison against preserved `eb49dcd`: median LCP2.667→2.427s (−9.0%), FCP1.062→0.910s, performance97→98; accessibility100/CLS0 throughout. Desktop sample100/LCP0.530s. 411 app tests pass (five opt-in Redis skipped); lint/types/build/bundle scan, deterministic font regeneration, glyph fidelity and local responsive/keyboard/axe/multilingual/slow-network checks pass. Original display/mono optional-font policy and dynamic glyph availability retained; no duplicate full fonts on the sampled slow initial load. Zero AI requests, no shared quota/provider/control changes, no push. Exact original `next-env.d.ts` and `PRD.md` remain outside commits. The <1.2s mobile target and earlier external release limitations remain open; no full-plan archive/tag. Evidence and sample variation: `docs/RELEASE_CHECKLIST.md`.
 
+**Publication / prepared next increment — 2026-11-02:** the operator now explicitly asks to commit/push the validated font increment and prepare the next step. This supersedes the earlier no-automatic-push boundary for these commits only; Vercel Ready remains unverified. Next: profile the post-font render path using trace/devtools-log artifacts before selecting a runtime change. The median report attributes 81% to estimated render delay, but whole-trace JavaScript/layout totals do not establish causality. Execution and acceptance criteria: [`docs/LCP_RENDER_PLAN.md`](../docs/LCP_RENDER_PLAN.md).
+
+- [x] Prepare the render-path investigation and preserve current evidence/guardrails in a durable plan.
+- [ ] Freeze a post-font standalone baseline and capture attributable traces with zero AI requests.
+- [ ] Select/test one trace-supported optimization; batch validation and compare against the post-font baseline, not only `eb49dcd`.
+- [ ] Close the original mobile LCP budget only when actually met; no threshold relaxation or inferred release certification.
+
 ---
 
 ## Mission Statement

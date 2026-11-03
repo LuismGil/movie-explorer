@@ -1,5 +1,24 @@
 # Phase 7 — Premium UI Polish
 
+## Next increment prepared — 2026-11-02
+
+The operator explicitly authorizes commit/push of font optimization `cbf00a9`,
+validation `26d818e` and this preparation. Earlier local-only publication notes
+below are historical; a successful push is not proof of Vercel Ready.
+
+Current baseline: mobile three-run median LCP 2.427s (−9.0%), FCP 0.910s,
+performance 98/accessibility 100/CLS 0, initial font transfer 49,272 bytes (−45.9%).
+411 app tests, lint/types/build and bundle scan pass in the completed font batch;
+those checks are not newly rerun for this documentation-only preparation.
+
+Next work is **prepared, not implemented**: freeze the post-font build, capture
+trace/devtools-log artifacts, separate pre-LCP work from later hydration/layout
+and test one evidenced change. Do not assume the nine script requests all block
+the headline. Keep the 1.2s goal, design/accessibility and AI safeguards unchanged.
+[Execution plan and acceptance criteria](../docs/LCP_RENDER_PLAN.md).
+No new inference, hosted diagnostic, quota/provider change or release closure.
+Preserve `PRD.md` and the original dev-reference `next-env.d.ts` outside commits.
+
 ## Closeout status — 2026-11-02
 
 Reachable implementation is in atomic Conventional Commits: font/QR/poster loading, movie-named save controls and touch targets, standalone/Docker/CI assets, scoped browser bundle protection, architecture/checklist, fixture isolation and intent-driven trailers. Final batch passes398 app +5 isolated Redis +45 MCP tests, lint/build/types, bundle scan17files/0issues, production audits0, native browser/keyboard/axe review and Docker build/HTML+CSS200 smoke. Docker context141.3MB→1.331MB. Local Lighthouse desktop100/LCP0.596s vs mobile96/LCP2.669s, accessibility100/CLS0 both; strict mobile budget remains open. No live AI/hosted diagnostic, quota/credentials change, push, tag or full archive. True screen-reader/provider/geo/old-diagnostic checks remain unverified. PRD.md and original dev-generated next-env.d.ts retained outside commits. [Current evidence and remaining boundaries](../docs/RELEASE_CHECKLIST.md). Older “Lighthouse unmeasured” notes below are superseded.

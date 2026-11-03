@@ -1,5 +1,28 @@
 # Project Context
 
+## Current: 2026-11-02 — Font Increment Validated; Render-Path Plan Prepared
+
+Runtime commit `cbf00a9` adds licensed self-hosted UI subsets and original-family
+fallbacks with disjoint Unicode ranges; `26d818e` records validation. Mobile LCP
+median 2.667→2.427s, FCP 1.062→0.910s and font transfer 91,112→49,272 bytes; canonical
+design, accessibility 100/CLS 0 and dynamic glyph availability retained. 411 app
+tests pass (five opt-in Redis cases skipped), lint/types/build/bundle scan and
+responsive/keyboard/axe/multilingual/slow-font checks pass. These are prior-batch
+results, not tests rerun for the present documentation-only preparation.
+
+The operator now explicitly authorizes commit/push of that work and preparation
+of the next increment on `main`. Earlier no-push/local-only notes are historical;
+deployment Ready is not verified by source publication. The strict mobile 1.2s
+target and earlier external release limitations remain open.
+
+Next task: [profile the render path](../docs/LCP_RENDER_PLAN.md), starting with a
+frozen **post-font** baseline and trace/devtools-log capture. One sample reports
+81% estimated render delay and nine scripts/150,284 transferred bytes, but its
+unthrottled observed LCP differs from the simulated estimate and whole-trace CPU
+totals are not proof of pre-LCP blocking. No runtime change has started. Preserve
+AI controls/provider/quotas, zero agent-run inference, and the user's `PRD.md` and
+original dev-reference `next-env.d.ts`. Do not archive/tag or claim 1.2s passed.
+
 ## Current: 2026-11-02 — Reachable Closeout Committed; Explicit Remaining Limits
 
 Operator asks to finish reachable tasks, commit atomically per COMMIT_GUIDE and defer validation until the end. Implemented/committed optional display/mono fonts, responsive posters and viewport-deferred QR; named movie save actions/44px touch targets; automatic standalone asset assembly, bounded CI startup and bundle guard; root architecture/checklist. Final UI review found inaccessible controls inside automatically loaded YouTube: replaced it with an explicit native trailer loader, privacy-enhanced iframe only after intent, external fallback link and per-video state reset. Excluding nested Docker dependencies/env/build artifacts cut context141.3MB→1.331MB.
