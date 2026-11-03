@@ -1,5 +1,21 @@
 # Phase 7 — Premium UI Polish
 
+## Render-path follow-up completed locally — 2026-11-02
+
+User reports prior `c3a1cea` Vercel Ready. Local implementation `6e50606` isolates
+Discover-only copy from catalog client JavaScript, preserving all text/formatters
+and identical fonts. Added a catalog-entry bundle guard; frozen old build fails,
+candidate passes. Sampled script transfer150,284→148,635bytes (−1.1%).
+424 app tests, lint/types/build/bundle scan and responsive/axe/keyboard/catalog
+flows pass, including saved-watchlist reload/remove. Five opt-in Redis cases
+skipped; no fresh provider/MCP/Redis experiment. Zero AI requests and page errors.
+
+Five-run simulated median LCP2.509→2.380s is **not** a reliable improvement claim:
+sample ranges overlap. Retain the resource saving without closing the1.2s goal
+or substituting supplemental observed timings. No new push/deployment; preserve
+`PRD.md`, original dev `next-env.d.ts`, AI controls/provider/quotas and all external
+release limitations. [Evidence and next-work boundary](../docs/LCP_RENDER_RESULTS.md).
+
 ## Next increment prepared — 2026-11-02
 
 The operator explicitly authorizes commit/push of font optimization `cbf00a9`,

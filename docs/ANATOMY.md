@@ -77,6 +77,8 @@
 │   │   ├── WatchlistContext.ts
 │   │   └── WatchlistProvider.tsx
 │   ├── i18n
+│   │   ├── ai.ts
+│   │   ├── catalog.ts
 │   │   ├── index.ts
 │   │   └── messages.ts
 │   ├── server

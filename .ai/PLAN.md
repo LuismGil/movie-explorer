@@ -13,9 +13,11 @@
 
 **Publication / prepared next increment — 2026-11-02:** the operator now explicitly asks to commit/push the validated font increment and prepare the next step. This supersedes the earlier no-automatic-push boundary for these commits only; Vercel Ready remains unverified. Next: profile the post-font render path using trace/devtools-log artifacts before selecting a runtime change. The median report attributes 81% to estimated render delay, but whole-trace JavaScript/layout totals do not establish causality. Execution and acceptance criteria: [`docs/LCP_RENDER_PLAN.md`](../docs/LCP_RENDER_PLAN.md).
 
+**Render-path follow-up completed locally — 2026-11-02, `6e50606`:** the operator confirms Vercel Ready for published `c3a1cea`; no independent hosted audit. Frozen post-font standalone excludes private env files; trace/devtools-log and Lantern node timings distinguish observed paint from simulated framework work. Split Discover-only copy from catalog clients and added a manifest-scoped bundle guard/positive control: sampled JavaScript150,284→148,635bytes (−1.1%), identical message/formatter behavior and font binaries. Five-run simulated medians LCP2.509→2.380s, but overlapping samples do not prove a reliable LCP gain. This is a retained resource-only improvement; the original1.2s goal remains open. 424 app tests (five opt-in skipped), lint/types/build/bundle/browser flows pass; zero AI requests. No new provider/hosted/Redis/MCP experiment, quota/control change or push. Original `PRD.md`/dev `next-env.d.ts` preserved. Full evidence: [`docs/LCP_RENDER_RESULTS.md`](../docs/LCP_RENDER_RESULTS.md).
+
 - [x] Prepare the render-path investigation and preserve current evidence/guardrails in a durable plan.
-- [ ] Freeze a post-font standalone baseline and capture attributable traces with zero AI requests.
-- [ ] Select/test one trace-supported optimization; batch validation and compare against the post-font baseline, not only `eb49dcd`.
+- [x] Freeze a post-font standalone baseline and capture attributable traces with zero AI requests.
+- [x] Select/test one trace-supported resource optimization; batch validation and compare against the post-font baseline, not only `eb49dcd`. Retain the deterministic byte reduction, not a claimed reliable LCP win.
 - [ ] Close the original mobile LCP budget only when actually met; no threshold relaxation or inferred release certification.
 
 ---
@@ -473,7 +475,7 @@ npm run test        # agent mock tests pass
   - On the landing page, renders a QR code (use `qrcode.react` library) encoding the current deployment URL.
   - Label: "Scan to demo the AI agent on mobile".
   - Visible only in production (`process.env.NODE_ENV === 'production'`).
-- [ ] **7.8** Close performance budgets. Latest local font-loading follow-up: desktop100/LCP0.530s (one sample); unchanged simulated mobile settings, three-run median98/LCP2.427s versus baseline97/2.667s, accessibility100/CLS0 throughout. Initial font transfer reduced45.9%; responsive/slow-network/font-fallback checks pass. The strict mobile <1.2s target remains unmet. Reduced-motion behavior is verified. Do not mark this budget passed or relax it silently; detailed samples/limits are in `docs/RELEASE_CHECKLIST.md`.
+- [ ] **7.8** Close performance budgets. Published font milestone: three-run simulated mobile median98/LCP2.427s, initial fonts−45.9%. Local render-path follow-up: five-run medians97/LCP2.509s→98/2.380s, but overlap prevents a reliable LCP-gain claim; confirmed JavaScript reduction1.1%. Accessibility100/CLS0, responsive/slow-font/reduced-motion checks pass; desktop100/LCP0.560s latest single sample. The strict mobile <1.2s simulated target remains unmet; do not substitute supplemental observed timings, relax it or mark passed. Detailed samples/limits: `docs/RELEASE_CHECKLIST.md` and `docs/LCP_RENDER_RESULTS.md`.
 - [x] **7.9** Add `prefers-reduced-motion` guard to all CSS `transition` and `animation` declarations:
   ```css
   @media (prefers-reduced-motion: reduce) {

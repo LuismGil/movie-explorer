@@ -79,6 +79,25 @@ did not improve the complete critical path reliably. Neither is shipped.
 were relaxed.** Raw comparison/browser reports remain in `/tmp/opencode/` for
 this local session; the figures and conditions above are the durable record.
 
+## Render-path follow-up — local `6e50606`
+
+The operator reports `c3a1cea` Vercel Ready; no independent hosted audit was run.
+Preserved the post-font baseline, captured trace/devtools-log artifacts and
+separated observed paint from Lantern estimates. Split Discover-only copy from
+catalog client imports, retaining every message/formatter and identical fonts.
+Initial sampled Home JavaScript falls **150,284→148,635 bytes (−1.1%)**, protected
+by a new catalog-entry bundle assertion with an old-build positive control.
+
+Five-run simulated mobile medians: **LCP 2.509→2.380s**, FCP 0.907→0.908s,
+TBT 47.565→37.5ms, performance 97→98; accessibility 100/CLS 0. **Overlapping samples
+do not establish a reliable LCP improvement**; retain this as a resource-only
+change, not closure of the 1.2s goal. Supplemental DevTools-throttled observations
+also do not replace that gate. 424 app tests, lint/types/build, 17-file plus
+three-catalog-entry bundle scan and responsive/keyboard/axe/catalog persistence
+checks pass; five opt-in Redis tests remain skipped, no fresh MCP/provider run.
+Zero AI requests, no quota/control changes. New commits remain local, without
+push/deployment. [Full trace interpretation and all samples](LCP_RENDER_RESULTS.md).
+
 ## Deliberately not fabricated or performed
 
 | Item | Remaining boundary |

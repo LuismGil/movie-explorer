@@ -1,6 +1,8 @@
 # Next increment — profile the mobile render path
 
-Prepared 2026-11-02. This is an execution plan, **not an implemented optimization**.
+Prepared 2026-11-02; investigation completed locally. A small resource-only
+optimization is retained, without claiming a reliable LCP improvement.
+See [results, samples and remaining limits](LCP_RENDER_RESULTS.md).
 Font-loading runtime baseline: `cbf00a9`; validation record: `26d818e` and
 [the release checklist](RELEASE_CHECKLIST.md). The operator explicitly authorizes
 commit/push of that increment and this preparation. A push is not Vercel Ready
@@ -66,7 +68,7 @@ or a complete release certification.
   provider/model, shared admission or request budgets. Block/count AI search
   requests in performance/browser harnesses; require **zero**. No live inference,
   quota reset, hosted diagnostic or new service is authorized by this plan.
-- No runtime work has started for this increment. Do not mark phase 7.8 closed,
+- Completing this increment does not mark phase 7.8 closed. Do not
   relax `lighthouserc.json`, archive the full plan or tag a release because a
   candidate improves without reaching the existing 1.2s target.
 - Preserve `PRD.md` and the exact pre-task `next-env.d.ts` contents outside

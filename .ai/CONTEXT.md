@@ -1,5 +1,28 @@
 # Project Context
 
+## Current: 2026-11-02 — Render Traces Captured; Catalog Copy Split Locally
+
+User reports published `c3a1cea` Vercel Ready. Preserved a post-font standalone
+baseline without private env files; captured Lighthouse trace/devtools-log and
+reconstructed Lantern node timings. Model-selected framework work overlaps the
+presentation timestamp; whole-trace CPU or script bytes do not prove pre-paint
+blocking. No framework/script suppression or metric workaround was attempted.
+
+Local `6e50606` separates catalog/Discover dictionaries with compatible complete
+API, unchanged strings/formatters and byte-identical font generation. Catalog
+navigation JavaScript150,284→148,635bytes (−1.1%); new manifest-scoped guard rejects
+the old build and passes three candidate entry files. 424 app tests (five opt-in
+skipped), lint/types/build, 17-file bundle scan and responsive/axe/keyboard/search/
+trending/pagination/watchlist-save-reload-remove checks pass. Zero AI requests or
+page errors; no quota/provider/access changes or new hosted/Redis/MCP experiment.
+
+Five-run simulated median LCP2.509→2.380s has overlapping ranges, so no reliable
+LCP-gain claim. Retain only the objectively smaller payload. Supplemental applied
+throttling observes medians760→720ms but does not replace the1.2s simulated gate.
+No push/deployment of new changes, archive or release tag. `PRD.md` and exact
+pre-task dev `next-env.d.ts` preserved; temporary browsers/servers stopped.
+[Durable evidence and next-work boundary](../docs/LCP_RENDER_RESULTS.md).
+
 ## Current: 2026-11-02 — Font Increment Validated; Render-Path Plan Prepared
 
 Runtime commit `cbf00a9` adds licensed self-hosted UI subsets and original-family
