@@ -1,14 +1,16 @@
 import type { Metadata } from 'next';
-import { Sora, Hanken_Grotesk, JetBrains_Mono } from 'next/font/google';
+import localFont from 'next/font/local';
 import Header from '@/components/Header';
 import { WatchlistProvider } from '@/context/WatchlistProvider';
 import { messages } from '@/i18n';
 import { cinemaTheme } from '@/theme/cinema';
+import '@/theme/fonts-full.css';
 import '@/index.css';
 
-const display = Sora({ subsets: ['latin'], variable: '--font-display', display: 'optional' });
-const body = Hanken_Grotesk({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
-const mono = JetBrains_Mono({ subsets: ['latin'], weight: '500', variable: '--font-mono', display: 'optional', preload: false });
+// Complete families use disjoint Unicode ranges in fonts-full.css, without preloads.
+const display = localFont({ src: '../src/theme/fonts/sora-ui.woff2', variable: '--font-display-ui', weight: '400 700', display: 'optional', adjustFontFallback: false });
+const body = localFont({ src: '../src/theme/fonts/hanken-ui.woff2', variable: '--font-body-ui', weight: '400 700', display: 'swap', adjustFontFallback: false });
+const mono = localFont({ src: '../src/theme/fonts/mono-ui.woff2', variable: '--font-mono-ui', weight: '500', display: 'optional', adjustFontFallback: false });
 
 export const metadata: Metadata = {
   title: 'Movie Explorer',

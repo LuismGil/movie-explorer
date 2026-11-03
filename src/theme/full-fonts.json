@@ -1,0 +1,110 @@
+[
+  {
+    "file": "sora-latin.woff2",
+    "family": "display",
+    "name": "Sora",
+    "weight": "100 800",
+    "display": "optional",
+    "bytes": 33672,
+    "sha256": "d2909123a6a8ed2f928055f002c32f63ee93496b470c1a344873f955111fca53"
+  },
+  {
+    "file": "sora-latin-ext.woff2",
+    "family": "display",
+    "name": "Sora",
+    "weight": "100 800",
+    "display": "optional",
+    "bytes": 15556,
+    "sha256": "df4fca18912e29202b16286ab514798de8357c416b5e1f2dd31703994bec7a78"
+  },
+  {
+    "file": "hanken-latin.woff2",
+    "family": "body",
+    "name": "Hanken Grotesk",
+    "weight": "100 900",
+    "display": "swap",
+    "bytes": 34664,
+    "sha256": "1f21c6eaa0000f3329cfcfac966b43d5bebf5aa610303e33294ac31bc6f4bb59"
+  },
+  {
+    "file": "hanken-latin-ext.woff2",
+    "family": "body",
+    "name": "Hanken Grotesk",
+    "weight": "100 900",
+    "display": "swap",
+    "bytes": 19572,
+    "sha256": "a1376a563717f1efa2f5286ab23da2b61ae8dec827a77b97adfa01cad4ec4ee2"
+  },
+  {
+    "file": "hanken-vietnamese.woff2",
+    "family": "body",
+    "name": "Hanken Grotesk",
+    "weight": "100 900",
+    "display": "swap",
+    "bytes": 9364,
+    "sha256": "2f467719b2167cc4778b5780a2fb42fadf5203b29d0fb5f1482bbab32b1b7999"
+  },
+  {
+    "file": "hanken-cyrillic-ext.woff2",
+    "family": "body",
+    "name": "Hanken Grotesk",
+    "weight": "100 900",
+    "display": "swap",
+    "bytes": 1644,
+    "sha256": "2f52020a90793104e4178b0ae3ccd30eea28cac27e0fea8fcf4f246151777f74"
+  },
+  {
+    "file": "mono-latin.woff2",
+    "family": "mono",
+    "name": "JetBrains Mono Medium",
+    "weight": "500",
+    "display": "optional",
+    "bytes": 21876,
+    "sha256": "615a7673d37b1dd624e2deeb572a1a238f9b32981bf3fc44f87aa14f3bd7d04b"
+  },
+  {
+    "file": "mono-latin-ext.woff2",
+    "family": "mono",
+    "name": "JetBrains Mono Medium",
+    "weight": "500",
+    "display": "optional",
+    "bytes": 7548,
+    "sha256": "9a1b37b15422ff95216a0838aceeeb4ca6cb54453a8e1ef4594352834fcc8b66"
+  },
+  {
+    "file": "mono-vietnamese.woff2",
+    "family": "mono",
+    "name": "JetBrains Mono Medium",
+    "weight": "500",
+    "display": "optional",
+    "bytes": 4028,
+    "sha256": "71ab65f8779a7da4615e33af4ca1d0c5c5b61eafc9d387a9877b96eac3a98977"
+  },
+  {
+    "file": "mono-greek.woff2",
+    "family": "mono",
+    "name": "JetBrains Mono Medium",
+    "weight": "500",
+    "display": "optional",
+    "bytes": 4304,
+    "sha256": "557933eed12cfcdea0ec3799e20dcb97eace90c566488006530e2f3d054d8aef"
+  },
+  {
+    "file": "mono-cyrillic.woff2",
+    "family": "mono",
+    "name": "JetBrains Mono Medium",
+    "weight": "500",
+    "display": "optional",
+    "bytes": 5392,
+    "sha256": "cfc54a0a5621c3dddedf46e378f6518526a2069069d54cebb9b9783201260e7d"
+  },
+  {
+    "file": "mono-cyrillic-ext.woff2",
+    "family": "mono",
+    "name": "JetBrains Mono Medium",
+    "weight": "500",
+    "display": "optional",
+    "bytes": 1160,
+    "sha256": "142ebf7f49dfea43a83758e085b6ed690b0700bebcfb83b5c3d3c1d02b0076c8"
+  }
+]

@@ -3,7 +3,12 @@
 @tailwind utilities;
 
 @layer base {
-  html { color-scheme: dark; scroll-padding-top: 8rem; }
+  html {
+    --font-display: var(--font-display-ui), var(--font-display-full);
+    --font-body: var(--font-body-ui), var(--font-body-full);
+    --font-mono: var(--font-mono-ui), var(--font-mono-full);
+    color-scheme: dark; scroll-padding-top: 8rem;
+  }
   body { background-image: radial-gradient(ellipse at 80% 0, rgba(245, 197, 24, .035), transparent 45%); }
   ::selection { background: var(--cinema-accent); color: var(--cinema-on-accent); }
   :where(a, button, input, textarea, summary):focus-visible { outline: 2px solid var(--cinema-accent); outline-offset: 4px; }

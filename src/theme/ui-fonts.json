@@ -1,0 +1,29 @@
+[
+  {
+    "file": "sora-ui.woff2",
+    "family": "Sora",
+    "weight": "400 700",
+    "characters": "\r !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~·ÀÁÃÇÉÊÍÓÔÕÚàáãçéêíóôõú—…",
+    "bytes": 15876,
+    "sha256": "c1dac99597ca77124311fd03fcecf0d19f7b391de60c1ff75d5dcfb65b6a6fcc",
+    "sourceSha256": "d2909123a6a8ed2f928055f002c32f63ee93496b470c1a344873f955111fca53"
+  },
+  {
+    "file": "hanken-ui.woff2",
+    "family": "Hanken Grotesk",
+    "weight": "400 700",
+    "characters": " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~·ÀÁÃÇÉÊÍÓÔÕÚàáãçéêíóôõú—…",
+    "bytes": 15416,
+    "sha256": "10a1c4c30f8e8820d383fc54f5ca39ec8c71660078e59ac7a390436a59a41747",
+    "sourceSha256": "1f21c6eaa0000f3329cfcfac966b43d5bebf5aa610303e33294ac31bc6f4bb59"
+  },
+  {
+    "file": "mono-ui.woff2",
+    "family": "JetBrains Mono Medium",
+    "weight": "500",
+    "characters": "\r !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~·ÀÁÃÇÉÊÍÓÔÕÚàáãçéêíóôõú—…",
+    "bytes": 17080,
+    "sha256": "224b8cabd3beae34680025c16d08143242a8c24fe774c95f00de8ced2ac33e8c",
+    "sourceSha256": "615a7673d37b1dd624e2deeb572a1a238f9b32981bf3fc44f87aa14f3bd7d04b"
+  }
+]
