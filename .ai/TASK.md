@@ -1,6 +1,63 @@
-# Phase 7 — Premium UI Polish
+# Current work — Phase 7 / release reconciliation
 
-## Render-path follow-up completed locally — 2026-11-02
+Updated 2026-11-04. **The only actionable backlog is [PLAN.md → Remaining backlog](PLAN.md#remaining-backlog).** This file is its summary/index; do not create duplicate open checkboxes or treat historical checkpoints as current instructions.
+
+## Current state
+
+| Area | Status |
+|---|---|
+| Phases 1–4 | Implemented; retained validation evidence is historical, not a fresh hosted CI pass. |
+| Phase 5 | Next.js migration and deployed core-flow hydration fix verified within the recorded scope. React Compiler completion claim corrected: R1 remains open. |
+| Phase 6 | 6.1–6.8 implemented; 6.9 remains open for R4–R7. AI activation `8819583` published, Vercel Ready user-reported; no further activation approval is needed. |
+| Phase 7 | Explicitly approved 2026-11-02 despite the retained Phase 6 limits. 7.1–7.7 and 7.9 implemented. 7.8 remains open: simulated mobile median **2.380s**, target **<1.2s**. |
+| Render-path follow-up | Investigation, frozen baseline, traces and catalog/Discover copy split `6e50606` completed. JavaScript transfer −1.1%; overlapping LCP samples do not establish a reliable LCP improvement. |
+| Publication | At this review, `HEAD` and local `origin/main` point to `a34c313`, including `6e50606`. No fetch/push performed; matching local references do not independently verify the remote or Vercel Ready for that increment. Latest recorded user-reported Ready is activation `8819583`. |
+
+## Remaining-work index
+
+Status, evidence, acceptance and authorization boundaries are maintained **only in [PLAN.md](PLAN.md#remaining-backlog)**:
+
+| IDs | Work category | Remaining work |
+|---|---|---|
+| R1 | Implementation / scope | Resolve missing React Compiler activation/plugin or explicitly amend scope. |
+| R2 | Measured performance | Meet the original mobile <1.2s LCP goal while retaining CLS <0.05/accessibility 100. |
+| R3 | Configuration | Align CI release enforcement with the goals: LCP currently warns; accessibility currently permits 95. A green run is not goal closure. |
+| R4–R7 | External / operator | Establish audience eligibility; verify deployed geo trust; finish diagnostic key/older-deployment handling; verify enabled hosted AI behavior only under separately scoped authorization. |
+| R8 | Manual accessibility | Actual VoiceOver/NVDA audit, distinct from passed keyboard/axe samples. |
+| R9 | Release evidence | Associate actual GitHub Actions and Vercel state with the release candidate; do not confuse local evidence/publication with hosted verification. |
+| R10–R11 | Formal closure | Archive the plan and create v2.0.0 only after applicable gates/scope amendments and operator authorization. |
+
+## Completed decisions — do not reopen or rerun automatically
+
+- Google/model choice, no automatic fallback, operator Brazil/data-use consent and Free/no-payment service confirmations are recorded. No paid usage or provider migration is approved.
+- AI-only EEA/CH/UK/unknown-country restriction and mandatory adult self-declaration are implemented; actual audience eligibility and deployed signal trust are **not** proven by those controls.
+- Bounded, demand-driven MCP preparation before Google is selected/implemented under operator delegation: 20s initialization / 30s pipeline / 35s route/UI. Longer Render Free wake-ups can fail; no SLA, polling, keep-alive or automatic retry is implied.
+- D4 hosted dependency probes passed per operator output: Upstash **83ms**, Render/MCP **928ms**, total **1,015ms**. These tested paths are complete, not a pending request to restore diagnostics or inspect the production counter.
+- Diagnostic route/caller retired; production GET/POST 404 recorded and dedicated key absent locally. Vercel key/old-deployment cleanup remains R6.
+- One separately authorized D5 local live pipeline passed: **237 tokens**, **4,275ms**, 12 approved movies. That permission is consumed; it is not enabled Vercel/browser evidence or authorization for another invocation.
+- Activation `8819583` publication/user-reported Ready and the Phase 7 ordering exception are already recorded. Do not ask to approve activation or Phase 7 again.
+
+## Evidence and current authorization
+
+Latest prior application batch: **424 tests pass**, five opt-in Redis cases skipped; lint/types/build, bundle and responsive/keyboard/axe/catalog-persistence checks pass. Separate earlier Redis/MCP validations remain historical; no new checks are claimed for this documentation-only reconciliation.
+
+- [Render-path measurements and next-work boundary](../docs/LCP_RENDER_RESULTS.md)
+- [Local closeout evidence and limits](../docs/RELEASE_CHECKLIST.md)
+- [Activation, startup and known eligibility/hosted limits](../docs/AI_RELEASE.md)
+- [D4 evidence and diagnostic retirement](../docs/AI_RUNTIME_CHECK.md)
+- [Single local live invocation](../docs/AI_LIVE_CHECK.md)
+- [Implemented architecture and deferred catalog-to-MCP coverage](../ARCHITECTURE.md)
+
+**This task changes only `.ai/PLAN.md` and `.ai/TASK.md`.** The user explicitly requested a documentation-only commit and push after this reconciliation. No runtime/configuration/dependency change, application test, live inference, hosted diagnostic, credential/quota operation, archive or tag is authorized by it. Preserve the pre-existing `PRD.md` and `next-env.d.ts` changes. All-catalog-to-MCP migration remains deferred until tool feature coverage exists; it is not a new release blocker.
+
+## Historical execution record
+
+<details>
+<summary>Earlier checkpoints and implementation evidence (not the active backlog)</summary>
+
+The snapshots below retain their original test counts and disabled/local-only states. They describe the named batch, not today's availability, publication or next action. Subsequent activation, startup selection, Phase 7 approval, measurements and local Git evidence supersede those older instructions. Remaining items point to the canonical PLAN IDs above; do not execute historical verification recipes without a scoped task.
+
+### Render-path follow-up completed locally — 2026-11-02
 
 User reports prior `c3a1cea` Vercel Ready. Local implementation `6e50606` isolates
 Discover-only copy from catalog client JavaScript, preserving all text/formatters
@@ -16,7 +73,7 @@ or substituting supplemental observed timings. No new push/deployment; preserve
 `PRD.md`, original dev `next-env.d.ts`, AI controls/provider/quotas and all external
 release limitations. [Evidence and next-work boundary](../docs/LCP_RENDER_RESULTS.md).
 
-## Next increment prepared — 2026-11-02
+### Render-path preparation snapshot — 2026-11-02 (subsequently executed)
 
 The operator explicitly authorizes commit/push of font optimization `cbf00a9`,
 validation `26d818e` and this preparation. Earlier local-only publication notes
@@ -27,7 +84,7 @@ performance 98/accessibility 100/CLS 0, initial font transfer 49,272 bytes (−4
 411 app tests, lint/types/build and bundle scan pass in the completed font batch;
 those checks are not newly rerun for this documentation-only preparation.
 
-Next work is **prepared, not implemented**: freeze the post-font build, capture
+At this preparation checkpoint, work was **prepared, not implemented**: freeze the post-font build, capture
 trace/devtools-log artifacts, separate pre-LCP work from later hydration/layout
 and test one evidenced change. Do not assume the nine script requests all block
 the headline. Keep the 1.2s goal, design/accessibility and AI safeguards unchanged.
@@ -35,19 +92,19 @@ the headline. Keep the 1.2s goal, design/accessibility and AI safeguards unchang
 No new inference, hosted diagnostic, quota/provider change or release closure.
 Preserve `PRD.md` and the original dev-reference `next-env.d.ts` outside commits.
 
-## Closeout status — 2026-11-02
+### Closeout checkpoint — 2026-11-02
 
 Reachable implementation is in atomic Conventional Commits: font/QR/poster loading, movie-named save controls and touch targets, standalone/Docker/CI assets, scoped browser bundle protection, architecture/checklist, fixture isolation and intent-driven trailers. Final batch passes398 app +5 isolated Redis +45 MCP tests, lint/build/types, bundle scan17files/0issues, production audits0, native browser/keyboard/axe review and Docker build/HTML+CSS200 smoke. Docker context141.3MB→1.331MB. Local Lighthouse desktop100/LCP0.596s vs mobile96/LCP2.669s, accessibility100/CLS0 both; strict mobile budget remains open. No live AI/hosted diagnostic, quota/credentials change, push, tag or full archive. True screen-reader/provider/geo/old-diagnostic checks remain unverified. PRD.md and original dev-generated next-env.d.ts retained outside commits. [Current evidence and remaining boundaries](../docs/RELEASE_CHECKLIST.md). Older “Lighthouse unmeasured” notes below are superseded.
 
-## Current work — 2026-11-02
+### First visual increment — 2026-11-02
 
 User reports activation commit `8819583` deployed Ready and explicitly approves Phase 7 despite documented Phase 6 limitations. Do not reopen activation approval or repeat live AI/hosted diagnostics. Implemented the first visual increment: shared obsidian/gold theme, self-hosted canonical fonts, catalog intro/search/filter/card/grid polish, mobile header, watchlist/empty/error states, real App Router error reset, production-only same-origin QR, AI presentation-only refinements and reduced motion. Added only planned `qrcode.react@4.2.0`; patched existing transitive `follow-redirects` 1.16.1→1.16.2, production audit now zero. No AI access/quota/runtime/provider change. Build/lint and 35 focused UI tests pass; five local production responsive/axe states pass with zero AI requests. Lighthouse budgets remain unmeasured; Phase 7 is not fully closed. Changes not committed/published; pre-existing `PRD.md` untouched. [Full evidence](../docs/UI_POLISH.md).
 
 The Phase 6 notes below are historical where they say Phase 7 has not started or publication is pending; actual deployment status is user-reported, not agent-certified.
 
-# Phase 6 — MCP Server + Multi-Agent System (history)
+### Phase 6 — MCP Server + Multi-Agent System (history)
 
-## Active Phase
+#### Pre-publication / prior decision snapshots
 - **Latest instruction — 2026-11-02:** user delegated startup/age controls and explicitly authorized AI activation. Source flag is now true. Added adult self-declaration in UI plus mandatory server header check before body/admission; no DOB/documents/accounts or persistence. Production prepares/reuses MCP before Google within existing 20/30/35s bounds, with real preparation progress and slow-start/catalog guidance, no polling/retries. This is not verified age or provider-policy certification. Publication and unverified geographic/audience/diagnostic/hosted limitations are recorded in [`AI_RELEASE.md`](../docs/AI_RELEASE.md). Older “keep disabled / ask for activation” notes below are historical and superseded. Do not repeat live tests, touch quota/credentials or start Phase 7 implicitly.
 - **D5 single real test passed:** explicit operator authorization consumed by one private local-handler run against real Google/Upstash/Render. One shared admission, one token preflight and one generation (HTTP 200), one movie search; Quality approved 12 results including Inception and clean-EOF streaming passed. **237 tokens**, **4,275ms**. No source/env changes, retries, public activation or further inference authorization. [Evidence](../docs/AI_LIVE_CHECK.md).
 - **D4 runtime passed:** operator output confirms Vercel→Upstash PING/isolated EVAL 83ms and Vercel→Render/MCP search 928ms, 1,015ms total, after deployment/configuration corrections. No Google or real-counter access. Cold-start reliability is not certified by this sample. Evidence: [`AI_RUNTIME_CHECK.md`](../docs/AI_RUNTIME_CHECK.md).
@@ -56,19 +113,19 @@ The Phase 6 notes below are historical where they say Phase 7 has not started or
 - **Decision/execution (2026-10-29):** operator in Brazil accepts Google unpaid-service data use; one authorized real test passed. Keep Google/model, public availability false, and do not repeat the single consumed test. Remaining: audience/access, cold-start acceptance and deliberately scoped public/Vercel release verification.
 - Phase 6.1–6.8 implementations exist; 6.9 release verification remains open. Google/model approval, operator privacy acceptance, the AI-only regional block and one separately authorized local live test are complete. Adult-audience eligibility, cold-start acceptance and public activation/full Vercel/browser execution remain pending.
 - Phase 5 production verification is closed: the deployed hydration fix passes user and agent live browser checks without React errors.
-- Public AI remains deliberately disabled. Next: bounded-startup and public-release decisions, then explicitly scoped enabled Vercel/browser verification; do not repeat the completed local live test automatically.
+- Historical pre-activation status: public AI was deliberately disabled at that checkpoint. Startup selection and activation/publication have since been completed; enabled Vercel/browser verification remains open in PLAN R7. Do not repeat the consumed local live test.
 
-## Previous Completed Phases
+#### Previously completed implementation phases
 - [x] Phase 1 — Stabilization & Code Quality
 - [x] Phase 2 — Accessibility Baseline (WCAG 2.1 AA)
 - [x] Phase 3 — Security Baseline
 - [x] Phase 4 — DevOps Baseline
-- [x] Phase 5 — Next.js App Router Migration and core-flow production verification (2026-10-22)
+- [x] Phase 5 — Next.js App Router migration and core-flow production verification (2026-10-22); this does not include the unsupported React Compiler completion claim, now tracked in R1.
 
-## Current Goal
+#### Historical goal
 - Complete a usable, honestly disclosed real-AI portfolio demo using the approved architecture where eligible. Preserve Search→Quality and conservative limits. Operator privacy acceptance, production-composition mocks, D4 hosted dependency checks and one separately authorized real local inference are complete. Resolve visitor eligibility and bounded startup, then deliberately scope public activation/full Vercel verification. No paid use, implicit consent, repeated inference or automatic provider/model switch.
 
-## Tasks
+#### Migration implementation record
 
 - [x] Confirm Next.js App Router is approved as the target framework before implementation.
 - [x] Install and configure Next.js.
@@ -166,14 +223,14 @@ docker build -t movie-explorer:latest .
 docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:latest
 ```
 
-# Phase 6 — MCP Server + Multi-Agent System
+### Phase 6 — detailed implementation record
 
-**Status:** In Progress
+**Current reconciliation:** implementation 6.1–6.8 exists; remaining 6.9 release conditions are R4–R7. The snapshots below predate activation unless explicitly noted.
 **Goal:** Introduce a standalone MCP server for TMDB and a validated three-agent AI orchestration flow without exposing secrets or rendering raw LLM output.
 
-## Active next work — 2026-10-29
+#### D1–D5 record — 2026-10-29, reconciled 2026-11-04
 
-The goal is a usable portfolio demo with real inference, not permanent disabled availability. Google/model approval remains valid; operator in Brazil now accepts unpaid-service data use. Source of truth: the D1–D5 sequence in [PLAN.md](PLAN.md) and [AI demo decision](../docs/AI_DEMO_DECISION.md).
+The goal is a usable portfolio demo with real inference, not permanent disabled availability. Google/model approval and the operator's unpaid-service data-use consent remain valid. Current remaining work is the single [PLAN backlog](PLAN.md#remaining-backlog); [the AI demo decision](../docs/AI_DEMO_DECISION.md) preserves the original alternatives and decision evidence.
 
 - [x] Record deployment of `5419f86`: user confirmed Vercel Ready; post-deploy smoke passed `/discover` 200 and AI 503 `disabled`/`no-store`; startup hint hidden. No Vercel→MCP/Upstash/provider execution was exercised.
 - [x] Record operator Free/no-payment confirmation for existing services and Upstash eviction disabled; isolated hosted checks passed locally, not in Vercel.
@@ -181,8 +238,7 @@ The goal is a usable portfolio demo with real inference, not permanent disabled 
 - [x] Review original/execution plans and Google terms; distinguish approved architecture/model from unresolved release conditions. Find stale task summaries and unfinished production Google-assertion wiring; no live provider failure has been observed.
 - [x] Document alternatives as contingencies only. Presets do not remove Google policy/eligibility constraints or silently replace free-text scope.
 - [x] **D1 operator decision:** Brazil/LatAm confirmed; Google unpaid-service data policy accepted; proceed with approved provider/model.
-- [ ] **D1 visitor audience:** clarify intended visitor regions/adult audience and access; a Brazil operator and demo label do not establish visitor eligibility.
-- [ ] **D2:** Reuse current Google implementation and confirmed Free/no-payment setup; clarify only missing model/account/audience facts and the minimal eligible release design.
+**D1/D2 remaining audience/distribution conditions: open in PLAN R4; deployed geo trust in R5.** Region policy, operator consent and server interlocks are already implemented; do not reopen them as missing decisions.
 - [x] **D3 implementation:** wire trusted Google assertion from server-owned availability (false) and expand pt-BR disclosure with terms link.
 - [x] **D3 verification:** production-composition mocks and existing suite pass (348 tests; five opt-in Redis cases skipped), along with lint/types/build; no live provider calls.
 - [x] **D3 quota UX:** real countdown in hours/minutes/seconds, absolute expiry/tab-resume synchronization, non-live timer for accessibility, expiry message, catalog link and no automatic requests. Updated total: 349 passing tests, five opt-in Redis cases skipped; lint/types/build pass.
@@ -190,9 +246,11 @@ The goal is a usable portfolio demo with real inference, not permanent disabled 
 - [x] **D4 execution:** operator-supplied output confirms both checks passed: Upstash 83ms, MCP 928ms, total 1,015ms; no Google or real admission-counter access.
 - [x] **D4 local retirement:** remove temporary diagnostic/caller/helper/tests/command/example key. Lint/types/build, 349 remaining tests and local production route-removal/disabled-AI smoke pass.
 - [x] **D4 hosted route retirement:** `e8b314c` pushed and production diagnostic GET/POST both return 404.
-- [ ] **D4 remaining cleanup/acceptance:** confirm operator token/old-deployment handling and explicitly accept bounded cold-start behavior.
+**D4 remaining cleanup: open in PLAN R6.** Startup policy was subsequently delegated/selected/implemented; do not request its approval again. Longer wake-up failures remain a known limitation under R7.
 - [x] **D5 one authorized local live test:** real handler/admission/Google/Search/Quality/stream execution passed with one admitted generation, 237 tokens and 12 approved movies. No retry or public activation. [Evidence](../docs/AI_LIVE_CHECK.md).
-- [ ] **D5 public release:** resolve remaining audience/startup decisions, obtain activation approval and scope enabled Vercel/browser verification. Retain 1 global admission/60s, 10/rolling 24h; no Phase 7 yet.
+- [x] **D5 activation/publication:** subsequently authorized and published as `8819583`; Vercel Ready user-reported and Phase 7 explicitly approved.
+
+**D5 enabled hosted verification: open in PLAN R7.** Retain 1 global admission/60s, 10/rolling 24h; no new invocation is authorized by this reconciliation.
 
 ## Architecture and Entry Gates
 
@@ -218,7 +276,7 @@ Explicit user approvals recorded on 2026-10-22, including the default model/no-a
 - [x] Confirm authenticated remote tools via user-provided Inspector 1.0.3 output: all five tools listed; `search_movies(query=Inception, page=1)` returned real TMDB data including movie 27205 without an MCP error.
 - [x] Verify the local Next.js server adapter against Render: all five read-only tools passed; this does not prove Vercel runtime access.
 - [x] Verify the fixed Vercel-to-Render search with the approved protected method (operator output, 2026-10-29).
-- [ ] Agree on the remaining cold-start limitation; successful samples have no confirmed idle window.
+**Subsequent startup decision:** bounded demand-driven preparation was selected/implemented under operator delegation. The samples still do not prove maximum wake time or an SLA; retain that limitation in R7, not a duplicate approval task.
 
 #### Standalone MCP Server Foundation
 **Status**: `Complete`
@@ -302,7 +360,7 @@ Contract/limits: [`docs/STREAMING_UI.md`](../docs/STREAMING_UI.md). Enabled data
 - [x] Verify 342 app tests plus five opt-in real Redis cases, app lint/types/build, MCP checks/45 tests, local production axe, and disabled Discover 320px browser smoke; no live Google/Upstash, no external requests on Discover, and no client-chunk Upstash markers.
 - [x] Operator reports hosted Upstash creation and Vercel Production variables; local PING and isolated temporary-key atomic EVAL passed, with no Google call or production-counter mutation.
 - [x] Record operator confirmation: existing services Free/no-payment and Upstash eviction disabled; no independent dashboard inspection claimed.
-- [ ] Verify Vercel runtime access using an approved protected method. The production counter key was not exercised by isolated local checks.
+- [x] Verify scoped Vercel runtime access through D4 operator evidence: isolated Upstash PING/EVAL 83ms and Render/MCP search 928ms, total 1,015ms. No Google or real production-counter access; full enabled hosted verification remains R7.
 
 See [`docs/AI_OPERATIONS.md`](../docs/AI_OPERATIONS.md). No model calls, user identifiers, prompts, results, movie IDs, or raw errors are included in telemetry.
 
@@ -315,7 +373,10 @@ See [`docs/AI_OPERATIONS.md`](../docs/AI_OPERATIONS.md). No model calls, user id
 - [x] Run authenticated server-only MCP adapter against Render: all five read-only tools succeeded in 3,253 ms; no Google call. The verifier now sets its validated remote endpoint when local `MCP_SERVER_URL` is absent.
 - [x] Measure `/health` and an MCP initialize-only handshake after 16-minute windows with no agent requests: 12,542 ms and 13,889 ms; external traffic could not be observed, so the samples are indicative.
 - [x] Raise only MCP initialization timeout to 20s; retain 30s global, 35s route/UI, and 10s per-tool caps. Explain free-tier cold starts in pt-BR UI only when AI is enabled.
-- [ ] Confirm Vercel runtime-to-Render without generation and approve an honest bounded cold-start policy; 20s init is not guaranteed to cover all Render Free wake-ups.
-- [ ] Close D1–D5 for the approved Google/model path: applicable privacy/audience/region, production composition and separate live-test/public-activation gates. No new provider/model, paid use or live inference is authorized.
+- [x] Confirm the scoped Vercel-to-Render/Upstash paths via D4 and select/implement bounded startup under the later operator delegation. No universal Render Free wake-up guarantee is claimed.
 
-**Phase 6 remains open** until D1–D5 and remaining runtime/cold-start gates pass or scope is explicitly amended. Keep `/discover` generation disabled temporarily; a usable real-AI demo, not permanent unavailability, is the final objective.
+**Remaining Phase 6 release conditions: PLAN R4–R7.** Do not reopen completed activation, consent, startup or local-live-test decisions, and do not turn unverified external conditions into passes.
+
+**Phase 6 closure remains open in R4–R7; Phase 7 is already explicitly authorized.** The earlier keep-disabled instruction was superseded by activation `8819583`. This is not certification of the unverified audience/geographic/cleanup/hosted conditions or authorization for new inference.
+
+</details>
