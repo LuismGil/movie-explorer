@@ -257,7 +257,7 @@ The earlier review below is historical and superseded where it says operator pri
   - Created [Dockerfile](Dockerfile) using a 3-stage setup: alpine-based dependency install (`base`), client/server compilation and dependency pruning (`builder`), and a minimal debian12 distroless runtime (`runner`).
   - Created [.dockerignore](.dockerignore) to prevent copying local development artifacts into the image.
   - Created [scripts/a11y-audit.js](scripts/a11y-audit.js) using Playwright + axe-core to perform headless checks on the Home and Watchlist pages.
-  - Configured Lighthouse CI in [lighthouserc.json](lighthouserc.json) with custom budgets: LCP warning threshold at `1.2s`, CLS error threshold at `0.05`, and accessibility minimum score at `0.95`, mapped to the local Express server.
+  - Historical initial Phase 4 Lighthouse CI configuration used an LCP warning at `1.2s`, a CLS error at `0.05`, and an accessibility minimum of `0.95`, mapped to the local Express server. The current Next.js/mobile release enforcement is maintained in the root [lighthouserc.json](../lighthouserc.json) and `.ai/PLAN.md`.
   - Configured GitHub Actions CI pipeline in [.github/workflows/ci.yml](.github/workflows/ci.yml) to run lint, typecheck, unit tests, build, Playwright-based a11y checks, Lighthouse budget verification, and a Docker build smoke test.
   - Updated [.gitignore](.gitignore) to exclude local server build output (`dist-server/`) and Lighthouse reports (`.lighthouseci/`).
   - Docker build and runtime were verified locally with `docker build -t movie-explorer:latest .` and `docker run --rm -p 3000:3000 -e TMDB_API_KEY=<runtime-secret> movie-explorer:latest`.

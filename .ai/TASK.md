@@ -1,17 +1,22 @@
 # Current work — Phase 7 / release reconciliation
 
-Updated 2026-11-04. **The only actionable backlog is [PLAN.md → Remaining backlog](PLAN.md#remaining-backlog).** This file is its summary/index; do not create duplicate open checkboxes or treat historical checkpoints as current instructions.
+Updated 2026-11-06. **The only actionable backlog is [PLAN.md → Remaining backlog](PLAN.md#remaining-backlog).** This file is its summary/index; do not create duplicate open checkboxes or treat historical checkpoints as current instructions.
 
 ## Current state
 
 | Area | Status |
 |---|---|
 | Phases 1–4 | Implemented; retained validation evidence is historical, not a fresh hosted CI pass. |
-| Phase 5 | Next.js migration and deployed core-flow hydration fix verified within the recorded scope. React Compiler completion claim corrected: R1 remains open. |
+| Phase 5 | Next.js migration/core-flow hydration fix verified within the recorded scope. React Compiler is now enabled and R1 is resolved. |
 | Phase 6 | 6.1–6.8 implemented; 6.9 remains open for R4–R7. AI activation `8819583` published, Vercel Ready user-reported; no further activation approval is needed. |
-| Phase 7 | Explicitly approved 2026-11-02 despite the retained Phase 6 limits. 7.1–7.7 and 7.9 implemented. 7.8 remains open: simulated mobile median **2.380s**, target **<1.2s**. |
+| Phase 7 | Explicitly approved 2026-11-02 despite the retained Phase 6 limits. R3 now enforces the original CI gates. R2 remains open: latest CI simulated mobile median **2,386.457ms**, target **<1,200ms**. |
 | Render-path follow-up | Investigation, frozen baseline, traces and catalog/Discover copy split `6e50606` completed. JavaScript transfer −1.1%; overlapping LCP samples do not establish a reliable LCP improvement. |
-| Publication | At this review, `HEAD` and local `origin/main` point to `a34c313`, including `6e50606`. No fetch/push performed; matching local references do not independently verify the remote or Vercel Ready for that increment. Latest recorded user-reported Ready is activation `8819583`. |
+| Publication | Last pushed commit is `67969f1`; R1/R3 changes are local/unpushed and have no Vercel Ready evidence. The latest recorded user-reported Ready is activation `8819583`. |
+
+## Resolved in the 2026-11-06 batch
+
+- **R1 — React Compiler:** installed `babel-plugin-react-compiler@1.0.0`, set `reactCompiler: true` in `next.config.ts`, and confirmed no `useMemo`/`useCallback` calls remain under `app/` or `src/`.
+- **R3 — Lighthouse CI:** explicitly collect mobile/simulated runs. Accessibility 100 and CLS <0.05 are enforced against the worst run; LCP <1,200ms is enforced against the median. `npx lhci autorun` validates the configuration and correctly fails on the still-open R2 LCP budget (median 2,386.457ms). Accessibility and CLS produced no assertion failures.
 
 ## Remaining-work index
 
@@ -19,9 +24,7 @@ Status, evidence, acceptance and authorization boundaries are maintained **only 
 
 | IDs | Work category | Remaining work |
 |---|---|---|
-| R1 | Implementation / scope | Resolve missing React Compiler activation/plugin or explicitly amend scope. |
 | R2 | Measured performance | Meet the original mobile <1.2s LCP goal while retaining CLS <0.05/accessibility 100. |
-| R3 | Configuration | Align CI release enforcement with the goals: LCP currently warns; accessibility currently permits 95. A green run is not goal closure. |
 | R4–R7 | External / operator | Establish audience eligibility; verify deployed geo trust; finish diagnostic key/older-deployment handling; verify enabled hosted AI behavior only under separately scoped authorization. |
 | R8 | Manual accessibility | Actual VoiceOver/NVDA audit, distinct from passed keyboard/axe samples. |
 | R9 | Release evidence | Associate actual GitHub Actions and Vercel state with the release candidate; do not confuse local evidence/publication with hosted verification. |
@@ -39,7 +42,7 @@ Status, evidence, acceptance and authorization boundaries are maintained **only 
 
 ## Evidence and current authorization
 
-Latest prior application batch: **424 tests pass**, five opt-in Redis cases skipped; lint/types/build, bundle and responsive/keyboard/axe/catalog-persistence checks pass. Separate earlier Redis/MCP validations remain historical; no new checks are claimed for this documentation-only reconciliation.
+Current validation batch: lint, typecheck, production build and **424 app tests pass**, with five opt-in Redis cases skipped. Lighthouse CI ran three mobile/simulated samples and correctly exits 1 on the enforced LCP limit; its median was 2,386.457ms. Separate Redis/MCP validations remain historical. The build's generated `next-env.d.ts` was restored to its pre-existing working-tree state.
 
 - [Render-path measurements and next-work boundary](../docs/LCP_RENDER_RESULTS.md)
 - [Local closeout evidence and limits](../docs/RELEASE_CHECKLIST.md)
@@ -48,7 +51,7 @@ Latest prior application batch: **424 tests pass**, five opt-in Redis cases skip
 - [Single local live invocation](../docs/AI_LIVE_CHECK.md)
 - [Implemented architecture and deferred catalog-to-MCP coverage](../ARCHITECTURE.md)
 
-**This task changes only `.ai/PLAN.md` and `.ai/TASK.md`.** The user explicitly requested a documentation-only commit and push after this reconciliation. No runtime/configuration/dependency change, application test, live inference, hosted diagnostic, credential/quota operation, archive or tag is authorized by it. Preserve the pre-existing `PRD.md` and `next-env.d.ts` changes. All-catalog-to-MCP migration remains deferred until tool feature coverage exists; it is not a new release blocker.
+**This increment changes the Next.js compiler configuration/development dependency, Lighthouse CI policy and these tracking records.** No AI runtime behavior, live inference, hosted diagnostic, credential/quota operation, archive or release tag was changed. Preserve the pre-existing `PRD.md` and `next-env.d.ts` changes. All-catalog-to-MCP migration remains deferred until tool feature coverage exists; it is not a new release blocker.
 
 ## Historical execution record
 

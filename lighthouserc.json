@@ -5,15 +5,17 @@
       "startServerCommand": "node .next/standalone/server.js",
       "numberOfRuns": 3,
       "settings": {
+        "formFactor": "mobile",
+        "throttlingMethod": "simulate",
         "chromeFlags": "--no-sandbox --disable-gpu --headless"
       }
     },
     "assert": {
       "assertions": {
         "categories:performance": ["warn", {"minScore": 0.8}],
-        "categories:accessibility": ["error", {"minScore": 0.95}],
-        "largest-contentful-paint": ["warn", {"maxNumericValue": 1200}],
-        "cumulative-layout-shift": ["error", {"maxNumericValue": 0.05}]
+        "categories:accessibility": ["error", {"minScore": 1, "aggregationMethod": "pessimistic"}],
+        "largest-contentful-paint": ["error", {"maxNumericValue": 1199.999, "aggregationMethod": "median"}],
+        "cumulative-layout-shift": ["error", {"maxNumericValue": 0.049999, "aggregationMethod": "pessimistic"}]
       }
     }
   }

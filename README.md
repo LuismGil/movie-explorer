@@ -315,14 +315,14 @@ Rotate credentials if they have been exposed. Ignoring a file does not revoke a 
 
 ## 13. Performance Budgets
 
-Latest local Lighthouse samples: desktop LCP **0.596s** and mobile LCP **2.669s** under default simulated throttling, both CLS **0**. Desktop meets the strict LCP goal; mobile does not. Performance scores are 100/96 and accessibility 100/100. No thresholds were loosened or production SLA inferred. See [closeout evidence](docs/RELEASE_CHECKLIST.md).
+The latest Lighthouse CI run (2026-11-06) used three mobile/simulated runs: LCP **2.418s / 1.960s / 2.386s**, median **2.386s**. Accessibility and CLS assertions passed, but LCP did not meet the strict mobile goal. The earlier desktop sample (LCP **0.596s**) is from a separate run and is not evidence that the mobile release gate passes. No production SLA is inferred. See [closeout evidence](docs/RELEASE_CHECKLIST.md).
 
 | Metric | Target | Enforcement |
 |---|---|---|
-| Largest Contentful Paint (LCP) | < 1.2s | Lighthouse CI warning above 1,200 ms |
-| Cumulative Layout Shift (CLS) | < 0.05 | Lighthouse CI error above 0.05 |
+| Largest Contentful Paint (LCP) | < 1.2s | Lighthouse CI error: median of 3 mobile/simulated runs must be < 1,200 ms |
+| Cumulative Layout Shift (CLS) | < 0.05 | Lighthouse CI error: worst of 3 mobile/simulated runs must be < 0.05 |
 | Lighthouse performance score | ≥ 0.80 | Warning below budget |
-| Lighthouse accessibility score | ≥ 0.95 | Error below budget |
+| Lighthouse accessibility score | 1.00 (100) | Lighthouse CI error if any of 3 mobile/simulated runs is below 100 |
 | A11y violations (critical/serious) | 0 | axe-core in CI |
 
 ---

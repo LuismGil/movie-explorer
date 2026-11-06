@@ -3,7 +3,7 @@
 > Agents MUST read this before any code action. Update task status in-place as work completes.
 > When this plan is fully executed, archive it to `.ai/context/archive/` and regenerate from the roadmap.
 
-## Current execution state — 2026-11-04
+## Current execution state — 2026-11-06
 
 **Active phase: 7, explicitly approved 2026-11-02; full-plan closure remains open.** The user reports activation `8819583` Ready and approved UI work with the unverified Phase 6 limitations carried forward. Activation approval, startup-policy selection and starting Phase 7 are **not** pending decisions. This explicitly amends the original sequential-phase rule, not the outstanding release checks.
 
@@ -12,11 +12,16 @@ This section and the [remaining backlog](#remaining-backlog) take precedence ove
 | Area | Current evidence / limitation |
 |---|---|
 | Phases 1–4 | Implementation and local evidence recorded below; no new CI run or complete release certification is claimed. |
-| Phase 5 | Next.js migration and deployed core-flow hydration fix are verified for the tested flows. React Compiler was incorrectly checked complete; resolve R1 without reopening the core migration. |
+| Phase 5 | Next.js migration/core-flow verification remain as recorded. React Compiler is now enabled with Next.js integration; R1 is resolved below. |
 | Phase 6 | Units 6.1–6.8 implemented. AI enabled in source; `8819583` published with Vercel Ready reported by the user. D4 hosted dependency checks and one separately authorized D5 local live invocation passed. Remaining release limits: R4–R7. |
-| Phase 7 | 7.1–7.7 and 7.9 implemented. Render-path investigation and catalog/Discover copy split completed. 7.8 remains open: latest simulated mobile median **2.380s**, target **<1.2s**. |
-| Source publication | At this review, `HEAD` and the local remote-tracking reference `origin/main` both point to `a34c313`, including `6e50606`. No fetch/push was performed; this does not independently verify the remote or Vercel Ready for that increment. Latest recorded user-reported Ready is activation `8819583`; the render-path follow-up has no separately recorded Vercel Ready confirmation. |
-| Latest validation evidence | Prior render-path batch: **424 app tests**, five opt-in Redis skips, lint/types/build/bundle/browser checks pass. Earlier separate Redis/MCP runs are historical. No checks were rerun for this documentation reconciliation. |
+| Phase 7 | 7.1–7.7 and 7.9 implemented. R3 now makes Lighthouse CI enforce mobile simulated LCP <1.2s, accessibility 100 and CLS <0.05. R2 remains open; latest run's LCP median is **2,386.457ms**. |
+| Source publication | Last pushed commit is `67969f1`; R1/R3 implementation changes are local and not pushed. User-reported Vercel Ready remains for activation `8819583`; there is no Ready evidence for these latest changes. |
+| Latest validation evidence | R1/R3 batch: lint, typecheck, build and **424 app tests** pass (five opt-in Redis cases skipped). LHCI validates the strict assertions and exits 1 on the expected LCP budget miss: **2,418.108 / 1,960.317 / 2,386.457ms**, median **2,386.457ms**. Accessibility/CLS assertions did not fail. |
+
+## Resolved since the previous backlog review
+
+- [x] **R1 — React Compiler.** Added `babel-plugin-react-compiler@1.0.0` as a dev dependency and enabled `reactCompiler: true` in `next.config.ts`. No `useMemo`/`useCallback` calls remain under `app/` or `src/`. Lint, typecheck, 424 app tests and production build pass.
+- [x] **R3 — Lighthouse release enforcement.** CI now explicitly collects three mobile/simulated runs; accessibility 100 and CLS <0.05 use the pessimistic aggregate, while the strict LCP <1,200ms gate uses the median. The current LHCI run correctly fails only the LCP gate (median 2,386.457ms); this keeps **R2 open**, rather than claiming the performance goal passed. Performance-category score remains a warning because no separate score target is part of the Phase 7 acceptance criteria.
 
 ## Remaining backlog
 
@@ -24,9 +29,7 @@ These are existing gaps or missing evidence, not authorization to execute them. 
 
 ### Implementation and configuration
 
-- [ ] **R1 — Resolve the React Compiler discrepancy (5.10; compiler portion of 5.1).** `next.config.ts` has no compiler activation and `package.json` does not declare `babel-plugin-react-compiler`; the original completion claim is unsupported. Implement and validate the planned compiler, or obtain an explicit scope amendment and document its exclusion. Review memoization changes only against the actual enabled configuration; do not assume a mobile LCP benefit.
-- [ ] **R2 — Meet the original mobile performance budget (7.8).** Latest five-run simulated median is 2.380s, accessibility 100/CLS 0. Continue only from attributable pre-paint/dependency evidence, compare identical Lighthouse settings and preserve design, accessibility, font coverage and catalog flows. Close only with evidence meeting **LCP <1.2s**, **CLS <0.05** and **accessibility 100**; no metric substitution or threshold relaxation. [Results and next-work boundary](../docs/LCP_RENDER_RESULTS.md).
-- [ ] **R3 — Reconcile CI enforcement with release acceptance.** `lighthouserc.json` currently warns above 1,200ms LCP and errors only below accessibility 0.95, whereas Phase 7 acceptance requires <1.2s/100. Make the intended release enforcement explicit and align it without loosening the goals. A green run under the present warning/95 configuration is not proof of Phase 7 completion. No configuration is changed by this review.
+- [ ] **R2 — Meet the original mobile performance budget (7.8).** Latest three-run simulated Lighthouse CI median is 2.386s; the separate five-run render-path median was 2.380s. Accessibility 100/CLS 0 passed this CI batch. Continue only from attributable pre-paint/dependency evidence, compare identical Lighthouse settings and preserve design, accessibility, font coverage and catalog flows. Close only with evidence meeting **LCP <1.2s**, **CLS <0.05** and **accessibility 100**; no metric substitution or threshold relaxation. [Results and next-work boundary](../docs/LCP_RENDER_RESULTS.md).
 
 ### External verification and operator work
 
@@ -35,7 +38,7 @@ These are existing gaps or missing evidence, not authorization to execute them. 
 - [ ] **R6 — Complete diagnostic credential / older-deployment cleanup (remaining D4).** Confirm removal of only `AI_RUNTIME_CHECK_API_KEY` from Vercel and address diagnostic-containing older deployments through operator controls. The route is already retired and the key absent locally. Preserve working service credentials; destructive deployment cleanup requires explicit approval. [Retirement evidence](../docs/AI_RUNTIME_CHECK.md).
 - [ ] **R7 — Verify the full enabled Vercel/browser AI path (remaining D5/6.9).** Scope any future hosted/inference execution separately with the operator; the prior single live-test permission is consumed and repetitive checks were declined. Distinguish the passed local live invocation and isolated D4 dependency probes from unverified hosted end-to-end behavior. Startup policy is selected/implemented, not awaiting reapproval; longer Render Free wake-ups remain a known failure mode, not an SLA or reason for implicit retries/keep-alives.
 - [ ] **R8 — Run the actual screen-reader audit.** Use VoiceOver or NVDA on `MovieCard`, `AIChatPanel` and `Header`, recording versions, states, announcements and findings. Keyboard/axe evidence remains valid within its scope but cannot close this check; AI states may be exercised with mocks, not implicit live generation.
-- [ ] **R9 — Record release-candidate CI and deployment evidence.** Associate an actual GitHub Actions result and Vercel deployment state with the candidate commit. Local test batches and a matching local `origin/main` reference are not hosted evidence; do not label `6e50606` uncommitted or infer Ready from publication. This documentation push does not authorize an application deployment or hosted probe.
+- [ ] **R9 — Record release-candidate CI and deployment evidence.** Associate an actual GitHub Actions result and Vercel deployment state with the candidate commit. Local test batches and a matching local `origin/main` reference are not hosted evidence; do not label `6e50606` uncommitted or infer Ready from publication. A source push alone does not authorize an application deployment or hosted probe.
 
 ### Formal closure, after the applicable gates
 
@@ -44,7 +47,7 @@ These are existing gaps or missing evidence, not authorization to execute them. 
 
 ## Execution boundaries and deferred scope
 
-- **Current authorization:** reconcile `.ai/PLAN.md` and `.ai/TASK.md`, then create and push one documentation-only commit as the user explicitly requested on 2026-11-04. No runtime/configuration/dependency changes, new application tests, live inference, hosted diagnostics, credential/quota changes, archive or tag are implied. Do not include the pre-existing `PRD.md` or `next-env.d.ts` changes.
+- **Current scope:** resolve R1 and R3 only. The React compiler configuration/development dependency, Lighthouse CI policy and their status records are in scope. Do not change AI behavior, request live inference/hosted diagnostics, alter credentials/quotas, archive or tag. Preserve the pre-existing `PRD.md` and `next-env.d.ts` changes. No commit/push was requested for this increment.
 - Preserve the pre-existing `PRD.md` and `next-env.d.ts` changes. Keep the catalog worldwide, existing AI region/adult/quota gates, Google/model policy, 20/30/35s deadlines and manual-only retry behavior unchanged.
 - The all-catalog-to-MCP migration is **deferred**, not a new release blocker: popular movies, trailers and pagination need coverage first. Retain the server-side TMDB actions as documented in [the implemented architecture](../ARCHITECTURE.md).
 - Historical validation counts and availability/publication statements describe their original batch only. Do not rerun consumed tests, request activation consent again, or treat the historical design examples as permission to replace canonical shared tokens/fonts.
@@ -259,7 +262,7 @@ docker run --rm -p 3000:3000 movie-explorer:latest  # must serve app on :3000
 ### Tasks
 
 #### Scaffold
-- [x] **5.1 — Next.js scaffold portion.** Install Next.js 15+ and update the application scripts. Current production scripts build/assemble and start the standalone server. The originally bundled React Compiler plugin claim is not complete; it is tracked with 5.10 in R1.
+- [x] **5.1 — Next.js scaffold.** Install Next.js 15+ and update the application scripts. Current production scripts build/assemble and start the standalone server. The compiler plugin is now installed; see 5.10.
 - [x] **5.2** Create `app/layout.tsx` — root layout with `<html lang="pt-BR">`, skip-nav link, `<Header>`, `<main id="main-content">` wrapper.
 - [x] **5.3** Delete `index.html`, `vite.config.ts`, and all `VITE_`-prefixed env references.
 
@@ -274,7 +277,7 @@ docker run --rm -p 3000:3000 movie-explorer:latest  # must serve app on :3000
 - [x] **5.9** Delete `src/services/tmdb.ts` (old Axios client). Confirm zero imports remain.
 
 #### React Compiler
-**5.10 — Open; see R1.** The original checked completion was incorrect: compiler activation is absent from `next.config.ts`, and `package.json` does not declare its plugin. Implement/validate it or explicitly amend scope; review performance-only memoization only against the real compiler configuration, preserving referential stability needed by effects.
+- [x] **5.10** Enable the React Compiler through Next.js `reactCompiler: true` and `babel-plugin-react-compiler@1.0.0`. No `useMemo`/`useCallback` calls remain in `app/` or `src/`; build and the R1 validation batch pass. No LCP benefit is claimed from compiler activation.
 ### Post-Migration Cleanups
 - [x] Fixed Tailwind production purge by adding `./app/**/*` to `tailwind.config.js`.
 - [x] Centralized static UI copy in `src/i18n/messages.ts` and `src/i18n/index.ts`.
