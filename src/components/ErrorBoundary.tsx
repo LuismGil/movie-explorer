@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { catalogMessages as messages } from '@/i18n/catalog';
 import { FilmMark } from './FilmMark';
 
@@ -13,7 +12,7 @@ export function ErrorBoundary({ reset }: { reset: () => void }) {
     <p>{messages.error.cinemaDescription}</p>
     <div className="cinema-actions">
       <button type="button" className="cinema-button" onClick={reset}>{messages.error.retry}</button>
-      <Link href="/" className="cinema-text-link">{messages.common.backToCatalog}</Link>
+      <a href="/" className="cinema-text-link">{messages.common.backToCatalog}</a>
     </div>
   </section>;
 }

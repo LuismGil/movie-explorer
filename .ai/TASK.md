@@ -9,14 +9,15 @@ Updated 2026-11-06. **The only actionable backlog is [PLAN.md → Remaining back
 | Phases 1–4 | Implemented; retained validation evidence is historical, not a fresh hosted CI pass. |
 | Phase 5 | Next.js migration/core-flow hydration fix verified within the recorded scope. React Compiler is now enabled and R1 is resolved. |
 | Phase 6 | 6.1–6.8 implemented; 6.9 remains open for R4–R7. AI activation `8819583` published, Vercel Ready user-reported; no further activation approval is needed. |
-| Phase 7 | Explicitly approved 2026-11-02 despite the retained Phase 6 limits. R3 now enforces the original CI gates. R2 remains open: latest CI simulated mobile median **2,386.457ms**, target **<1,200ms**. |
-| Render-path follow-up | Investigation, frozen baseline, traces and catalog/Discover copy split `6e50606` completed. JavaScript transfer −1.1%; overlapping LCP samples do not establish a reliable LCP improvement. |
-| Publication | Last pushed commit is `67969f1`; R1/R3 changes are local/unpushed and have no Vercel Ready evidence. The latest recorded user-reported Ready is activation `8819583`. |
+| Phase 7 | Explicitly approved 2026-11-02 despite the retained Phase 6 limits. R3 enforces the original CI gates. R2 passes locally with the unchanged median LCP, accessibility and CLS requirements. |
+| Render-path follow-up | Earlier Cache Components/PPR and runtime traces are historical. The final local document-shell candidate preserves canonical Sora/Hanken/Mono and Unicode fallback coverage; two unchanged-settings LHCI medians are **1,056.398 / 1,060.342ms**. See the dated report for prior experiments and limits. |
+| Publication | R1/R3 commit `4a4f1ce` and the R2 shell candidate are pushed on `main`. The latest user-reported Ready is activation `8819583`; no deployment or hosted evidence exists for the R2 candidate. |
 
 ## Resolved in the 2026-11-06 batch
 
 - **R1 — React Compiler:** installed `babel-plugin-react-compiler@1.0.0`, set `reactCompiler: true` in `next.config.ts`, and confirmed no `useMemo`/`useCallback` calls remain under `app/` or `src/`.
-- **R3 — Lighthouse CI:** explicitly collect mobile/simulated runs. Accessibility 100 and CLS <0.05 are enforced against the worst run; LCP <1,200ms is enforced against the median. `npx lhci autorun` validates the configuration and correctly fails on the still-open R2 LCP budget (median 2,386.457ms). Accessibility and CLS produced no assertion failures.
+- **R3 — Lighthouse CI:** explicitly collect mobile/simulated runs. Accessibility 100 and CLS <0.05 are enforced against the worst run; LCP <1,200ms is enforced against the median. The unchanged assertions pass on both final local LHCI batches.
+- **R2 — Original mobile performance budget, local evidence:** medians **1,056.398ms** and **1,060.342ms** across two unchanged-settings three-run LHCI batches; all six LCP samples are <1,200ms, accessibility is 100 and CLS is 0. Canonical local fonts and full Unicode fallbacks, catalog controls and watchlist persistence remain available. This is not deployment/hosted evidence.
 
 ## Remaining-work index
 
@@ -24,7 +25,6 @@ Status, evidence, acceptance and authorization boundaries are maintained **only 
 
 | IDs | Work category | Remaining work |
 |---|---|---|
-| R2 | Measured performance | Meet the original mobile <1.2s LCP goal while retaining CLS <0.05/accessibility 100. |
 | R4–R7 | External / operator | Establish audience eligibility; verify deployed geo trust; finish diagnostic key/older-deployment handling; verify enabled hosted AI behavior only under separately scoped authorization. |
 | R8 | Manual accessibility | Actual VoiceOver/NVDA audit, distinct from passed keyboard/axe samples. |
 | R9 | Release evidence | Associate actual GitHub Actions and Vercel state with the release candidate; do not confuse local evidence/publication with hosted verification. |
@@ -42,7 +42,9 @@ Status, evidence, acceptance and authorization boundaries are maintained **only 
 
 ## Evidence and current authorization
 
-Current validation batch: lint, typecheck, production build and **424 app tests pass**, with five opt-in Redis cases skipped. Lighthouse CI ran three mobile/simulated samples and correctly exits 1 on the enforced LCP limit; its median was 2,386.457ms. Separate Redis/MCP validations remain historical. The build's generated `next-env.d.ts` was restored to its pre-existing working-tree state.
+Current validation batch: production build, lint, typecheck, **424 app tests** (five opt-in Redis cases skipped), client-bundle guard and final standalone browser flows pass. Two unchanged-settings LHCI batches measured medians **1,056.398ms** and **1,060.342ms**; accessibility 100 and CLS 0 in all six runs. Playwright/axe found no violations on Home, detail or empty Watchlist; pagination, popular/trending/day/week, search and watchlist add/remove/reload passed without page errors. No AI inference or hosted diagnostics were requested. Separate Redis/MCP validations remain historical. The pre-existing `next-env.d.ts` working-tree state and `PRD.md` were preserved.
+
+Historical R2 diagnosis before the final document-shell candidate: one exact-settings trace's Lighthouse 12.6.1 Lantern estimate ended at the common App Router runtime request (`2ki…js`, 72,438 transferred bytes), while an unthrottled trace painted the H1 at 104ms. Three DevTools-throttled diagnostics had median LCP/FCP 1,636.182ms; these alternate measurements did not replace the acceptance metric. A temporary Webpack build emitted theme-token warnings and root runtime files 1.8% larger than Turbopack, so it was discarded. The final candidate uses the unchanged Turbopack build and original LHCI settings.
 
 - [Render-path measurements and next-work boundary](../docs/LCP_RENDER_RESULTS.md)
 - [Local closeout evidence and limits](../docs/RELEASE_CHECKLIST.md)
@@ -51,7 +53,7 @@ Current validation batch: lint, typecheck, production build and **424 app tests 
 - [Single local live invocation](../docs/AI_LIVE_CHECK.md)
 - [Implemented architecture and deferred catalog-to-MCP coverage](../ARCHITECTURE.md)
 
-**This increment changes the Next.js compiler configuration/development dependency, Lighthouse CI policy and these tracking records.** No AI runtime behavior, live inference, hosted diagnostic, credential/quota operation, archive or release tag was changed. Preserve the pre-existing `PRD.md` and `next-env.d.ts` changes. All-catalog-to-MCP migration remains deferred until tool feature coverage exists; it is not a new release blocker.
+**The R1/R3 increment is commit `4a4f1ce`; the R2 shell candidate is committed and pushed on `main`.** Earlier R2 work tested Cache Components/PPR boundaries, `/discover` no-prefetch hints and below-fold card containment; the final root document is now served by the standalone HTML shell documented above. No AI runtime behavior, live inference, hosted diagnostic, credential/quota operation, deployment, archive or release tag was changed. Preserve the pre-existing `PRD.md` and `next-env.d.ts` changes. All-catalog-to-MCP migration remains deferred until tool feature coverage exists; it is not a new release blocker.
 
 ## Historical execution record
 

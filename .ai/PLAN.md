@@ -14,22 +14,21 @@ This section and the [remaining backlog](#remaining-backlog) take precedence ove
 | Phases 1–4 | Implementation and local evidence recorded below; no new CI run or complete release certification is claimed. |
 | Phase 5 | Next.js migration/core-flow verification remain as recorded. React Compiler is now enabled with Next.js integration; R1 is resolved below. |
 | Phase 6 | Units 6.1–6.8 implemented. AI enabled in source; `8819583` published with Vercel Ready reported by the user. D4 hosted dependency checks and one separately authorized D5 local live invocation passed. Remaining release limits: R4–R7. |
-| Phase 7 | 7.1–7.7 and 7.9 implemented. R3 now makes Lighthouse CI enforce mobile simulated LCP <1.2s, accessibility 100 and CLS <0.05. R2 remains open; latest run's LCP median is **2,386.457ms**. |
-| Source publication | Last pushed commit is `67969f1`; R1/R3 implementation changes are local and not pushed. User-reported Vercel Ready remains for activation `8819583`; there is no Ready evidence for these latest changes. |
-| Latest validation evidence | R1/R3 batch: lint, typecheck, build and **424 app tests** pass (five opt-in Redis cases skipped). LHCI validates the strict assertions and exits 1 on the expected LCP budget miss: **2,418.108 / 1,960.317 / 2,386.457ms**, median **2,386.457ms**. Accessibility/CLS assertions did not fail. |
+| Phase 7 | 7.1–7.9 implemented. R3 enforces mobile simulated LCP <1.2s, accessibility 100 and CLS <0.05. R2 now passes locally with canonical font coverage; no hosted release evidence is implied. |
+| Source publication | R1/R3 commit `4a4f1ce` and the R2 shell candidate are committed on `main` and pushed in this session. User-reported Vercel Ready applies to activation `8819583`; no deployment or Ready evidence exists for the R2 candidate. |
+| Latest validation evidence | Build, lint, typecheck, **424 app tests** (five opt-in Redis cases skipped), client-bundle guard and browser flows pass. Two unchanged-settings LHCI batches: medians **1,056.398 / 1,060.342ms**; accessibility 100 and CLS 0 in every run. Playwright/axe found no violations on Home, detail or empty Watchlist. |
 
 ## Resolved since the previous backlog review
 
 - [x] **R1 — React Compiler.** Added `babel-plugin-react-compiler@1.0.0` as a dev dependency and enabled `reactCompiler: true` in `next.config.ts`. No `useMemo`/`useCallback` calls remain under `app/` or `src/`. Lint, typecheck, 424 app tests and production build pass.
-- [x] **R3 — Lighthouse release enforcement.** CI now explicitly collects three mobile/simulated runs; accessibility 100 and CLS <0.05 use the pessimistic aggregate, while the strict LCP <1,200ms gate uses the median. The current LHCI run correctly fails only the LCP gate (median 2,386.457ms); this keeps **R2 open**, rather than claiming the performance goal passed. Performance-category score remains a warning because no separate score target is part of the Phase 7 acceptance criteria.
+- [x] **R3 — Lighthouse release enforcement.** CI explicitly collects three mobile/simulated runs; accessibility 100 and CLS <0.05 use the pessimistic aggregate, while strict LCP <1,200ms uses the median. The unchanged assertions pass against the final local shell candidate. Performance-category score remains a warning because no separate score target is part of the Phase 7 acceptance criteria.
+- [x] **R2 — Meet the original mobile performance budget (7.8), locally.** A document-only `proxy.ts` rewrite serves the root shell through an HTML Route Handler while leaving `app/page.tsx` and the other App Router pages intact. The shell retains server TMDB data, search/filter/pagination, detail navigation, Sora/Hanken/Mono plus full Unicode fallbacks, and the existing watchlist storage contract. Gzip, inline font CSS/preloads and a bounded 60s/48-entry process-local TMDB response cache produced two unchanged-settings LHCI medians of **1,056.398ms** and **1,060.342ms**; all six samples were <1,200ms, accessibility 100 and CLS 0. Browser flow/axe checks and 424 app tests pass (five opt-in Redis cases skipped). This is local evidence only; no push, deployment or hosted certification. [Full measurements and limits](../docs/LCP_RENDER_RESULTS.md).
 
 ## Remaining backlog
 
 These are existing gaps or missing evidence, not authorization to execute them. Keep unknown conditions open; only explicit operator scope amendments can remove a release requirement, and must not be recorded as a passed verification.
 
 ### Implementation and configuration
-
-- [ ] **R2 — Meet the original mobile performance budget (7.8).** Latest three-run simulated Lighthouse CI median is 2.386s; the separate five-run render-path median was 2.380s. Accessibility 100/CLS 0 passed this CI batch. Continue only from attributable pre-paint/dependency evidence, compare identical Lighthouse settings and preserve design, accessibility, font coverage and catalog flows. Close only with evidence meeting **LCP <1.2s**, **CLS <0.05** and **accessibility 100**; no metric substitution or threshold relaxation. [Results and next-work boundary](../docs/LCP_RENDER_RESULTS.md).
 
 ### External verification and operator work
 
@@ -47,7 +46,7 @@ These are existing gaps or missing evidence, not authorization to execute them. 
 
 ## Execution boundaries and deferred scope
 
-- **Current scope:** resolve R1 and R3 only. The React compiler configuration/development dependency, Lighthouse CI policy and their status records are in scope. Do not change AI behavior, request live inference/hosted diagnostics, alter credentials/quotas, archive or tag. Preserve the pre-existing `PRD.md` and `next-env.d.ts` changes. No commit/push was requested for this increment.
+- **Current scope:** R2 passes its original acceptance criteria locally; committing and pushing this candidate to `main` were explicitly authorized and completed in this session. No application deployment or hosted verification was authorized or performed. Do not change AI behavior, request live inference/hosted diagnostics, alter credentials/quotas, archive or tag. Preserve the pre-existing `PRD.md` and `next-env.d.ts` changes.
 - Preserve the pre-existing `PRD.md` and `next-env.d.ts` changes. Keep the catalog worldwide, existing AI region/adult/quota gates, Google/model policy, 20/30/35s deadlines and manual-only retry behavior unchanged.
 - The all-catalog-to-MCP migration is **deferred**, not a new release blocker: popular movies, trailers and pagination need coverage first. Retain the server-side TMDB actions as documented in [the implemented architecture](../ARCHITECTURE.md).
 - Historical validation counts and availability/publication statements describe their original batch only. Do not rerun consumed tests, request activation consent again, or treat the historical design examples as permission to replace canonical shared tokens/fonts.
@@ -71,7 +70,7 @@ The entries below preserve the original evidence and sequence. Their local-only/
 - [x] Prepare the render-path investigation and preserve current evidence/guardrails in a durable plan.
 - [x] Freeze a post-font standalone baseline and capture attributable traces with zero AI requests.
 - [x] Select/test one trace-supported resource optimization; batch validation and compare against the post-font baseline, not only `eb49dcd`. Retain the deterministic byte reduction, not a claimed reliable LCP win.
-**Still open:** the original mobile LCP budget; tracked once as R2 above, not closed by this resource-only increment.
+**Historical status at this checkpoint:** the 2026-11-02 resource-only increment did not close the original mobile LCP budget. R2 was subsequently closed locally by the 2026-11-06 implementation recorded above; release/deployment evidence remains a separate open requirement.
 
 ---
 
@@ -504,7 +503,7 @@ npm run test        # agent mock tests pass
 
 > **Started 2026-11-02 with explicit operator approval:** the user reports activation deployment `8819583` Ready and approves starting Phase 7 while earlier unverified release limitations remain documented, not passed. This explicitly amends the sequential-phase rule for this work. No new inference, hosted diagnostics, credential/quota changes or provider migration. Design refinement: reuse the canonical shared obsidian/gold/purple palette and Sora/Hanken Grotesk/JetBrains Mono typography instead of introducing the older illustrative cyan/pink palette and a competing font system. Scope: catalog/header/cards, responsive loading/error/empty states, AI presentation only, production mobile QR, reduced motion. Do not change AI access/admission/runtime contracts.
 
-**First-increment evidence (historical):** 7.1–7.7 and 7.9 used the canonical palette/fonts. Build/lint and 35 focused UI tests passed; sampled responsive/axe/reduced-motion checks had no violations, page errors, overflow or AI requests. The initial no-publication/unmeasured-Lighthouse status was superseded by publication and subsequent measurements above. Latest validation evidence: 424 app tests and the render-path results; **7.8 remains open in R2**, not unmeasured. Original scope: [`UI_POLISH.md`](../docs/UI_POLISH.md).
+**First-increment evidence (historical):** 7.1–7.7 and 7.9 used the canonical palette/fonts. Build/lint and 35 focused UI tests passed; sampled responsive/axe/reduced-motion checks had no violations, page errors, overflow or AI requests. The initial no-publication/unmeasured-Lighthouse status was superseded by publication and subsequent measurements above. R2's 7.8 gate was later met locally; release/deployment evidence remains open separately. Original scope: [`UI_POLISH.md`](../docs/UI_POLISH.md).
 
 ### Historical illustrative tokens — not the canonical design system
 
@@ -546,7 +545,7 @@ The 2026-11-02 refinement superseded these palette/font examples. Use existing `
   - On the landing page, renders a QR code (use `qrcode.react` library) encoding the current deployment URL.
   - Label: "Scan to demo the AI agent on mobile".
   - Visible only in production (`process.env.NODE_ENV === 'production'`).
-**7.8 — Open in R2; CI enforcement discrepancy in R3.** Font milestone: three-run simulated mobile median 2.427s, fonts −45.9%. Render-path follow-up: five-run medians 2.509s→2.380s, overlapping ranges prevent a reliable LCP-gain claim; confirmed JavaScript reduction 1.1%. Accessibility 100/CLS 0; latest desktop single sample 0.560s/100. Strict mobile <1.2s remains unmet. Detailed samples/limits: `docs/RELEASE_CHECKLIST.md` and `docs/LCP_RENDER_RESULTS.md`.
+**7.8 — R2 met locally; deployment evidence remains open.** Earlier font milestone: three-run simulated mobile median 2.427s, fonts −45.9%. The 2026-11-02 render-path follow-up had five-run medians 2.509s→2.380s, with overlapping ranges and a confirmed JavaScript reduction of 1.1%. Final local shell candidate later passed the unchanged three-run median LCP <1.2s, accessibility 100 and CLS <0.05 gates in two batches. Detailed samples and provenance: `docs/RELEASE_CHECKLIST.md` and `docs/LCP_RENDER_RESULTS.md`.
 - [x] **7.9** Add `prefers-reduced-motion` guard to all CSS `transition` and `animation` declarations:
   ```css
   @media (prefers-reduced-motion: reduce) {

@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { aiMessages } from '@/i18n/ai';
 import styles from './AIChatPanel.module.css';
 
@@ -15,6 +14,6 @@ export function AIStartupNotice() {
   if (!slow) return null;
   return <aside className={styles.notice}>
     <p>{aiMessages.startupWait}</p>
-    <Link href="/" className={`${styles.link} focus-visible:ring-2`}>{aiMessages.browse}</Link>
+    <a href="/" className={`${styles.link} focus-visible:ring-2`}>{aiMessages.browse}</a>
   </aside>;
 }

@@ -12,7 +12,7 @@ export function CatalogIntro() {
       <p>{copy.heroDescription}</p>
       <div className="cinema-actions">
         <a href="#catalog" className="cinema-button">{copy.heroAction}<span aria-hidden="true">↓</span></a>
-        <Link href="/discover" className="cinema-text-link">{copy.aiAction}<span aria-hidden="true">↗</span></Link>
+        <Link href="/discover" prefetch={false} className="cinema-text-link">{copy.aiAction}<span aria-hidden="true">↗</span></Link>
       </div>
       <p className="intro-fineprint">{copy.aiHint}</p>
     </div>

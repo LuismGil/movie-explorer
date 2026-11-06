@@ -14,19 +14,19 @@ export function Header() {
   return (
     <header className="site-header">
       <div className="header-inner">
-        <Link href="/" className="brand" aria-label={messages.navigation.appTitle}>
+        <a href="/" className="brand" aria-label={messages.navigation.appTitle}>
           <FilmMark />
           <span>{messages.navigation.appTitle}<span className="brand-tagline">{messages.navigation.tagline}</span></span>
-        </Link>
+        </a>
         <nav className="main-nav" aria-label={messages.navigation.label}>
-          <Link
+          <a
             href="/"
             aria-current={isHomeActive ? 'page' : undefined}
             className="nav-link"
           >
             {messages.navigation.home}
-          </Link>
-          <Link href="/discover" aria-current={isDiscoverActive ? 'page' : undefined}
+          </a>
+          <Link href="/discover" prefetch={false} aria-current={isDiscoverActive ? 'page' : undefined}
             className="nav-link nav-ai">
             {messages.navigation.discover}
           </Link>

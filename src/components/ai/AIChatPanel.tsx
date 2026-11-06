@@ -94,7 +94,7 @@ export function AIChatPanel({ enabled, regionUnavailable = false }: { enabled: b
         <p className={styles.muted}>{copy.description}</p>
         {enabled && <p className={styles.muted}>{copy.coldStartHint}</p>}
       </header>
-      {!enabled && <div className={styles.notice}><p>{regionUnavailable ? copy.regionUnavailable : copy.disabled}</p><Link href="/" className={`${styles.link} ${focus}`}>{copy.browse}</Link></div>}
+      {!enabled && <div className={styles.notice}><p>{regionUnavailable ? copy.regionUnavailable : copy.disabled}</p><a href="/" className={`${styles.link} ${focus}`}>{copy.browse}</a></div>}
       <form className={styles.form} onSubmit={event => { event.preventDefault(); void search({ message }); }}>
         {enabled && <fieldset className={styles.notice} disabled={pending}>
           <legend className={styles.audienceTitle}>{copy.adultTitle}</legend>
@@ -106,7 +106,7 @@ export function AIChatPanel({ enabled, regionUnavailable = false }: { enabled: b
             <span>{copy.adultDeclaration}</span>
           </label>
           <p id="ai-audience-privacy" className={styles.muted}>{copy.adultPrivacy}</p>
-          {!adultConfirmed && <Link href="/" className={`${styles.link} ${focus}`}>{copy.adultDecline}</Link>}
+          {!adultConfirmed && <a href="/" className={`${styles.link} ${focus}`}>{copy.adultDecline}</a>}
         </fieldset>}
         <label htmlFor="ai-message">{copy.label}</label>
         <textarea id="ai-message" rows={3} maxLength={1000} required value={message} disabled={!enabled || !adultConfirmed || pending}
@@ -134,10 +134,10 @@ export function AIChatPanel({ enabled, regionUnavailable = false }: { enabled: b
       {terminal?.type === 'error' && terminal.code === 'rate_limited' && <div className={styles.notice}>
         {retryAt !== undefined && <AIQuotaCountdown key={retryAt} until={retryAt} />}
         <p>{copy.rateLimitShared}</p>
-        <Link href="/" className={`${styles.link} ${focus}`}>{copy.browse}</Link>
+        <a href="/" className={`${styles.link} ${focus}`}>{copy.browse}</a>
       </div>}
       {terminal?.type === 'error' && terminal.code === 'region_unavailable' && <div className={styles.notice}>
-        <Link href="/" className={`${styles.link} ${focus}`}>{copy.browse}</Link>
+        <a href="/" className={`${styles.link} ${focus}`}>{copy.browse}</a>
       </div>}
       {terminal?.type === 'error' && enabled && adultConfirmed && lastRequest && !pending && retryAt === undefined
         && terminal.code !== 'disabled' && terminal.code !== 'region_unavailable' && (

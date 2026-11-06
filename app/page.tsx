@@ -41,6 +41,15 @@ function SearchBarSkeleton() {
   );
 }
 
+function CatalogSectionSkeleton() {
+  return (
+    <section id="catalog" className="catalog-section" aria-label={messages.home.selection}>
+      <SearchBarSkeleton />
+      <MovieGridSkeleton />
+    </section>
+  );
+}
+
 async function MovieContent({
   query,
   viewMode,
@@ -85,7 +94,7 @@ async function MovieContent({
   );
 }
 
-export default async function HomePage({ searchParams }: PageProps) {
+async function CatalogSection({ searchParams }: PageProps) {
   const params = await searchParams;
   const query = params.query || '';
   const viewMode = params.view === 'trending' ? 'trending' : 'popular';
@@ -103,9 +112,7 @@ export default async function HomePage({ searchParams }: PageProps) {
   const key = `${query}-${viewMode}-${trendingWindow}-${page}`;
 
   return (
-    <div className="catalog-page">
-      <CatalogIntro />
-      <section id="catalog" className="catalog-section" aria-label={messages.home.selection}>
+    <section id="catalog" className="catalog-section" aria-label={messages.home.selection}>
       <Suspense fallback={<SearchBarSkeleton />}>
         <SearchBar />
       </Suspense>
@@ -118,7 +125,17 @@ export default async function HomePage({ searchParams }: PageProps) {
           page={page}
         />
       </Suspense>
-      </section>
+    </section>
+  );
+}
+
+export default function HomePage({ searchParams }: PageProps) {
+  return (
+    <div className="catalog-page">
+      <CatalogIntro />
+      <Suspense fallback={<CatalogSectionSkeleton />}>
+        <CatalogSection searchParams={searchParams} />
+      </Suspense>
       {process.env.NODE_ENV === 'production' && <QRDemo />}
     </div>
   );

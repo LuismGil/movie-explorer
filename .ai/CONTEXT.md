@@ -1,5 +1,44 @@
 # Project Context
 
+## Current: 2026-11-06 — R2 Passes Locally; No Deployment
+
+R2 now meets its original local gate without changing LHCI settings, metrics,
+thresholds, canonical fonts or existing flows. The root document is rewritten by
+`proxy.ts` to an HTML Route Handler; `app/page.tsx` remains intact for the
+App Router. The shell retains server-fetched TMDB catalog data, search, popular /
+trending / day / week filters, pagination, detail navigation and the existing
+`movie-explorer:watchlist` localStorage contract. Sora/Hanken/Mono and complete
+Unicode fallbacks are served locally, with inline font CSS/preloads and gzip.
+TMDB responses use an in-process cache with a 60-second TTL and maximum 48
+entries; it is not shared across processes or persistent.
+
+Two identical-settings three-run mobile simulated LHCI batches produced medians
+**1,056.398ms** and **1,060.342ms**; all six samples were below 1,200ms, with
+accessibility 100 and CLS 0 in every run. One cold TMDB response measured about
+505–521ms; warm responses were about 5–6ms. Playwright covered pagination,
+trending windows, search, detail, and watchlist add/remove; axe found no
+violations on Home, detail or empty Watchlist. Build, lint, typecheck, bundle
+guard and **424 tests** pass (five opt-in Redis cases skipped). The user's
+pre-existing `PRD.md` and exact working-tree `next-env.d.ts` state are preserved.
+
+R2 changes are committed and pushed to `main` in this session. No hosted check,
+AI inference or deployment occurred. Keep the other R4–R11 release/closure limits
+in [`PLAN.md`](PLAN.md#remaining-backlog) open; do not archive or tag. Older
+same-day PPR-only measurements below and in the render report describe an earlier
+failed candidate, not the final local result.
+
+### Superseded same-day candidate and diagnostics
+
+The earlier Cache Components/partial-prerendered candidate had a 1,963.354ms
+median and failed R2. Deferring cards, changing poster priority, removing font
+preloads, global CSS inlining and other runtime experiments did not solve it.
+An exact trace showed Lantern's modeled estimate ending at a common App Router
+runtime chunk while an unthrottled paint occurred much earlier; alternate
+DevTools throttling was diagnostic only. The final shell candidate replaced this
+Home document path while leaving other App Router routes available. Detailed
+historical traces and rejected experiments remain in
+[`LCP_RENDER_RESULTS.md`](../docs/LCP_RENDER_RESULTS.md).
+
 ## Current: 2026-11-02 — Render Traces Captured; Catalog Copy Split Locally
 
 User reports published `c3a1cea` Vercel Ready. Preserved a post-font standalone

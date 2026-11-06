@@ -1,9 +1,6 @@
 import { timingSafeEqual } from 'node:crypto';
 import { getAiTelemetrySnapshot } from '@/server/telemetry/ai-metrics';
 
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
-
 const headers = {
   'Cache-Control': 'private, no-store',
   'Content-Type': 'application/json; charset=utf-8',

@@ -36,6 +36,6 @@ export function QRDemo() {
       <h2 id="qr-title">{messages.qr.title}</h2>
       <p>{messages.qr.description}</p>
     </div>
-    <Link href="/discover" className="cinema-text-link">{messages.qr.link}<span aria-hidden="true">↗</span></Link>
+    <Link href="/discover" prefetch={false} className="cinema-text-link">{messages.qr.link}<span aria-hidden="true">↗</span></Link>
   </aside>;
 }

@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {
   fetchMovieDetails,
@@ -18,6 +17,8 @@ import {
   type MovieDetails,
 } from '@/types/movie';
 import { messages } from '@/i18n';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { Suspense } from 'react';
 
 
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w780';
@@ -29,7 +30,9 @@ interface PageProps {
   }>;
 }
 
-export default async function MovieDetailsPage({ params }: PageProps) {
+export const instant = false;
+
+async function MovieDetailsContent({ params }: PageProps) {
   const { id } = await params;
 
   if (!id) {
@@ -124,12 +127,12 @@ export default async function MovieDetailsPage({ params }: PageProps) {
                 </div>
               )}
             </div>
-            <Link
+            <a
               href="/"
               className="cinema-text-link mt-4"
             >
               {messages.movie.goBack}
-            </Link>
+            </a>
           </div>
 
           <div className="space-y-4">
@@ -196,5 +199,13 @@ export default async function MovieDetailsPage({ params }: PageProps) {
 
       <SimilarMovies movies={similar} />
     </div>
+  );
+}
+
+export default function MovieDetailsPage({ params }: PageProps) {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <MovieDetailsContent params={params} />
+    </Suspense>
   );
 }

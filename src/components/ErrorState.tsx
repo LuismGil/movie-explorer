@@ -1,5 +1,4 @@
 import { catalogMessages as messages } from '@/i18n/catalog';
-import Link from 'next/link';
 import { FilmMark } from './FilmMark';
 
 type ErrorStateProps = {
@@ -12,7 +11,7 @@ export function ErrorState({ message }: ErrorStateProps) {
       <FilmMark />
       <h2>{messages.error.cinemaTitle}</h2>
       <p>{message ?? messages.error.cinemaDescription}</p>
-      <Link href="/" className="cinema-text-link">{messages.common.backToCatalog}</Link>
+      <a href="/" className="cinema-text-link">{messages.common.backToCatalog}</a>
     </div>
   );
 }

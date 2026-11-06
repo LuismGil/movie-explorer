@@ -27,6 +27,7 @@ dist-server
 .env.*
 !.env.example
 .lighthouseci
+/public/catalog-fonts/
 
 # Next.js build output
 .next

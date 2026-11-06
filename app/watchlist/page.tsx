@@ -3,7 +3,6 @@
 import { MovieCard } from '@/components/MovieCard';
 import { useWatchlist } from '@/context/WatchlistContext';
 import { catalogMessages as messages } from '@/i18n/catalog';
-import Link from 'next/link';
 import { FilmMark } from '@/components/FilmMark';
 
 export default function WatchlistPage() {
@@ -23,7 +22,7 @@ export default function WatchlistPage() {
           <FilmMark />
           <h2>{messages.watchlist.emptyTitle}</h2>
           <p>{messages.watchlist.empty}</p>
-          <Link href="/" className="cinema-button">{messages.common.backToCatalog}<span aria-hidden="true">↗</span></Link>
+          <a href="/" className="cinema-button">{messages.common.backToCatalog}<span aria-hidden="true">↗</span></a>
         </div>
       ) : (
         <div className="movie-grid">

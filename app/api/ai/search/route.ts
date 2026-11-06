@@ -4,7 +4,6 @@ import { createAiSearchHandler } from '@/server/ai/search-handler';
 import { runOrchestrator } from '@/server/agents/orchestrator';
 import { getMcpClient } from '@/server/mcp/client';
 
-export const runtime = 'nodejs';
 export const maxDuration = 35;
 export const POST = createAiSearchHandler({
   enabled: aiDiscoveryEnabled,

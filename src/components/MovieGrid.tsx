@@ -2,7 +2,6 @@ import { MovieCard } from './MovieCard';
 import { MovieCardSkeleton } from './MovieCardSkeleton';
 import type { MovieListItem } from '@/types/movie';
 import { catalogMessages as messages } from '@/i18n/catalog';
-import Link from 'next/link';
 
 interface MovieGridProps {
   movies: MovieListItem[];
@@ -26,7 +25,7 @@ export function MovieGrid({ movies, isLoading }: MovieGridProps) {
         <p className="cinema-eyebrow">{messages.home.searchHint}</p>
         <h2>{messages.home.noMoviesFound}</h2>
         <p>{messages.home.emptyHint}</p>
-        <Link href="/" className="cinema-button">{messages.common.backToCatalog}</Link>
+        <a href="/" className="cinema-button">{messages.common.backToCatalog}</a>
       </div>
     );
   }
