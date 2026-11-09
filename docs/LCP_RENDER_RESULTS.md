@@ -5,9 +5,11 @@
 The original acceptance criteria and `lighthouserc.json` are unchanged: mobile
 simulated three-run **median LCP <1,200ms**, accessibility **100**, and
 **CLS <0.05**. The prior R1/R3 commit is `4a4f1ce`. The R2 implementation and
-this evidence are committed and pushed to `main` in the current session; no
-application deployment or hosted verification was performed. The pre-existing
-`PRD.md` and exact working-tree state of `next-env.d.ts` are preserved.
+this evidence are committed and pushed to `main` as `3fe0b6b`. Subsequent
+production GETs served the shell and `/discover` returned HTTP 200, confirming
+the content is reachable; no Vercel dashboard Ready state or hosted Lighthouse
+verification was independently established. The pre-existing `PRD.md` and exact
+working-tree state of `next-env.d.ts` are preserved.
 
 ### Final implementation
 

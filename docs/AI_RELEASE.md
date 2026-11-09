@@ -1,21 +1,23 @@
-# AI activation — 2026-11-02
+# AI activation and release limits — updated 2026-11-09
 
-**Subsequent publication:** commit `8819583` was created and pushed to `main`; the user reports its Vercel deployment **Ready**. This is operator-reported deployment state, not a new agent-run inference or certification of the known limitations. The user explicitly approved beginning Phase 7 with these limits carried forward. Source-preparation descriptions below predate that publication.
+**Publication evidence:** activation commit `8819583` was pushed and its Vercel deployment was reported **Ready** by the operator. Later, after R2 commit `3fe0b6b` was pushed, production GETs served the new shell and `/discover` returned HTTP 200. This confirms the content was reachable, but is not an independent dashboard check of the `3fe0b6b` deployment's Ready state. The operator authorized one R7 browser inference on 2026-11-09; the attempt and precise result are in [AI_VERCEL_CHECK.md](AI_VERCEL_CHECK.md). These observations do not certify general reliability or the remaining R5/R6 conditions.
 
 ## Authorization and actual deployment state
 
-The operator explicitly delegated the startup policy and age-control implementation, and authorized turning on AI. `src/server/ai/availability.ts` now exports `true` in the working tree. This supersedes earlier instructions to wait for activation authorization; it is **not evidence of a deployed release or provider-policy certification**. The operator reported the previous geo-gate commit pushed and its tests successful.
+The operator explicitly delegated the startup policy and age-control implementation, and authorized turning on AI. `src/server/ai/availability.ts` exports `true`; production `/discover` and the AI route were reachable during the R7 attempt. The flag alone is not deployment evidence, and the incomplete stream is not provider-policy certification. The operator reported the previous geo-gate commit pushed and its tests successful.
 
-No new live inference, hosted probe, quota mutation/reset, credential change, payment, commit, push or deployment was performed for this change. The earlier one-off inference permission remains consumed; public activation authorization does not request another agent-run experiment. The operator asked to stop repetitive testing and postponed the Vercel geolocation experiment; do not silently restore diagnostics.
+The one local live inference is historical evidence in [AI_LIVE_CHECK.md](AI_LIVE_CHECK.md). A distinct, expressly authorized one-attempt hosted inference is recorded in [AI_VERCEL_CHECK.md](AI_VERCEL_CHECK.md); it used the normal shared admission and did not reset/refund quota. No extra inference, retry, credential change, payment, deployment or diagnostic restoration is authorized. The operator postponed the separate Vercel geolocation experiment (R5).
 
-## Adult access: self-declaration, not age verification
+## Adult audience decision and access control
+
+On 2026-11-09, the operator stated the expected audience is generally adults. The AI feature is positioned as an adult portfolio/technical demo and is not intended or marketed to minors. Based on those supplied facts, the release decision is that the feature is not directed to and is not likely to be accessed by under-18s. Public access means a minor cannot be ruled out; this is a reasoned audience assessment, not a guarantee or provider/legal certification. Reassess and disable Google access or choose an eligible distribution/provider if credible audience evidence changes.
 
 - Only the AI panel requires a deliberately unchecked “18 or older” checkbox. Until confirmed, input/submission is disabled; visitors can choose the public catalog instead. There are no accounts, invitations, identity providers or document uploads.
 - Every AI submission (including selection/manual retry) must include `x-ai-adult-declaration: 18-or-older-v1`. The server rejects missing/invalid declarations with HTTP 403 and `adult_confirmation_required`, before reading the body, shared admission, MCP initialization or Google requests.
 - The browser keeps the declaration only in component memory. Reloading requires confirmation again. No date of birth, document, age record, identifier or declaration cookie is collected/stored. The declaration is not included in the prompt or provider request. Application logging/telemetry does not record it.
-- **This is a user-controlled assertion, not authentication, verified age or proof that minors cannot access the feature.** The Gemini terms prohibit clients directed towards or likely accessed by under-18s; they do not endorse this checkbox as sufficient. Actual audience eligibility remains unestablished. Do not describe activation or the gate as a legal/provider-compliance certification.
+- **This is a user-controlled assertion, not authentication, verified age or proof that minors cannot access the feature.** It is a supporting friction/disclosure measure, not the basis of the audience determination by itself. The Gemini terms prohibit clients directed towards or likely accessed by under-18s. The eligibility decision above relies on the operator's stated expected audience and adult-oriented purpose; it remains subject to reassessment if those facts change. Do not describe the gate as age verification or a legal/provider-compliance certification.
 
-Official terms re-read on 2026-11-02: [Gemini age requirements](https://ai.google.dev/gemini-api/terms#age-requirements).
+Official terms re-read on 2026-11-09: [Gemini age requirements](https://ai.google.dev/gemini-api/terms#age-requirements).
 
 ## Startup policy selected under operator delegation
 
@@ -33,7 +35,7 @@ MCP initialization remains capped at 20s, total orchestration at 30s and route/c
 - Catalog access remains public worldwide. The AI-only EEA/CH/UK/unknown-country restriction is unchanged. Its use of Vercel's country header is implemented/tested locally; deployed resistance to header spoofing remains **unverified**, not waived into a pass.
 - Shared limits remain one admission/60s and ten/rolling 24h. No refunds, counter namespace changes, resets, alternate model or paid fallback.
 - The approved Google model, exact-request token preflight, token ceilings, no-store behavior, Quality-only presentation and existing data-use notice remain in force.
-- Vercel diagnostic-key removal/older diagnostic-deployment cleanup and full enabled Vercel/browser behavior remain unverified. No old deployment was deleted.
+- Vercel diagnostic-key removal/older diagnostic-deployment cleanup remain unverified (R6); no old deployment was deleted. The one hosted browser attempt is documented separately and is not a repeated reliability or quota-error test.
 
 ## Disable / rollback
 
