@@ -105,7 +105,7 @@ push/deployment. [Full trace interpretation and all samples](LCP_RENDER_RESULTS.
 | Item | Remaining boundary |
 |---|---|
 | Actual VoiceOver/NVDA audit | Requires those screen readers; automated accessibility/keyboard checks are not equivalent |
-| Country-header trust in Vercel | Previously postponed by the user; no new diagnostic or spoof-resistance claim |
+| Country-header trust in Vercel | A later no-body production spoof check found the region decision unchanged for no header and caller-supplied `GB`/`US`/`XX`; one-vantage limitation and details in [AI_GEO_CHECK.md](AI_GEO_CHECK.md). No diagnostic route was used. |
 | Adult audience eligibility | Self-declaration is not verified age or provider-policy certification |
 | Vercel diagnostic-key / old deployment cleanup | Not inspected; no credentials rotated or immutable deployments deleted |
 | Enabled hosted AI inference | No additional live inference authorized by this batch; no shared admission/reset/refund |

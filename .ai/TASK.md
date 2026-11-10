@@ -8,7 +8,7 @@ Updated 2026-11-09. **The only actionable backlog is [PLAN.md → Remaining back
 |---|---|
 | Phases 1–4 | Implemented; retained validation evidence is historical, not a fresh hosted CI pass. |
 | Phase 5 | Next.js migration/core-flow hydration fix verified within the recorded scope. React Compiler is now enabled and R1 is resolved. |
-| Phase 6 | 6.1–6.8 implemented; R4 has a documented risk-based audience decision. R5/R6 remain open; the single R7 browser attempt was inconclusive (HTTP 200 NDJSON, no terminal result/EOF). AI activation `8819583` Ready was operator-reported; no further activation approval is needed. |
+| Phase 6 | 6.1–6.8 implemented; R4 has a documented risk-based audience decision; R5 passed a scoped production spoof check. R6 remains open; the single R7 browser attempt was inconclusive (HTTP 200 NDJSON, no terminal result/EOF). AI activation `8819583` Ready was operator-reported; no further activation approval is needed. |
 | Phase 7 | Explicitly approved 2026-11-02 despite the retained Phase 6 limits. R3 enforces the original CI gates. R2 passes locally with the unchanged median LCP, accessibility and CLS requirements. |
 | Render-path follow-up | Earlier Cache Components/PPR and runtime traces are historical. The final local document-shell candidate preserves canonical Sora/Hanken/Mono and Unicode fallback coverage; two unchanged-settings LHCI medians are **1,056.398 / 1,060.342ms**. See the dated report for prior experiments and limits. |
 | Publication | R1/R3 commit `4a4f1ce` and R2 shell commit `3fe0b6b` are on `main`/`origin/main`. Production GETs served the shell and `/discover` returned 200; this does not independently establish dashboard Ready or CI for `3fe0b6b`. |
@@ -25,7 +25,7 @@ Status, evidence, acceptance and authorization boundaries are maintained **only 
 
 | IDs | Work category | Remaining work |
 |---|---|---|
-| R4–R7 | External / operator | R4 audience decision recorded with residual public-access uncertainty; R5 geo trust and R6 diagnostic cleanup remain open; R7 remains open after one inconclusive hosted attempt (see [AI_VERCEL_CHECK.md](../docs/AI_VERCEL_CHECK.md)). |
+| R4–R7 | External / operator | R4 audience decision recorded with residual public-access uncertainty; R5 scoped country-header spoof check passed; R6 diagnostic cleanup remains open; R7 remains open after one inconclusive hosted attempt (see [AI_GEO_CHECK.md](../docs/AI_GEO_CHECK.md) and [AI_VERCEL_CHECK.md](../docs/AI_VERCEL_CHECK.md)). |
 | R8 | Manual accessibility | Actual VoiceOver/NVDA audit, distinct from passed keyboard/axe samples. |
 | R9 | Release evidence | Associate actual GitHub Actions and Vercel state with the release candidate; do not confuse local evidence/publication with hosted verification. |
 | R10–R11 | Formal closure | Archive the plan and create v2.0.0 only after applicable gates/scope amendments and operator authorization. |
@@ -243,7 +243,7 @@ The goal is a usable portfolio demo with real inference, not permanent disabled 
 - [x] Review original/execution plans and Google terms; distinguish approved architecture/model from unresolved release conditions. Find stale task summaries and unfinished production Google-assertion wiring; no live provider failure has been observed.
 - [x] Document alternatives as contingencies only. Presets do not remove Google policy/eligibility constraints or silently replace free-text scope.
 - [x] **D1 operator decision:** Brazil/LatAm confirmed; Google unpaid-service data policy accepted; proceed with approved provider/model.
-**D1/D2 remaining audience/distribution conditions: open in PLAN R4; deployed geo trust in R5.** Region policy, operator consent and server interlocks are already implemented; do not reopen them as missing decisions.
+**Historical D1/D2 checkpoint:** R4 audience eligibility and R5 deployed geo trust were open at this snapshot. R4 was resolved and R5's scoped spoof check passed on 2026-11-09; see the current backlog and evidence links above. Region policy, operator consent and server interlocks are implemented; do not reopen them as missing decisions.
 - [x] **D3 implementation:** wire trusted Google assertion from server-owned availability (false) and expand pt-BR disclosure with terms link.
 - [x] **D3 verification:** production-composition mocks and existing suite pass (348 tests; five opt-in Redis cases skipped), along with lint/types/build; no live provider calls.
 - [x] **D3 quota UX:** real countdown in hours/minutes/seconds, absolute expiry/tab-resume synchronization, non-live timer for accessibility, expiry message, catalog link and no automatic requests. Updated total: 349 passing tests, five opt-in Redis cases skipped; lint/types/build pass.

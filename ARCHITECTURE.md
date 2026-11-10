@@ -46,7 +46,7 @@ The public movie catalog is worldwide. Its pages still use server-side TMDB acti
 | Route failure | App Router `app/error.tsx` with branded reset/catalog actions, not raw exception text |
 | Trailer | Client leaf; native load button and external link, privacy-enhanced YouTube iframe only on visitor intent |
 
-An adult declaration is user-controlled and ephemeral, **not verified age, authentication or proof of provider-policy eligibility**. The geolocation policy is approximate and its deployed spoof resistance remains unverified. Neither control replaces the global quota.
+An adult declaration is user-controlled and ephemeral, **not verified age, authentication or proof of provider-policy eligibility**. The deployed country-header spoof check found no decision change for caller-supplied restricted/allowed/unknown values at one network vantage; it does not establish geolocation accuracy or every ingress path. Neither control replaces the global quota. See [`AI_GEO_CHECK.md`](docs/AI_GEO_CHECK.md).
 
 ## Standalone MCP
 
