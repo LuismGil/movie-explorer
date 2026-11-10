@@ -1,12 +1,12 @@
 # AI activation and release limits — updated 2026-11-09
 
-**Publication evidence:** activation commit `8819583` was pushed and its Vercel deployment was reported **Ready** by the operator. Later, after R2 commit `3fe0b6b` was pushed, production GETs served the new shell and `/discover` returned HTTP 200. This confirms the content was reachable, but is not an independent dashboard check of the `3fe0b6b` deployment's Ready state. R5's separately scoped production country-header spoof check passed; [evidence and limitations](AI_GEO_CHECK.md). Two separately authorized one-POST R7 browser attempts were inconclusive; see [attempt record](AI_VERCEL_CHECK.md). R6 remains open; these observations do not certify general reliability.
+**Publication evidence:** activation commit `8819583` was operator-reported Ready; production GETs later served the shell after `3fe0b6b` was pushed. The third authorized R7 attempt passed for title selection: **one POST, HTTP 200 NDJSON, 12 choices rendered after client-validated EOF, 3,014ms**. A `net::ERR_ABORTED` notification is retained without claiming error-free teardown. This is not a subsequent recommendation, general reliability or independent dashboard Ready/CI certification. [R7 scope/evidence](AI_VERCEL_CHECK.md) · [R5 country-header evidence](AI_GEO_CHECK.md). R6 remains open.
 
 ## Authorization and actual deployment state
 
-The operator explicitly delegated the startup policy and age-control implementation, and authorized turning on AI. `src/server/ai/availability.ts` exports `true`; production `/discover` and the AI route were reachable during the R7 attempt. The flag alone is not deployment evidence, and the incomplete stream is not provider-policy certification. The operator reported the previous geo-gate commit pushed and its tests successful.
+The operator explicitly delegated the startup policy and age-control implementation, and authorized turning on AI. `src/server/ai/availability.ts` exports `true`; the third R7 attempt verified the production title-selection result. The flag alone is not deployment evidence, and the successful sample is not provider-policy certification. The operator reported the previous geo-gate commit pushed and its tests successful.
 
-The one local live inference is historical evidence in [AI_LIVE_CHECK.md](AI_LIVE_CHECK.md). Two distinct, expressly authorized one-POST hosted attempts are recorded in [AI_VERCEL_CHECK.md](AI_VERCEL_CHECK.md); each may have consumed the normal shared admission and/or reached generation, and neither was reset/refunded. The separate R5 country-header check was non-generative and is recorded in [AI_GEO_CHECK.md](AI_GEO_CHECK.md). Both R7 authorizations are consumed; no extra inference, retry, credential change, payment, deployment or diagnostic restoration is authorized.
+The original local live inference is separate evidence in [AI_LIVE_CHECK.md](AI_LIVE_CHECK.md). Of three separately authorized one-POST hosted attempts, the first two were inconclusive and the third produced the validated title-selection result above. Normal shared admission remained in force; no quota was reset/refunded. All three authorizations are consumed. No extra selection/inference, retry, credential change, payment, deployment or diagnostic restoration is authorized.
 
 ## Adult audience decision and access control
 
@@ -35,7 +35,7 @@ MCP initialization remains capped at 20s, total orchestration at 30s and route/c
 - Catalog access remains public worldwide. The AI-only EEA/CH/UK/unknown-country restriction is unchanged. Its use of Vercel's country header is covered by local policy tests and the scoped deployed spoof check in [AI_GEO_CHECK.md](AI_GEO_CHECK.md); that check does not establish location accuracy or behavior from every region/ingress.
 - Shared limits remain one admission/60s and ten/rolling 24h. No refunds, counter namespace changes, resets, alternate model or paid fallback.
 - The approved Google model, exact-request token preflight, token ceilings, no-store behavior, Quality-only presentation and existing data-use notice remain in force.
-- Vercel diagnostic-key removal/older diagnostic-deployment cleanup remain unverified (R6); no old deployment was deleted. R5's hosted country-header spoof check has a single-vantage scope, not a physical restricted-region test. The two R7 browser attempts are documented separately; neither is a reliability or quota-error test.
+- Vercel diagnostic-key removal/older diagnostic-deployment cleanup remain unverified (R6); no old deployment was deleted. R5 has a single-vantage scope. R7 passed the title-selection sample, not every intent, actual cold start, quota error, subsequent selection or network teardown.
 
 ## Disable / rollback
 

@@ -1,5 +1,7 @@
 # Deployment Checkpoint — 2026-10-29
 
+**Subsequent R7 result:** the third authorized production browser attempt passed title selection: one POST, HTTP 200, 12 movie choices after client-validated EOF, 3,014ms. This supersedes earlier inconclusive R7 notes below, not their missing evidence. No new deployment or further inference was made. See [scope/network caveat](AI_VERCEL_CHECK.md); independent Ready/CI evidence and R6 remain separate.
+
 **Latest evidence — 2026-11-09:** activation commit `8819583` was pushed and its deployment was reported Ready by the operator. After R2 commit `3fe0b6b` was pushed, production GETs served the shell and `/discover` returned HTTP 200; no independent dashboard Ready or CI result for `3fe0b6b` is recorded. R5's production country-header spoof check passed within a single-vantage scope ([evidence](AI_GEO_CHECK.md)). Two separately authorized one-POST production browser attempts were inconclusive; neither verified terminal completion/EOF, and the second did not retain response status/body. Both authorizations are consumed; no retry/reset is authorized. R4 is resolved from the operator's adult-audience expectation, with residual public-access uncertainty; R6 remains open. [R7 attempt evidence](AI_VERCEL_CHECK.md) · [Current release state](AI_RELEASE.md).
 
 ## Activation source update — 2026-11-02 (publication reported subsequently)

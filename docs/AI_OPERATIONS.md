@@ -1,5 +1,7 @@
 # AI Operations — Phase 6.8
 
+**Latest R7 result:** the third authorized production attempt passed the title-selection path (one POST, HTTP 200, 12 choices after client-validated EOF, 3,014ms). No second selection/retry/reset was sent. Earlier two-attempt/inconclusive notes below are historical; see [evidence and network caveat](AI_VERCEL_CHECK.md). R6 remains open.
+
 ## Current operational/release state — 2026-11-09
 
 The user explicitly authorized activation and delegated startup/age controls. Source availability is true; activation commit `8819583` was reported Ready by the operator. Production GETs later served the R2 shell and `/discover` returned HTTP 200; this does not independently confirm dashboard Ready or CI for `3fe0b6b`. R4 is resolved from the operator's adult-audience expectation and adult portfolio-demo positioning, with residual public-access uncertainty; self-declaration is not verified age. R5's no-body production spoof check passed at one network vantage without reaching admission/provider work ([evidence](AI_GEO_CHECK.md)). Two separately authorized R7 browser POSTs were inconclusive; neither verified terminal completion/EOF, and the second did not retain response status/body ([evidence](AI_VERCEL_CHECK.md)). Both authorizations are consumed; no retry/reset is authorized. R6 diagnostic cleanup remains open. [Release decision/rollback](AI_RELEASE.md).

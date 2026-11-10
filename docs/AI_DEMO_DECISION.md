@@ -1,5 +1,7 @@
 # AI Portfolio Demo — Privacy and Activation Decision
 
+**Subsequent R7 result:** the third separately authorized browser attempt passed the title-selection path: one POST, HTTP 200 NDJSON, 12 choices rendered after client-validated EOF, 3,014ms. No follow-up selection/retry/reset was made; the network-abort notification and scope limits are retained in [AI_VERCEL_CHECK.md](AI_VERCEL_CHECK.md). This supersedes the earlier inconclusive R7 status below; R6 remains open.
+
 Updated: **2026-11-09**. The operator states the expected audience is generally adults; the AI feature is an adult portfolio/technical demo and is not intended or marketed to minors. On those facts, the risk-based decision is that the feature is not directed to and is not likely to be accessed by under-18s. Because the site is public, under-18 access cannot be ruled out; the checkbox remains self-declaration, not age verification or proof. This is not a provider/legal certification. Two separately authorized R7 production browser attempts were inconclusive; neither verified a terminal result/EOF. [Attempt evidence](AI_VERCEL_CHECK.md). [Current activation details, limitations and rollback](AI_RELEASE.md).
 
 **Earlier live execution:** a separately authorized private local-handler invocation used live Google/Upstash/Render and returned 12 Quality-approved movies with 237 model tokens in 4.275s. It is local evidence, distinct from the two one-POST hosted browser attempts separately authorized on 2026-11-09. [Local evidence](AI_LIVE_CHECK.md); [hosted evidence](AI_VERCEL_CHECK.md).
