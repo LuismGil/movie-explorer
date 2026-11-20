@@ -1,5 +1,18 @@
 # Render-path investigation
 
+## R9 CI comparison — 2026-11-09
+
+The authorized push produced candidate `0632582c40f8c717a6691d861ecf165732719b94` and [CI run #36](https://github.com/LuismGil/movie-explorer/actions/runs/42733042364). Browser installation on pinned Ubuntu 24.04 and the accessibility/MCP checks passed. Lighthouse failed: samples **1,207.2798 / 1,206.78 / 1,207.2577ms**, median **1,207.2577ms**. Docker was skipped. Vercel's status for that exact commit reports deployment completed. This is not a passing complete CI.
+
+The workflow uses `${{ secrets.TMDB_API_KEY || 'dummy' }}` for its browser audits. Two local three-run batches against the **same existing standalone build and unchanged `lighthouserc.json`** distinguish an important configuration effect:
+
+| Local configuration | LCP samples (ms) | Median | Page evidence |
+|---|---|---:|---|
+| Explicit `TMDB_API_KEY=dummy` | 1,228.8046 / 1,222.6262 / 1,215.4517 | **1,222.6262ms — fail** | Catalog error state; no poster requests |
+| Existing valid local catalog configuration | 1,066.2166 / 1,062.4098 / 1,060.4683 | **1,062.4098ms — pass** | Populated catalog; 8 poster requests per run; accessibility 100 / CLS 0 |
+
+The LCP node in the inspected failing local report remains `h1#catalog-title`. These samples do **not** prove the remote secret is missing/invalid or isolate all timing causes. They justify checking that a valid **GitHub Actions** repository secret named `TMDB_API_KEY` is available; configuring it in Vercel alone does not supply it to GitHub Actions. No credential value was printed/read for this comparison. No fonts, source UI, Lighthouse settings, thresholds or workflow were changed. No Google/MCP/admission call or extra deployment was made. Hosted R9 remains open pending the actual rerun result.
+
 ## R2 local closeout — 2026-11-06
 
 The original acceptance criteria and `lighthouserc.json` are unchanged: mobile

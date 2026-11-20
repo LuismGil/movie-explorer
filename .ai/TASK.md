@@ -11,7 +11,7 @@ Updated 2026-11-09. **The only actionable backlog is [PLAN.md → Remaining back
 | Phase 6 | 6.1–6.8 implemented; R4 audience decision and R5 spoof check recorded. R7 passed its third authorized attempt: one POST, HTTP 200, 12 title choices after client-validated EOF, 3,014ms. Network-abort caveat retained in the evidence. R6 remains open. |
 | Phase 7 | Explicitly approved 2026-11-02 despite the retained Phase 6 limits. R3 enforces the original CI gates. R2 passes locally with the unchanged median LCP, accessibility and CLS requirements. |
 | Render-path follow-up | Earlier Cache Components/PPR and runtime traces are historical. The final local document-shell candidate preserves canonical Sora/Hanken/Mono and Unicode fallback coverage; two unchanged-settings LHCI medians are **1,056.398 / 1,060.342ms**. See the dated report for prior experiments and limits. |
-| Publication | `3fe0b6b` Ready is screenshot-backed; CI #35 failed at browser installation. The operator now explicitly authorizes committing/pushing the Ubuntu 24.04 runner fix and pending evidence, including automatic Vercel deployment. New hosted results are pending verification. |
+| Publication | `13d160a` / `0632582` are pushed under explicit authorization. Vercel reports deployment complete for `0632582`; CI #36 passes browser installation/accessibility/MCP but fails Lighthouse (median 1,207.2577ms); Docker skipped. |
 
 ## Resolved in the 2026-11-06 batch
 
@@ -27,7 +27,7 @@ Status, evidence, acceptance and authorization boundaries are maintained **only 
 |---|---|---|
 | R4–R7 | External / operator | R4/R5/R7 resolved within their recorded limits. R6: October 29 deployment deletion is operator-confirmed; Project / Production key absence is screenshot-backed; Shared/other-environment key absence still needs confirmation. |
 | R8 | Manual accessibility | Actual VoiceOver/NVDA audit, distinct from passed keyboard/axe samples. |
-| R9 | Release evidence | Playwright 1.60.0 cannot install Chromium on Ubuntu 26.04; browser runner is pinned to ubuntu-24.04 with all gates intact. Publication/automatic deployment are expressly authorized; verify the resulting candidate CI and deployment state. |
+| R9 | Release evidence | Browser-runner fix works. Lighthouse remains failing; local same-build/config comparison fails with dummy TMDB credentials but passes with valid local catalog configuration. Confirm the GitHub Actions TMDB secret, then rerun the failed job. Remote credential state is not independently verified; no threshold/design change is selected from this evidence. |
 | R10–R11 | Formal closure | Archive the plan and create v2.0.0 only after applicable gates/scope amendments and operator authorization. |
 
 ## Completed decisions — do not reopen or rerun automatically
