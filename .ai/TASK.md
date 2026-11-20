@@ -25,8 +25,8 @@ Status, evidence, acceptance and authorization boundaries are maintained **only 
 
 | IDs | Work category | Remaining work |
 |---|---|---|
-| R8 | Manual accessibility | Actual VoiceOver/NVDA audit, distinct from passed keyboard/axe samples. |
-| R10–R11 | Formal closure | Archive the plan and create v2.0.0 only after applicable gates/scope amendments and operator authorization. |
+| R8 | Manual accessibility | [Partial Orca evidence](../docs/SCREEN_READER_AUDIT.md): movie-title link and mocked AI selection/error confirmed. The operator stopped the walkthrough; unverified cases remain open. |
+| R10–R11 | Formal closure | R10 handoff prepared in the plan; first obtain an explicit R8 scope decision. Archive only after closure, and leave `v2.0.0` for separate authorization. |
 
 ## Completed decisions — do not reopen or rerun automatically
 
