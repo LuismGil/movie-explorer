@@ -1,5 +1,15 @@
 # Render-path investigation
 
+## R9 CI rerun and diagnostic — 2026-11-19
+
+[Run #36, attempt 2](https://github.com/LuismGil/movie-explorer/actions/runs/42733042364/attempts/2) tested the same `0632582` SHA. The Lighthouse log shows LCP samples **1,559.460555 / 3,144.859875 / 3,212.159875ms**. The median failed the unchanged gate; Docker was skipped. GitHub lists no report artifacts. The operator confirms `TMDB_API_KEY` is listed under GitHub Actions repository secrets; the existing log does not show whether the audited home rendered movie cards or an error.
+
+The diagnostic workflow records whether the secret was supplied (not whether it is valid), without logging its value. The existing `dummy` fallback is explicitly reported when used. After Lighthouse, a read-only summary lists per-run simulated LCP, observed document response time and counts of TMDB poster requests and successful responses. A poster request indicates the measured document rendered catalog data; zero requests alone does not prove an error. Open the corresponding report screenshot to distinguish the populated, empty and error states, then inspect the LCP element and breakdown in the report. The summary issues no requests and cannot warm the measured server.
+
+Download `lighthouse-reports-attempt-<n>` from the new run's **Artifacts** section, even if the Lighthouse assertion fails. It includes only the collected HTML/JSON reports and assertion results; retention is seven days. No app code or Lighthouse budget changed, and Docker still runs only after the preceding gates pass. The operator authorized publication; hosted validation for the diagnostic is still pending. Rerunning #36 will not exercise it.
+
+Local checks: the workflow YAML parses with existing gates intact; a shell stub verified the secret presence/fallback branches without exposing the supplied value. The summary works with saved reports and synthetic missing/empty/failed image cases. In an isolated offline simulation using existing reports and injected failing timings, the real LHCI assertion failed at the original budget and retained all three reports plus the assertion JSON. GitHub artifact upload is not yet verified.
+
 ## R9 CI comparison — 2026-11-09
 
 The authorized push produced candidate `0632582c40f8c717a6691d861ecf165732719b94` and [CI run #36](https://github.com/LuismGil/movie-explorer/actions/runs/42733042364). Browser installation on pinned Ubuntu 24.04 and the accessibility/MCP checks passed. Lighthouse failed: samples **1,207.2798 / 1,206.78 / 1,207.2577ms**, median **1,207.2577ms**. Docker was skipped. Vercel's status for that exact commit reports deployment completed. This is not a passing complete CI.

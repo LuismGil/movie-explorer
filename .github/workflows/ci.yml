@@ -67,12 +67,38 @@ jobs:
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY || 'dummy' }}
 
       - name: Run Lighthouse CI Budget Check
-        run: npx lhci autorun
+        id: lighthouse
+        run: |
+          if [[ -n "$TMDB_API_KEY" ]]; then
+            echo 'Lighthouse: TMDB_API_KEY supplied by GitHub Actions (validity not verified).'
+          else
+            echo '::warning::Lighthouse: TMDB_API_KEY unavailable; using the existing dummy fallback.'
+          fi
+          TMDB_API_KEY="${TMDB_API_KEY:-dummy}" npx lhci autorun
         env:
-          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY || 'dummy' }}
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
 
       - name: Docker Build Smoke Test
         run: docker build -t movie-explorer:latest .
+
+      - name: Summarize Lighthouse Catalog Evidence
+        if: ${{ !cancelled() && (steps.lighthouse.outcome == 'success' || steps.lighthouse.outcome == 'failure') }}
+        continue-on-error: true
+        run: node scripts/summarize-lighthouse-catalog.mjs
+
+      - name: Upload Lighthouse Reports
+        if: ${{ !cancelled() && (steps.lighthouse.outcome == 'success' || steps.lighthouse.outcome == 'failure') }}
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports-attempt-${{ github.run_attempt }}
+          path: |
+            .lighthouseci/lhr-*.json
+            .lighthouseci/lhr-*.html
+            .lighthouseci/assertion-results.json
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
 
   mcp-gate:
     name: Quality Gate (MCP Server)

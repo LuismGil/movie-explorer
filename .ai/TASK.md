@@ -1,6 +1,6 @@
 # Current work — Phase 7 / release reconciliation
 
-Updated 2026-11-09. **The only actionable backlog is [PLAN.md → Remaining backlog](PLAN.md#remaining-backlog).** This file is its summary/index; do not create duplicate open checkboxes or treat historical checkpoints as current instructions.
+Updated 2026-11-19. **The only actionable backlog is [PLAN.md → Remaining backlog](PLAN.md#remaining-backlog).** This file is its summary/index; do not create duplicate open checkboxes or treat historical checkpoints as current instructions.
 
 ## Current state
 
@@ -11,7 +11,7 @@ Updated 2026-11-09. **The only actionable backlog is [PLAN.md → Remaining back
 | Phase 6 | 6.1–6.8 implemented; R4 audience decision and R5 spoof check recorded. R7 passed its third authorized attempt: one POST, HTTP 200, 12 title choices after client-validated EOF, 3,014ms. Network-abort caveat retained in the evidence. R6 remains open. |
 | Phase 7 | Explicitly approved 2026-11-02 despite the retained Phase 6 limits. R3 enforces the original CI gates. R2 passes locally with the unchanged median LCP, accessibility and CLS requirements. |
 | Render-path follow-up | Earlier Cache Components/PPR and runtime traces are historical. The final local document-shell candidate preserves canonical Sora/Hanken/Mono and Unicode fallback coverage; two unchanged-settings LHCI medians are **1,056.398 / 1,060.342ms**. See the dated report for prior experiments and limits. |
-| Publication | `13d160a` / `0632582` are pushed under explicit authorization. Vercel reports deployment complete for `0632582`; CI #36 passes browser installation/accessibility/MCP but fails Lighthouse (median 1,207.2577ms); Docker skipped. |
+| Publication | `13d160a` / `0632582` are pushed under explicit authorization. Vercel reports deployment complete for `0632582`; CI #36 passes browser installation/accessibility/MCP but fails Lighthouse in both attempts; Docker skipped. |
 
 ## Resolved in the 2026-11-06 batch
 
@@ -27,7 +27,7 @@ Status, evidence, acceptance and authorization boundaries are maintained **only 
 |---|---|---|
 | R4–R7 | External / operator | R4/R5/R7 resolved within their recorded limits. R6: October 29 deployment deletion is operator-confirmed; Project / Production key absence is screenshot-backed; Shared/other-environment key absence still needs confirmation. |
 | R8 | Manual accessibility | Actual VoiceOver/NVDA audit, distinct from passed keyboard/axe samples. |
-| R9 | Release evidence | Browser-runner fix works. Lighthouse remains failing; local same-build/config comparison fails with dummy TMDB credentials but passes with valid local catalog configuration. Confirm the GitHub Actions TMDB secret, then rerun the failed job. Remote credential state is not independently verified; no threshold/design change is selected from this evidence. |
+| R9 | Release evidence | Lighthouse still fails; attempt 2 measured **3,144.86ms** and kept no reports. The repository secret is listed per operator; runtime validity is unverified. Diagnostic publication is authorized; verification requires a new candidate CI run. |
 | R10–R11 | Formal closure | Archive the plan and create v2.0.0 only after applicable gates/scope amendments and operator authorization. |
 
 ## Completed decisions — do not reopen or rerun automatically
