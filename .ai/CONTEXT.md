@@ -1,5 +1,9 @@
 # Project Context
 
+## Current — v2 execution archived
+
+R10 is complete; the execution record is in [the v2 archive](context/archive/PLAN_v2_complete.md). R8 was closed by accepted scope amendment, not by a full screen-reader audit. [The active plan](PLAN.md#remaining-backlog) tracks only the pending R11 tag authorization. The dated entries below are historical snapshots.
+
 ## Current: 2026-11-06 — R2 Passes Locally; No Deployment
 
 R2 now meets its original local gate without changing LHCI settings, metrics,

@@ -1,6 +1,6 @@
-# Current work — Phase 7 / release reconciliation
+# Current work — v2 release follow-up
 
-Updated 2026-11-19. **The only actionable backlog is [PLAN.md → Remaining backlog](PLAN.md#remaining-backlog).** This file is its summary/index; do not create duplicate open checkboxes or treat historical checkpoints as current instructions.
+**The only actionable backlog is [PLAN.md → Remaining backlog](PLAN.md#remaining-backlog).** The [v2 execution plan](context/archive/PLAN_v2_complete.md) is archived. The records below retain the original phase evidence and do not authorize new work.
 
 ## Current state
 
@@ -25,8 +25,7 @@ Status, evidence, acceptance and authorization boundaries are maintained **only 
 
 | IDs | Work category | Remaining work |
 |---|---|---|
-| R8 | Manual accessibility | [Partial Orca evidence](../docs/SCREEN_READER_AUDIT.md): movie-title link and mocked AI selection/error confirmed. The operator stopped the walkthrough; unverified cases remain open. |
-| R10–R11 | Formal closure | R10 handoff prepared in the plan; first obtain an explicit R8 scope decision. Archive only after closure, and leave `v2.0.0` for separate authorization. |
+| R11 | Release publication | R10 is complete. The `v2.0.0` tag remains pending separate authorization and target SHA confirmation. |
 
 ## Completed decisions — do not reopen or rerun automatically
 

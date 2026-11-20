@@ -1,6 +1,6 @@
 # R8 — Manual screen-reader audit
 
-**Status:** manual walkthrough stopped at the operator's request, with partial Orca evidence recorded below. The operator explicitly authorized Orca on Linux instead of VoiceOver/NVDA. R8 remains open; do not infer a pass for untested cases.
+**Status:** R8 closed by operator-accepted scope amendment. The operator authorized Orca on Linux instead of VoiceOver/NVDA and accepted the observations below for this release without repeating the walkthrough. Untested cases are not passes.
 
 ## Setup
 
@@ -28,6 +28,6 @@ An isolated Xephyr/D-Bus run with Orca and native keyboard input captured Orca s
 ## Desktop observations (operator-reported, in progress)
 
 - `MovieCard`, no-poster fixture: the operator heard “sem imagem” and a link announcement, and then confirmed that Orca also read the movie title. The configured speech rate made exact wording hard to distinguish. The toggle name/state and `Header` current-page announcement are not yet recorded.
-- The operator could not identify the Watchlist toggle in this walkthrough. Defer that case rather than treating it as passed or concluding that Orca failed to announce it.
+- The operator initially could not identify the Watchlist toggle and later confirmed its pressed state. Focus after removing the card from Watchlist was not verified.
 - `AIChatPanel`, mocked `selection`: the operator confirmed Orca announced “Qual destes filmes?” without moving focus. This records the result announcement only, not the progress announcements, EOF timing or selection controls.
 - `AIChatPanel`, mocked `error`: the operator confirmed the error was announced without moving focus, including “Tente novamente mais tarde ou …”. This verifies the announcement, not keyboard access to the retry control.

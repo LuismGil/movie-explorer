@@ -102,6 +102,8 @@ push/deployment. [Full trace interpretation and all samples](LCP_RENDER_RESULTS.
 
 ## Deliberately not fabricated or performed
 
+The table below describes the original validation batch. For the current release state, see the [v2 archive](../.ai/context/archive/PLAN_v2_complete.md) and [active plan](../.ai/PLAN.md). Subsequent operator-confirmed cleanup closed R6, the scoped Orca audit closed R8 by amendment, and CI #37 closed R9 for its candidate. The plan is archived; the release tag remains pending separate authorization.
+
 | Item | Remaining boundary |
 |---|---|
 | Actual VoiceOver/NVDA audit | Requires those screen readers; automated accessibility/keyboard checks are not equivalent |

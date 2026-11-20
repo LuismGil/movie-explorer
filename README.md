@@ -379,7 +379,7 @@ Generated TestSprite scripts/reports are local artifacts, not part of the commit
 - [x] Enable standalone server builds and distroless deployment.
 - [x] Complete core-flow production verification: deployed watchlist hydration fix passes user and agent live browser retesting without React errors.
 
-### Phase 6 — AI-native Layer 🔄
+### Phase 6 — AI-native Layer 🟩
 - [x] **6.0** Entry approvals complete: architecture/contracts, credential availability, and explicit `gemini-3.1-flash-lite`/no-alternate-fallback policy. Provider access/billing and actual Next.js-to-MCP integration remain separate implementation/verification work.
 - [x] **6.1** Standalone Streamable HTTP MCP foundation with authentication, health endpoints, and independent tooling.
 - [x] **6.2** Five TMDB tools with Zod validation and mocked tests.
@@ -389,13 +389,13 @@ Generated TestSprite scripts/reports are local artifacts, not part of the commit
 - [x] **6.6** Orchestrator: intent planning, agent sequencing, and execution budgets.
 - [x] **6.7** Accessible streaming UI for validated data and controlled progress events.
 - [x] **6.8** Cache policy, distributed admission, and token/latency observability.
-- [ ] **6.9** Hardening, integration verification, deployment checks, and documentation closure.
+- [x] **6.9** Hardening, integration verification, deployment checks, and documentation closure within the scopes recorded in the [v2 archive](.ai/context/archive/PLAN_v2_complete.md).
 
-Before removing existing TMDB actions, resolve MCP coverage for popular movies, trailers, and trending pagination. The current five tools do not replace every UI request. User-authorized AI activation is implemented and its deployment Ready is user-reported; remaining release limitations are retained rather than blocking the explicitly approved Phase 7 work. See [architecture](ARCHITECTURE.md) and [closeout](docs/RELEASE_CHECKLIST.md).
+Before removing existing TMDB actions, resolve MCP coverage for popular movies, trailers, and trending pagination. The current five tools do not replace every UI request. User-authorized AI activation is implemented and its deployment Ready is user-reported; the scoped hosted results are not a certification of all intents. See [architecture](ARCHITECTURE.md) and [closeout](docs/RELEASE_CHECKLIST.md).
 
-### Phase 7 — Premium UI Polish 🔄
+### Phase 7 — Premium UI Polish 🟩
 - [x] Shared cinema design system — fluid grid, poster-led cards, reduced-motion-safe micro-interactions.
 - [x] Refined skeleton loading visualizers.
 - [x] Real App Router visual error boundary with reset/catalog actions.
 - [x] Deferred production-only mobile QR linking to the existing gated AI page.
-- [ ] Close measured performance/release goals; evidence and remaining limitations are explicit in the release checklist.
+- [x] Close measured performance gates in candidate CI; record the scope and limitations of the Orca accessibility checks. The execution plan is archived; the [release tag](.ai/PLAN.md#remaining-backlog) remains pending separate authorization.
