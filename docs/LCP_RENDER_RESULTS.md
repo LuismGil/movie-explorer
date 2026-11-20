@@ -1,14 +1,20 @@
 # Render-path investigation
 
+## R9 candidate CI closeout
+
+[GitHub Actions #37](https://github.com/LuismGil/movie-explorer/actions/runs/44645358587) completed successfully for full SHA `381dff6f0ee76117d65f56c980a358730241329a`. The Next.js standalone job passed accessibility, the unchanged Lighthouse thresholds (three simulated mobile runs, median LCP <1,200ms, accessibility 100 and CLS <0.05), and the Docker build smoke test. The MCP job also passed. Vercel's status for the same SHA reports `Deployment has completed`.
+
+GitHub lists the [Lighthouse report artifact](https://github.com/LuismGil/movie-explorer/actions/runs/44645358587/artifacts/14587359816) as `lighthouse-reports-attempt-1`. Exact hosted timings and poster counts were not independently read from it. This closes the CI/deployment-status gate for this SHA, not the root cause of #36's failures or performance measured against the deployed Vercel URL. No rerun was needed.
+
 ## R9 CI rerun and diagnostic — 2026-11-19
 
 [Run #36, attempt 2](https://github.com/LuismGil/movie-explorer/actions/runs/42733042364/attempts/2) tested the same `0632582` SHA. The Lighthouse log shows LCP samples **1,559.460555 / 3,144.859875 / 3,212.159875ms**. The median failed the unchanged gate; Docker was skipped. GitHub lists no report artifacts. The operator confirms `TMDB_API_KEY` is listed under GitHub Actions repository secrets; the existing log does not show whether the audited home rendered movie cards or an error.
 
 The diagnostic workflow records whether the secret was supplied (not whether it is valid), without logging its value. The existing `dummy` fallback is explicitly reported when used. After Lighthouse, a read-only summary lists per-run simulated LCP, observed document response time and counts of TMDB poster requests and successful responses. A poster request indicates the measured document rendered catalog data; zero requests alone does not prove an error. Open the corresponding report screenshot to distinguish the populated, empty and error states, then inspect the LCP element and breakdown in the report. The summary issues no requests and cannot warm the measured server.
 
-Download `lighthouse-reports-attempt-<n>` from the new run's **Artifacts** section, even if the Lighthouse assertion fails. It includes only the collected HTML/JSON reports and assertion results; retention is seven days. No app code or Lighthouse budget changed, and Docker still runs only after the preceding gates pass. The operator authorized publication; hosted validation for the diagnostic is still pending. Rerunning #36 will not exercise it.
+The authorized diagnostic uploads `lighthouse-reports-attempt-<n>` to the run's **Artifacts** section, even if the Lighthouse assertion fails. It includes only the collected HTML/JSON reports and assertion results; retention is seven days. No app code or Lighthouse budget changed, and Docker still runs only after the preceding gates pass. Rerunning #36 will not exercise it; #37 ran the diagnostic candidate.
 
-Local checks: the workflow YAML parses with existing gates intact; a shell stub verified the secret presence/fallback branches without exposing the supplied value. The summary works with saved reports and synthetic missing/empty/failed image cases. In an isolated offline simulation using existing reports and injected failing timings, the real LHCI assertion failed at the original budget and retained all three reports plus the assertion JSON. GitHub artifact upload is not yet verified.
+Local checks: the workflow YAML parses with existing gates intact; a shell stub verified the secret presence/fallback branches without exposing the supplied value. The summary works with saved reports and synthetic missing/empty/failed image cases. In an isolated offline simulation using existing reports and injected failing timings, the real LHCI assertion failed at the original budget and retained all three reports plus the assertion JSON. GitHub artifact upload was subsequently verified on the passing #37 run.
 
 ## R9 CI comparison — 2026-11-09
 
@@ -21,7 +27,7 @@ The workflow uses `${{ secrets.TMDB_API_KEY || 'dummy' }}` for its browser audit
 | Explicit `TMDB_API_KEY=dummy` | 1,228.8046 / 1,222.6262 / 1,215.4517 | **1,222.6262ms — fail** | Catalog error state; no poster requests |
 | Existing valid local catalog configuration | 1,066.2166 / 1,062.4098 / 1,060.4683 | **1,062.4098ms — pass** | Populated catalog; 8 poster requests per run; accessibility 100 / CLS 0 |
 
-The LCP node in the inspected failing local report remains `h1#catalog-title`. These samples do **not** prove the remote secret is missing/invalid or isolate all timing causes. They justify checking that a valid **GitHub Actions** repository secret named `TMDB_API_KEY` is available; configuring it in Vercel alone does not supply it to GitHub Actions. No credential value was printed/read for this comparison. No fonts, source UI, Lighthouse settings, thresholds or workflow were changed. No Google/MCP/admission call or extra deployment was made. Hosted R9 remains open pending the actual rerun result.
+The LCP node in the inspected failing local report remains `h1#catalog-title`. These samples do **not** prove the remote secret was missing/invalid or isolate all timing causes. They justified checking that a valid **GitHub Actions** repository secret named `TMDB_API_KEY` was available; configuring it in Vercel alone does not supply it to GitHub Actions. No credential value was printed/read for this comparison. No fonts, source UI, Lighthouse settings, thresholds or workflow were changed. No Google/MCP/admission call or extra deployment was made for this comparison. The newer passing candidate is documented in the R9 closeout above.
 
 ## R2 local closeout — 2026-11-06
 

@@ -6,12 +6,12 @@ Updated 2026-11-19. **The only actionable backlog is [PLAN.md → Remaining back
 
 | Area | Status |
 |---|---|
-| Phases 1–4 | Implemented; retained validation evidence is historical, not a fresh hosted CI pass. |
+| Phases 1–4 | Implemented; candidate CI, including the Docker build smoke test, passed in R9. |
 | Phase 5 | Next.js migration/core-flow hydration fix verified within the recorded scope. React Compiler is now enabled and R1 is resolved. |
-| Phase 6 | 6.1–6.8 implemented; R4 audience decision and R5 spoof check recorded. R7 passed its third authorized attempt: one POST, HTTP 200, 12 title choices after client-validated EOF, 3,014ms. Network-abort caveat retained in the evidence. R6 remains open. |
-| Phase 7 | Explicitly approved 2026-11-02 despite the retained Phase 6 limits. R3 enforces the original CI gates. R2 passes locally with the unchanged median LCP, accessibility and CLS requirements. |
+| Phase 6 | 6.1–6.8 implemented; R4–R7 closed within their documented scopes. R6 is operator-confirmed; R7 remains limited to the tested title-selection outcome, with its network-abort caveat. |
+| Phase 7 | Explicitly approved 2026-11-02 despite the retained Phase 6 limits. The original Lighthouse budget passed locally (R2) and in candidate CI (R9). The manual screen-reader audit (R8) is still open. |
 | Render-path follow-up | Earlier Cache Components/PPR and runtime traces are historical. The final local document-shell candidate preserves canonical Sora/Hanken/Mono and Unicode fallback coverage; two unchanged-settings LHCI medians are **1,056.398 / 1,060.342ms**. See the dated report for prior experiments and limits. |
-| Publication | `13d160a` / `0632582` are pushed under explicit authorization. Vercel reports deployment complete for `0632582`; CI #36 passes browser installation/accessibility/MCP but fails Lighthouse in both attempts; Docker skipped. |
+| Publication | [CI #37](https://github.com/LuismGil/movie-explorer/actions/runs/44645358587) passed Lighthouse, accessibility, Docker and MCP for `381dff6`; Vercel reports deployment completed for the same SHA. |
 
 ## Resolved in the 2026-11-06 batch
 
@@ -25,9 +25,7 @@ Status, evidence, acceptance and authorization boundaries are maintained **only 
 
 | IDs | Work category | Remaining work |
 |---|---|---|
-| R4–R7 | External / operator | R4/R5/R7 resolved within their recorded limits. R6: October 29 deployment deletion is operator-confirmed; Project / Production key absence is screenshot-backed; Shared/other-environment key absence still needs confirmation. |
 | R8 | Manual accessibility | Actual VoiceOver/NVDA audit, distinct from passed keyboard/axe samples. |
-| R9 | Release evidence | Lighthouse still fails; attempt 2 measured **3,144.86ms** and kept no reports. The repository secret is listed per operator; runtime validity is unverified. Diagnostic publication is authorized; verification requires a new candidate CI run. |
 | R10–R11 | Formal closure | Archive the plan and create v2.0.0 only after applicable gates/scope amendments and operator authorization. |
 
 ## Completed decisions — do not reopen or rerun automatically
@@ -36,7 +34,7 @@ Status, evidence, acceptance and authorization boundaries are maintained **only 
 - AI-only EEA/CH/UK/unknown-country restriction and mandatory adult self-declaration are implemented; actual audience eligibility and deployed signal trust are **not** proven by those controls.
 - Bounded, demand-driven MCP preparation before Google is selected/implemented under operator delegation: 20s initialization / 30s pipeline / 35s route/UI. Longer Render Free wake-ups can fail; no SLA, polling, keep-alive or automatic retry is implied.
 - D4 hosted dependency probes passed per operator output: Upstash **83ms**, Render/MCP **928ms**, total **1,015ms**. These tested paths are complete, not a pending request to restore diagnostics or inspect the production counter.
-- Diagnostic route/caller retired; production GET/POST 404 recorded and dedicated key absent locally. Vercel key/old-deployment cleanup remains R6.
+- Diagnostic route/caller retired; production GET/POST 404 recorded and dedicated key absent locally. Vercel key/old-deployment cleanup is operator-confirmed (R6).
 - One separately authorized D5 local live pipeline passed: **237 tokens**, **4,275ms**, 12 approved movies. That permission is consumed; it is not enabled Vercel/browser evidence or authorization for another invocation.
 - Activation `8819583` publication/user-reported Ready and the Phase 7 ordering exception are already recorded. Do not ask to approve activation or Phase 7 again.
 
@@ -251,7 +249,7 @@ The goal is a usable portfolio demo with real inference, not permanent disabled 
 - [x] **D4 execution:** operator-supplied output confirms both checks passed: Upstash 83ms, MCP 928ms, total 1,015ms; no Google or real admission-counter access.
 - [x] **D4 local retirement:** remove temporary diagnostic/caller/helper/tests/command/example key. Lint/types/build, 349 remaining tests and local production route-removal/disabled-AI smoke pass.
 - [x] **D4 hosted route retirement:** `e8b314c` pushed and production diagnostic GET/POST both return 404.
-**D4 remaining cleanup: open in PLAN R6.** Startup policy was subsequently delegated/selected/implemented; do not request its approval again. Longer wake-up failures remain a known limitation under R7.
+**D4 cleanup: closed in PLAN R6** on operator confirmation. Startup policy was subsequently delegated/selected/implemented; do not request its approval again. Longer wake-up failures remain a known limitation under R7.
 - [x] **D5 one authorized local live test:** real handler/admission/Google/Search/Quality/stream execution passed with one admitted generation, 237 tokens and 12 approved movies. No retry or public activation. [Evidence](../docs/AI_LIVE_CHECK.md).
 - [x] **D5 activation/publication:** subsequently authorized and published as `8819583`; Vercel Ready user-reported and Phase 7 explicitly approved.
 

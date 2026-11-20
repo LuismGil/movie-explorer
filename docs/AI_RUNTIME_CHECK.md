@@ -1,8 +1,8 @@
 # Temporary Protected Vercel Runtime Check — Evidence and Retirement
 
-**Follow-up evidence:** the operator's Vercel screenshot shows no `AI_RUNTIME_CHECK_API_KEY` in the displayed **Project / Production** variable list. Shared variables and other environments have not been confirmed. After reviewing the deployment list, the operator reports deleting **all deployments dated October 29**, including the identified diagnostic-containing deployments. This is operator-reported cleanup, not an independent per-URL deletion check; the agent did not delete deployments. R6 remains open only for the outstanding environment-variable scope confirmation.
+**R6 cleanup closed on operator confirmation.** The earlier Vercel screenshot shows no `AI_RUNTIME_CHECK_API_KEY` under **Project / Production**. The operator subsequently confirmed removal and absence in Vercel, including Shared and other project environments. The operator also reported deleting **all deployments dated October 29**, including the identified diagnostic-containing versions. No independent dashboard inspection or per-URL deletion check was performed, and no agent-run deletion or change to any working credential is claimed.
 
-Status (2026-10-29): **hosted checks passed and the route is retired**. Removal commit `e8b314c` is pushed; credential-free production GET/POST to the diagnostic both return 404. A presence-only recheck confirms the dedicated key is absent from local `.env`; its value was not read. Vercel token removal and older-deployment handling are unverified. Public AI is disabled. D4 itself made no Google request; the subsequent separately authorized [D5 local live test](AI_LIVE_CHECK.md) passed without restoring this diagnostic.
+Retirement checkpoint (2026-10-29): **hosted checks passed and the route was retired**. Removal commit `e8b314c` was pushed; credential-free production GET/POST to the diagnostic both returned 404. A presence-only recheck confirmed the dedicated key was absent from local `.env`; its value was not read. Public AI was disabled at that checkpoint. D4 itself made no Google request; the subsequent separately authorized [D5 local live test](AI_LIVE_CHECK.md) passed without restoring this diagnostic.
 
 ## Hosted evidence
 
@@ -50,7 +50,7 @@ The historical caller used a fixed production URL, rejected redirects, bounded r
 - [x] Verify local retirement: lint/typecheck/build and **349 remaining tests** pass (five opt-in Redis cases skipped). A compiled standalone smoke with synthetic values and outbound fetch blocked returned 404 for diagnostic GET/POST and 503/disabled for public AI. Its temporary server was stopped. The test count drops because temporary diagnostic tests were retired with their implementation.
 - [x] Publish retirement `e8b314c`; production diagnostic GET/POST both return 404.
 - [x] Local cleanup: a presence-only check confirms `AI_RUNTIME_CHECK_API_KEY` is absent from `.env`; its value was not read, and the agent did not edit any private env file.
-- [ ] Vercel cleanup: the Project / Production screenshot shows no `AI_RUNTIME_CHECK_API_KEY`; confirm absence in Shared and other environments. Existing MCP, Upstash, Google and telemetry credentials must remain intact. Do not reveal secret values.
+- [x] Vercel cleanup: Project / Production screenshot-backed; Shared and other environment absence operator-confirmed. Existing MCP, Upstash, Google and telemetry credentials are outside this cleanup. No secret values were requested or inspected.
 - [x] Verify the hosted diagnostic route is gone (GET/POST 404); source public availability stays false and was not changed for the separate local live test. The public disabled-boundary HTTP smoke below was local, not a new hosted AI request.
 - [x] Address older diagnostic-containing deployments: after the scoped recommendation, the operator reports deleting all October 29 deployments. No agent-run deletion or independent per-URL recheck is claimed.
 
