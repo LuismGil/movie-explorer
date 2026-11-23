@@ -11,7 +11,7 @@ The seven-phase v2 execution plan is archived in [`PLAN_v2_complete.md`](context
 ## Remaining backlog
 
 - [x] **R11 — Create the `v2.0.0` release tag.** On 2026-11-23 the operator confirmed the exact CI-tested target, `381dff6f0ee76117d65f56c980a358730241329a`. The annotated tag was created and verified locally. The operator subsequently authorized pushing the tag and the release documentation to `origin`. No WCAG, provider, or deployed-performance certification is implied.
-- [ ] **Post-release CI follow-up — Make the Lighthouse gate reproducible and passing.** Run #38 failed on the unchanged app. A local controlled harness and independent live-catalog check are prepared; both controlled batches still exceed the unchanged budget. Use captured traces for the next experiment; no hosted run or change to the published tag is implied. [Evidence](../docs/LCP_RENDER_RESULTS.md#post-release-lighthouse-control).
+- [x] **Post-release CI policy — Keep the LCP target visible without blocking on it.** The operator approved making the <1,200ms simulated median an advisory warning. CI #41 measured 2,395.46ms; the target remains unmet. Accessibility, CLS and live catalog checks remain required where applicable. The policy is implemented locally; no new hosted pass or change to the published tag is implied. [Evidence](../docs/LCP_RENDER_RESULTS.md#post-release-lighthouse-control).
 
 ## Deferred scope
 

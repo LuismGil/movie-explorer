@@ -10,7 +10,7 @@
 
 **A movie discovery platform built on React 19, Next.js App Router Server Components, and Server Actions.**
 
-> **Phase 7 status — 2026-11-09.** R1/R3 commit `4a4f1ce` and R2 shell commit `3fe0b6b` are pushed. The original local mobile gate now passes in two unchanged-settings LHCI batches: median LCP **1,056.398 / 1,060.342ms**, accessibility **100**, CLS **0**; six samples are below 1,200ms. Production GETs served the shell and `/discover` returned 200, but no hosted LHCI, independent Vercel Ready state or GitHub Actions result for `3fe0b6b` is recorded. See [measurements](docs/LCP_RENDER_RESULTS.md) and [remaining gates](.ai/PLAN.md).
+> **Mobile performance:** the latest controlled GitHub Actions measurement ([CI #41](https://github.com/LuismGil/movie-explorer/actions/runs/45198722236)) recorded a **2.40 s simulated median LCP** against a **<1.20 s target**. Missing that target is now advisory; accessibility and layout-stability thresholds remain blocking. See [measurements](docs/LCP_RENDER_RESULTS.md).
 
 > **AI release status:** R4's adult-audience decision and R5's scoped country-header check are recorded with their limitations; self-declaration is **not age verification or compliance certification**. R7 passed its third authorized production browser attempt: one POST, HTTP 200, **12 title choices after client-validated EOF in 3,014ms**. This is the `needs_selection` outcome, not the later recommendation. A Playwright network-abort notification is retained in the evidence. R6 diagnostic cleanup remains open; independent Ready/CI evidence for `3fe0b6b` is still missing. No further inference/reset is authorized. [Release details](docs/AI_RELEASE.md) · [R5](docs/AI_GEO_CHECK.md) · [R7](docs/AI_VERCEL_CHECK.md).
 
@@ -266,15 +266,16 @@ flowchart LR
   Typecheck --> Test["Vitest\nnpm run test"]
   Test --> Build["Next.js build"]
   Build --> A11y["axe-core\na11y audit"]
-  A11y --> Lighthouse["Lighthouse CI\nperformance budgets"]
-  Lighthouse --> Docker["Next.js Docker build"]
+  A11y --> Lighthouse["Lighthouse CI\naccessibility and CLS gates; LCP advisory"]
+  Lighthouse --> TMDB["Live TMDB check\npushes only"]
+  TMDB --> Docker["Next.js Docker build"]
   Push --> MCPLint["MCP lint"]
   MCPLint --> MCPTypes["MCP typecheck"]
   MCPTypes --> MCPTests["MCP tests"]
   MCPTests --> MCPBuild["MCP build"]
 ```
 
-The workflow runs on pushes to `main`/`master` and pull requests targeting them. Application and MCP checks run as independent jobs, with sequential steps inside each. The application job builds before running accessibility and Lighthouse checks. Configure the `TMDB_API_KEY` repository secret for audits against real movie data; the workflow otherwise uses a dummy value. MCP tests mock TMDB and do not need live credentials. MCP Docker build/runtime verification is not part of the current CI job.
+The workflow runs on pushes to `main`/`master` and pull requests targeting them. The application and MCP checks run in independent jobs. Lighthouse measures the standalone application with a fixed catalog fixture and uploads its reports and traces. A separate live TMDB check requires `TMDB_API_KEY` on pushes; it is skipped on pull requests. The axe audit uses the TMDB secret when available, otherwise a dummy value. MCP tests mock TMDB and do not need live credentials. MCP Docker build/runtime verification is not part of the current CI job.
 
 ---
 
@@ -315,11 +316,11 @@ Rotate credentials if they have been exposed. Ignoring a file does not revoke a 
 
 ## 13. Performance Budgets
 
-The latest Lighthouse CI run (2026-11-06) used three mobile/simulated runs: LCP **2.418s / 1.960s / 2.386s**, median **2.386s**. Accessibility and CLS assertions passed, but LCP did not meet the strict mobile goal. The earlier desktop sample (LCP **0.596s**) is from a separate run and is not evidence that the mobile release gate passes. No production SLA is inferred. See [closeout evidence](docs/RELEASE_CHECKLIST.md).
+[CI #41](https://github.com/LuismGil/movie-explorer/actions/runs/45198722236) measured **2.51 s / 2.40 s / 2.39 s** simulated mobile LCP, with a **2.40 s median**. That exceeded the target; accessibility and CLS passed. LCP misses appear as warnings in GitHub Actions and the Lighthouse reports stay available as artifacts. A passing CI run does not mean the LCP target was met. These are lab measurements, not production performance or an SLA. See [measurement history](docs/LCP_RENDER_RESULTS.md#post-release-lighthouse-control).
 
 | Metric | Target | Enforcement |
 |---|---|---|
-| Largest Contentful Paint (LCP) | < 1.2s | Lighthouse CI error: median of 3 mobile/simulated runs must be < 1,200 ms |
+| Largest Contentful Paint (LCP) | < 1.2s | Lighthouse CI warning when the median of 3 simulated mobile runs misses the target |
 | Cumulative Layout Shift (CLS) | < 0.05 | Lighthouse CI error: worst of 3 mobile/simulated runs must be < 0.05 |
 | Lighthouse performance score | ≥ 0.80 | Warning below budget |
 | Lighthouse accessibility score | 1.00 (100) | Lighthouse CI error if any of 3 mobile/simulated runs is below 100 |

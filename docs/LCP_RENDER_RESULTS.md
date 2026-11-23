@@ -2,6 +2,10 @@
 
 ## Post-release Lighthouse control
 
+**Current policy:** the operator approved keeping simulated mobile median LCP <1,200ms as an advisory Lighthouse warning. The numeric target, three simulated mobile runs, fixture validation, accessibility and CLS error thresholds are unchanged. Lighthouse still retains reports and traces. The latest hosted controlled result (#41) was **2,395.46ms**, so a later green run with an LCP warning must not be presented as meeting the target. The release tag was not changed.
+
+Local validation with Node 20 and the controlled fixture collected three samples and exited successfully with an LCP warning at **2,412.38ms** median; the summary surfaced the miss and all three traces were retained. Replaying saved reports with deliberately failing accessibility or CLS values still produced a nonzero exit for each. No new hosted result is claimed.
+
 [CI #38](https://github.com/LuismGil/movie-explorer/actions/runs/45182718142) failed on the same application and budget that passed #37. Its downloaded reports show `h1#catalog-title` as LCP in all three runs. Observed LCP was **1,230 / 92 / 80ms** and simulated LCP **2,644 / 3,517 / 3,609ms**. All eight poster requests per run returned 2xx; accessibility 100 and CLS 0 held. This does not identify why Lantern's simulated render delay differed from the trace.
 
 The local follow-up runs the actual standalone app against a deterministic popular-movie response and synthetic JPEGs of the configured poster widths. A loopback-only HTTPS proxy replaces those two TMDB hosts for the test, rejects other targets, and uses an ephemeral certificate trusted only by the test processes. Neither the app bundle nor the Lighthouse assertions are changed. The browser comes from the Playwright version in the lockfile. The runner retains per-sample reports, traces and DevTools logs even when the budget assertion fails. CI's separate push-only live catalog check uses the repository secret, does not send it to Lighthouse, and prints no request URL. It does not run on fork PRs.
@@ -20,6 +24,20 @@ To reproduce locally with the installed browser and an existing standalone build
 [CI #39](https://github.com/LuismGil/movie-explorer/actions/runs/45189575299) stopped before Lighthouse collection: port 3000 was still occupied after the accessibility audit. The separate live TMDB check passed; no performance samples or report artifact were produced. The follow-up starts and waits for the actual accessibility server process rather than its npm wrapper, gives Lighthouse its own loopback port 3100, and waits for the Lighthouse server's own readiness output. The simulated settings and budget assertions remain unchanged.
 
 The next hosted run reached port 3100 but exited on an unhandled socket `ECONNRESET`; Next.js's subsequent fixture connection was refused. The loopback proxy now handles resets from the moment a TCP socket is accepted, before CONNECT or TLS can install a tunnel handler. A local Node 20.19.5 test survived 80 deliberate resets and still rejected an unlisted CONNECT target. A separate full Node 20.19.5 batch collected all three traces and loaded eight fixture posters per run; simulated median LCP was **2,351.20ms**, still above budget. The supplied earlier passing log reports **1,066.37 / 1,058.59 / 1,056.61ms** under the former live-TMDB setup; it does not verify the fixture path or identify the cause of the LCP difference.
+
+### Local poster-priority experiment
+
+Hosted [CI #41](https://github.com/LuismGil/movie-explorer/actions/runs/45198722236) completed collection and the live TMDB check but failed simulated LCP at a **2,395.46ms** median. The tag remains unchanged. To test resource scheduling without deploying again, three batches ran on the same Node 20/pinned Chrome/fixture setup, using temporary copies of the same compiled standalone build with only the poster-loading attribute varied:
+
+| Variant | Simulated LCP samples (ms) | Median (ms) |
+|---|---|---:|
+| Existing first four posters `fetchpriority="high"` | 2,432.79 / 2,356.04 / 2,339.98 | 2,356.04 |
+| First four `fetchpriority="low"` | 1,444.10 / 1,359.76 / 1,430.59 | 1,430.59 |
+| All posters `loading="lazy"` | 1,437.84 / 1,213.84 / 1,432.25 | 1,432.25 |
+
+The title remained the LCP element; eight posters loaded per sample, accessibility stayed 100 and CLS stayed 0. Lowering poster priority improved the simulated median by **39.3%** in this comparison, not the observed median (169ms baseline versus 172ms at low priority). Neither variant met <1,200ms. No app-source change, hosted run or deployment was made for the experiment.
+
+Keeping the low-priority poster variant, dropping only the JetBrains Mono preload (not the font) produced local medians of **1,357.50ms** and **1,361.13ms** in two batches. Dropping Hanken's preload as well, leaving only the title's Sora preload, produced **1,353.31ms** in one batch. Each still loaded eight fixture posters per sample and failed the unchanged LCP gate. The small extra change from removing Hanken's preload does not justify retaining it without more evidence. These were temporary compiled-build experiments, not application changes or deployments.
 
 ## R9 candidate CI closeout
 

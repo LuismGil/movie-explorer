@@ -1,5 +1,7 @@
 # Release closeout — 2026-11-02 (historical batch)
 
+**Post-release CI policy:** the simulated mobile median LCP target remains **<1.20s** and is reported as a warning when missed. Accessibility 100 and CLS <0.05 still block CI, as do applicable catalog and build checks. [CI #41](https://github.com/LuismGil/movie-explorer/actions/runs/45198722236) measured **2.40s** under the controlled setup. The advisory policy has been verified locally but not in hosted CI. See [current findings](LCP_RENDER_RESULTS.md#post-release-lighthouse-control). Historical batches below preserve the enforcement that applied at the time.
+
 **Superseding R2 result — 2026-11-06/09:** the mobile LCP gate was later met locally by the document-shell candidate: two unchanged-settings medians of **1,056.398ms / 1,060.342ms**, accessibility 100 and CLS 0. Source `3fe0b6b` is pushed, and production GETs served the shell, but no hosted Lighthouse run or independent Vercel Ready/CI result for that commit is recorded. See [R2 measurements and publication limits](LCP_RENDER_RESULTS.md). The batch below preserves the earlier measurements as historical evidence.
 
 The operator authorized completing reachable work, creating atomic Conventional Commits and grouping validation at the end. This checklist separates implementation from evidence. It does not reopen accepted privacy/model/startup decisions or require another live AI experiment.

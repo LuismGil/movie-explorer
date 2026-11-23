@@ -1,4 +1,4 @@
-import { readdir, readFile } from 'node:fs/promises';
+import { appendFile, readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 const directory = process.argv[2] ?? '.lighthouseci';
@@ -37,4 +37,17 @@ for (const [index, file] of reports.entries()) {
 
 if (reports.length > 0) {
   console.log('If no posters were observed, inspect the matching report screenshot for the catalog state.');
+}
+
+if (files.includes('assertion-results.json')) {
+  const assertions = JSON.parse(await readFile(join(directory, 'assertion-results.json'), 'utf8'));
+  const lcp = assertions.find(result => result.auditId === 'largest-contentful-paint' &&
+    result.level === 'warn' && result.passed === false && Number.isFinite(result.actual));
+  if (lcp) {
+    const message = `Simulated mobile LCP median: ${milliseconds(lcp.actual)}. Target: <1,200 ms (advisory, not met).`;
+    if (process.env.GITHUB_ACTIONS === 'true') console.log(`::warning title=Lighthouse LCP target missed::${message}`);
+    if (process.env.GITHUB_STEP_SUMMARY) {
+      await appendFile(process.env.GITHUB_STEP_SUMMARY, `### Lighthouse performance\n\n${message}\n`);
+    }
+  }
 }

@@ -9,14 +9,14 @@
 | Phases 1–4 | Implemented; candidate CI, including the Docker build smoke test, passed in R9. |
 | Phase 5 | Next.js migration/core-flow hydration fix verified within the recorded scope. React Compiler is now enabled and R1 is resolved. |
 | Phase 6 | 6.1–6.8 implemented; R4–R7 closed within their documented scopes. R6 is operator-confirmed; R7 remains limited to the tested title-selection outcome, with its network-abort caveat. |
-| Phase 7 | Explicitly approved 2026-11-02 despite the retained Phase 6 limits. The original Lighthouse budget passed locally (R2) and in candidate CI (R9). The manual screen-reader audit (R8) is still open. |
+| Phase 7 | R2/R9 retain the original passing Lighthouse evidence for their candidates. R8 closed by an accepted Orca scope amendment, not a full screen-reader audit. The post-release LCP target is advisory; accessibility and CLS remain blocking. |
 | Render-path follow-up | Earlier Cache Components/PPR and runtime traces are historical. The final local document-shell candidate preserves canonical Sora/Hanken/Mono and Unicode fallback coverage; two unchanged-settings LHCI medians are **1,056.398 / 1,060.342ms**. See the dated report for prior experiments and limits. |
-| Publication | [CI #37](https://github.com/LuismGil/movie-explorer/actions/runs/44645358587) passed Lighthouse, accessibility, Docker and MCP for `381dff6`; Vercel reports deployment completed for the same SHA. |
+| Publication | [CI #37](https://github.com/LuismGil/movie-explorer/actions/runs/44645358587) passed for the tagged `381dff6` candidate. [CI #41](https://github.com/LuismGil/movie-explorer/actions/runs/45198722236) later measured a 2.40s simulated median under the controlled setup. The advisory policy is validated locally, not yet published. |
 
 ## Resolved in the 2026-11-06 batch
 
 - **R1 — React Compiler:** installed `babel-plugin-react-compiler@1.0.0`, set `reactCompiler: true` in `next.config.ts`, and confirmed no `useMemo`/`useCallback` calls remain under `app/` or `src/`.
-- **R3 — Lighthouse CI:** explicitly collect mobile/simulated runs. Accessibility 100 and CLS <0.05 are enforced against the worst run; LCP <1,200ms is enforced against the median. The unchanged assertions pass on both final local LHCI batches.
+- **R3 — Original Lighthouse CI policy (historical):** accessibility 100 and CLS <0.05 against the worst run; blocking LCP <1,200ms against the median. Both final R2 local batches passed that policy. The post-release change makes only LCP advisory and retains the same calculation and numeric target.
 - **R2 — Original mobile performance budget, local evidence:** medians **1,056.398ms** and **1,060.342ms** across two unchanged-settings three-run LHCI batches; all six LCP samples are <1,200ms, accessibility is 100 and CLS is 0. Canonical local fonts and full Unicode fallbacks, catalog controls and watchlist persistence remain available. This is not deployment/hosted evidence.
 
 ## Remaining-work index
