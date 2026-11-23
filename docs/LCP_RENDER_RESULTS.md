@@ -1,5 +1,22 @@
 # Render-path investigation
 
+## Post-release Lighthouse control
+
+[CI #38](https://github.com/LuismGil/movie-explorer/actions/runs/45182718142) failed on the same application and budget that passed #37. Its downloaded reports show `h1#catalog-title` as LCP in all three runs. Observed LCP was **1,230 / 92 / 80ms** and simulated LCP **2,644 / 3,517 / 3,609ms**. All eight poster requests per run returned 2xx; accessibility 100 and CLS 0 held. This does not identify why Lantern's simulated render delay differed from the trace.
+
+The local follow-up runs the actual standalone app against a deterministic popular-movie response and synthetic JPEGs of the configured poster widths. A loopback-only HTTPS proxy replaces those two TMDB hosts for the test, rejects other targets, and uses an ephemeral certificate trusted only by the test processes. Neither the app bundle nor the Lighthouse assertions are changed. The browser comes from the Playwright version in the lockfile. The runner retains per-sample reports, traces and DevTools logs even when the budget assertion fails. CI's separate push-only live catalog check uses the repository secret, does not send it to Lighthouse, and prints no request URL. It does not run on fork PRs.
+
+Two local batches against the same existing standalone build (copied without `.env`), Lighthouse 12.6.1 and pinned Chrome for Testing 148.0.7778.96, produced:
+
+| Batch | Simulated LCP samples (ms) | Median | Observed LCP (ms) |
+|---|---|---:|---|
+| 1 | 2,428.96 / 2,343.85 / 2,361.80 | **2,361.80 — fail** | 239 / 136 / 175 |
+| 2 | 2,343.97 / 2,344.69 / 2,350.45 | **2,344.69 — fail** | 285 / 171 / 147 |
+
+All six measured the title with eight successful fixture poster requests, accessibility 100 and CLS 0. The fixture uses local HTTPS and fixed JPEGs, not TMDB's production transport or CDN; Chrome also differs from #38 (157). These results reproduce the failing gate without live TMDB but are not a like-for-like speedup or evidence that the fixture fixes LCP. No hosted run or real credential check was performed for the local batches. Thresholds and `v2.0.0` remain unchanged.
+
+To reproduce locally with the installed browser and an existing standalone build: `LIGHTHOUSE_WORKSPACE="$(mktemp -d)" node scripts/run-lighthouse-ci.mjs`. Read the `.lighthouseci` reports, traces and DevTools logs under that workspace. Use a new workspace for every batch; the runner refuses to combine old and new reports.
+
 ## R9 candidate CI closeout
 
 [GitHub Actions #37](https://github.com/LuismGil/movie-explorer/actions/runs/44645358587) completed successfully for full SHA `381dff6f0ee76117d65f56c980a358730241329a`. The Next.js standalone job passed accessibility, the unchanged Lighthouse thresholds (three simulated mobile runs, median LCP <1,200ms, accessibility 100 and CLS <0.05), and the Docker build smoke test. The MCP job also passed. Vercel's status for the same SHA reports `Deployment has completed`.

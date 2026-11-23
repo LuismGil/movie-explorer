@@ -68,13 +68,12 @@ jobs:
 
       - name: Run Lighthouse CI Budget Check
         id: lighthouse
-        run: |
-          if [[ -n "$TMDB_API_KEY" ]]; then
-            echo 'Lighthouse: TMDB_API_KEY supplied by GitHub Actions (validity not verified).'
-          else
-            echo '::warning::Lighthouse: TMDB_API_KEY unavailable; using the existing dummy fallback.'
-          fi
-          TMDB_API_KEY="${TMDB_API_KEY:-dummy}" npx lhci autorun
+        timeout-minutes: 5
+        run: node scripts/run-lighthouse-ci.mjs
+
+      - name: Check Live TMDB Catalog
+        if: ${{ !cancelled() && github.event_name == 'push' && (steps.lighthouse.outcome == 'success' || steps.lighthouse.outcome == 'failure') }}
+        run: node scripts/check-tmdb-live.mjs
         env:
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
 

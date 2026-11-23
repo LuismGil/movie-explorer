@@ -6,7 +6,7 @@ const files = await readdir(directory).catch(error => {
   if (error.code === 'ENOENT') return [];
   throw error;
 });
-const reports = files.filter(file => /^lhr-.*\.json$/.test(file)).sort();
+const reports = files.filter(file => /^lhr-\d+\.json$/.test(file)).sort();
 
 function isPoster({ resourceType, url }) {
   if (resourceType !== 'Image' || !URL.canParse(url)) return false;
