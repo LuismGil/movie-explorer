@@ -17,6 +17,8 @@ All six measured the title with eight successful fixture poster requests, access
 
 To reproduce locally with the installed browser and an existing standalone build: `LIGHTHOUSE_WORKSPACE="$(mktemp -d)" node scripts/run-lighthouse-ci.mjs`. Read the `.lighthouseci` reports, traces and DevTools logs under that workspace. Use a new workspace for every batch; the runner refuses to combine old and new reports.
 
+[CI #39](https://github.com/LuismGil/movie-explorer/actions/runs/45189575299) stopped before Lighthouse collection: port 3000 was still occupied after the accessibility audit. The separate live TMDB check passed; no performance samples or report artifact were produced. The follow-up starts and waits for the actual accessibility server process rather than its npm wrapper, gives Lighthouse its own loopback port 3100, and waits for the Lighthouse server's own readiness output. The simulated settings and budget assertions remain unchanged.
+
 ## R9 candidate CI closeout
 
 [GitHub Actions #37](https://github.com/LuismGil/movie-explorer/actions/runs/44645358587) completed successfully for full SHA `381dff6f0ee76117d65f56c980a358730241329a`. The Next.js standalone job passed accessibility, the unchanged Lighthouse thresholds (three simulated mobile runs, median LCP <1,200ms, accessibility 100 and CLS <0.05), and the Docker build smoke test. The MCP job also passed. Vercel's status for the same SHA reports `Deployment has completed`.

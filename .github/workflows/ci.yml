@@ -51,9 +51,9 @@ jobs:
       - name: Run Accessibility Audit
         timeout-minutes: 5
         run: |
-          npm run start &
+          HOSTNAME=127.0.0.1 PORT=3000 node .next/standalone/server.js &
           SERVER_PID=$!
-          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          trap 'kill "$SERVER_PID" 2>/dev/null || true; wait "$SERVER_PID" 2>/dev/null || true' EXIT
           # Wait for server to be responsive on port 3000
           for attempt in $(seq 1 30); do
             if curl --output /dev/null --silent --head --fail http://localhost:3000; then

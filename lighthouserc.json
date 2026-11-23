@@ -1,7 +1,7 @@
 {
   "ci": {
     "collect": {
-      "url": ["http://localhost:3000/"],
+      "url": ["http://localhost:3100/"],
       "startServerCommand": "node .next/standalone/server.js",
       "numberOfRuns": 3,
       "settings": {

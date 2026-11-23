@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFileSync, spawn } from 'node:child_process';
 import { existsSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync } from 'node:fs';
-import { createConnection } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
@@ -25,14 +24,6 @@ assert(existsSync(standalone), 'Build and assemble the standalone app before run
 console.log(`Lighthouse browser: ${execFileSync(chrome, ['--version'], { encoding: 'utf8' }).trim()}`);
 const scratch = mkdtempSync(join(tmpdir(), 'movie-lighthouse-'));
 
-function reachable() {
-  return new Promise(done => {
-    const socket = createConnection({ host: '127.0.0.1', port: Number(url.port) });
-    socket.once('connect', () => { socket.destroy(); done(true); });
-    socket.once('error', () => done(false));
-  });
-}
-
 function command(script, args, options) {
   return new Promise((done, reject) => {
     const child = spawn(process.execPath, [script, ...args], { ...options, stdio: 'inherit' });
@@ -45,23 +36,28 @@ let fixture;
 let server;
 let serverExited;
 try {
-  assert.equal(await reachable(), false, `Port ${url.port} is already in use.`);
   fixture = await startFixture(scratch);
   server = spawn(process.execPath, [standalone], {
-    stdio: 'inherit', env: {
+    stdio: ['ignore', 'pipe', 'inherit'], env: {
       ...process.env, HOSTNAME: '127.0.0.1', PORT: url.port, TMDB_API_KEY: 'ci-lighthouse-fixture',
       HTTPS_PROXY: fixture.url, https_proxy: fixture.url, HTTP_PROXY: fixture.url, http_proxy: fixture.url,
       NO_PROXY: 'localhost,127.0.0.1', no_proxy: 'localhost,127.0.0.1', NODE_EXTRA_CA_CERTS: fixture.certificate,
     },
   });
-  serverExited = new Promise(done => {
-    server.once('error', done);
-    server.once('exit', done);
+  const ready = new Promise(resolveReady => {
+    let output = '';
+    server.stdout.on('data', chunk => {
+      process.stdout.write(chunk);
+      output = (output + chunk).slice(-2048);
+      if (/\bReady in\b/.test(output)) resolveReady(true);
+    });
   });
-  for (let attempt = 0; !(await reachable()); attempt++) {
-    assert(attempt < 100 && server.exitCode === null, 'Standalone server did not start.');
-    await delay(100);
-  }
+  serverExited = new Promise(done => {
+    server.once('error', error => done(`Standalone server could not start: ${error.message}`));
+    server.once('exit', (code, signal) => done(`Standalone server exited before it was ready (${signal ?? code}).`));
+  });
+  const startup = await Promise.race([ready, serverExited, delay(15000, 'Standalone readiness timed out.', { ref: false })]);
+  assert(startup === true, startup);
 
   let fixtureValid = true;
   for (let run = 1; run <= numberOfRuns; run++) {
