@@ -43,6 +43,16 @@ function listen(server) {
   });
 }
 
+function trackConnections(server, sockets) {
+  server.on('connection', socket => {
+    sockets.add(socket);
+    // Chrome can reset a connection before sending CONNECT or completing TLS.
+    // There is no tunnel-level error handler yet at that point.
+    socket.on('error', () => socket.destroy());
+    socket.once('close', () => sockets.delete(socket));
+  });
+}
+
 export async function startFixture(directory) {
   const keyPath = join(directory, 'fixture.key');
   const certificate = join(directory, 'fixture.crt');
@@ -71,13 +81,11 @@ export async function startFixture(directory) {
     }
     res.writeHead(404).end();
   });
-  const httpsPort = await listen(https);
   const proxy = createServer((req, res) => res.writeHead(403).end());
   const sockets = new Set();
-  proxy.on('connection', socket => {
-    sockets.add(socket);
-    socket.on('close', () => sockets.delete(socket));
-  });
+  trackConnections(https, sockets);
+  trackConnections(proxy, sockets);
+  const httpsPort = await listen(https);
   proxy.on('connect', (req, client, head) => {
     if (!allowed.has(req.url)) {
       client.end('HTTP/1.1 403 Forbidden\r\nConnection: close\r\n\r\n');
