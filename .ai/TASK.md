@@ -25,7 +25,7 @@ Status, evidence, acceptance and authorization boundaries are maintained **only 
 
 | IDs | Work category | Remaining work |
 |---|---|---|
-| R11 | Release publication | R10 is complete. The `v2.0.0` tag remains pending separate authorization and target SHA confirmation. |
+| — | No open execution tasks | R11: the `v2.0.0` tag points to CI-tested `381dff6`; publication to `origin` was explicitly authorized. |
 
 ## Completed decisions — do not reopen or rerun automatically
 

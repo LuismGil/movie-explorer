@@ -398,4 +398,4 @@ Before removing existing TMDB actions, resolve MCP coverage for popular movies, 
 - [x] Refined skeleton loading visualizers.
 - [x] Real App Router visual error boundary with reset/catalog actions.
 - [x] Deferred production-only mobile QR linking to the existing gated AI page.
-- [x] Close measured performance gates in candidate CI; record the scope and limitations of the Orca accessibility checks. The execution plan is archived; the [release tag](.ai/PLAN.md#remaining-backlog) remains pending separate authorization.
+- [x] Close measured performance gates in candidate CI; record the scope and limitations of the Orca accessibility checks. The execution plan is archived; see the [release record](.ai/PLAN.md#remaining-backlog) for tag status.

@@ -2,7 +2,7 @@
 
 ## Current — v2 execution archived
 
-R10 is complete; the execution record is in [the v2 archive](context/archive/PLAN_v2_complete.md). R8 was closed by accepted scope amendment, not by a full screen-reader audit. [The active plan](PLAN.md#remaining-backlog) tracks only the pending R11 tag authorization. The dated entries below are historical snapshots.
+R10 is complete; the execution record is in [the v2 archive](context/archive/PLAN_v2_complete.md). R8 was closed by accepted scope amendment, not by a full screen-reader audit. R11 is complete: the annotated `v2.0.0` tag points to the CI-tested `381dff6` commit. [The active plan](PLAN.md#remaining-backlog) records the target and publication authorization. The dated entries below are historical snapshots.
 
 ## Current: 2026-11-06 — R2 Passes Locally; No Deployment
 

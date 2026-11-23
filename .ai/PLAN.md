@@ -10,7 +10,7 @@ The seven-phase v2 execution plan is archived in [`PLAN_v2_complete.md`](context
 
 ## Remaining backlog
 
-- [ ] **R11 — Create the `v2.0.0` release tag.** Await explicit authorization and confirm the target SHA before tagging. Keep the evidence tied to the candidate that actually ran; do not imply WCAG, provider, or deployed-performance certification. Do not push commits or tags without authorization.
+- [x] **R11 — Create the `v2.0.0` release tag.** On 2026-11-23 the operator confirmed the exact CI-tested target, `381dff6f0ee76117d65f56c980a358730241329a`. The annotated tag was created and verified locally. The operator subsequently authorized pushing the tag and the release documentation to `origin`. No WCAG, provider, or deployed-performance certification is implied.
 
 ## Deferred scope
 
