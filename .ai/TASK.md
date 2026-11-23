@@ -11,7 +11,7 @@
 | Phase 6 | 6.1–6.8 implemented; R4–R7 closed within their documented scopes. R6 is operator-confirmed; R7 remains limited to the tested title-selection outcome, with its network-abort caveat. |
 | Phase 7 | R2/R9 retain the original passing Lighthouse evidence for their candidates. R8 closed by an accepted Orca scope amendment, not a full screen-reader audit. The post-release LCP target is advisory; accessibility and CLS remain blocking. |
 | Render-path follow-up | Earlier Cache Components/PPR and runtime traces are historical. The final local document-shell candidate preserves canonical Sora/Hanken/Mono and Unicode fallback coverage; two unchanged-settings LHCI medians are **1,056.398 / 1,060.342ms**. See the dated report for prior experiments and limits. |
-| Publication | [CI #37](https://github.com/LuismGil/movie-explorer/actions/runs/44645358587) passed for the tagged `381dff6` candidate. [CI #41](https://github.com/LuismGil/movie-explorer/actions/runs/45198722236) later measured a 2.40s simulated median under the controlled setup. The advisory policy is validated locally, not yet published. |
+| Publication | The `v2.0.0` tag retains tested `381dff6`. [CI #42](https://github.com/LuismGil/movie-explorer/actions/runs/45248066979) passed on `55e1a24` with the LCP advisory policy; Vercel reports deployment completed. CI #41's recorded 2.40s simulated median is not a passed LCP target. |
 
 ## Resolved in the 2026-11-06 batch
 

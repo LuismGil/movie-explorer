@@ -11,7 +11,7 @@ The seven-phase v2 execution plan is archived in [`PLAN_v2_complete.md`](context
 ## Remaining backlog
 
 - [x] **R11 — Create the `v2.0.0` release tag.** On 2026-11-23 the operator confirmed the exact CI-tested target, `381dff6f0ee76117d65f56c980a358730241329a`. The annotated tag was created and verified locally. The operator subsequently authorized pushing the tag and the release documentation to `origin`. No WCAG, provider, or deployed-performance certification is implied.
-- [x] **Post-release CI policy — Keep the LCP target visible without blocking on it.** The operator approved making the <1,200ms simulated median an advisory warning. CI #41 measured 2,395.46ms; the target remains unmet. Accessibility, CLS and live catalog checks remain required where applicable. The policy is implemented locally; no new hosted pass or change to the published tag is implied. [Evidence](../docs/LCP_RENDER_RESULTS.md#post-release-lighthouse-control).
+- [x] **Post-release CI policy — Keep the LCP target visible without blocking on it.** The operator approved making the <1,200ms simulated median an advisory warning. CI #41 measured 2,395.46ms; the target remains unmet. Accessibility, CLS and live catalog checks remain required where applicable. [CI #42](https://github.com/LuismGil/movie-explorer/actions/runs/45248066979) passed for `55e1a24`, with Vercel deployment success for the same SHA. The published tag is unchanged. [Evidence](../docs/LCP_RENDER_RESULTS.md#post-release-lighthouse-control).
 
 ## Deferred scope
 

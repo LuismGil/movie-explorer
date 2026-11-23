@@ -1,5 +1,6 @@
 # 🎬 Movie Explorer
 
+[![CI Pipeline](https://github.com/LuismGil/movie-explorer/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/LuismGil/movie-explorer/actions/workflows/ci.yml)
 [![React](https://img.shields.io/badge/React-19.2.0-blue?logo=react)](https://react.dev)
 [![Next.js](https://img.shields.io/badge/Next.js-App_Router-black?logo=next.js)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-3178C6?logo=typescript)](https://www.typescriptlang.org)
@@ -10,23 +11,25 @@
 
 **A movie discovery platform built on React 19, Next.js App Router Server Components, and Server Actions.**
 
-> **Mobile performance:** the latest controlled GitHub Actions measurement ([CI #41](https://github.com/LuismGil/movie-explorer/actions/runs/45198722236)) recorded a **2.40 s simulated median LCP** against a **<1.20 s target**. Missing that target is now advisory; accessibility and layout-stability thresholds remain blocking. See [measurements](docs/LCP_RENDER_RESULTS.md).
+**[Live demo](https://movie-explorer-luis.vercel.app) · [v2.0.0 source](https://github.com/LuismGil/movie-explorer/tree/v2.0.0) · [Architecture](ARCHITECTURE.md)**
 
-> **AI release status:** R4's adult-audience decision and R5's scoped country-header check are recorded with their limitations; self-declaration is **not age verification or compliance certification**. R7 passed its third authorized production browser attempt: one POST, HTTP 200, **12 title choices after client-validated EOF in 3,014ms**. This is the `needs_selection` outcome, not the later recommendation. A Playwright network-abort notification is retained in the evidence. R6 diagnostic cleanup remains open; independent Ready/CI evidence for `3fe0b6b` is still missing. No further inference/reset is authorized. [Release details](docs/AI_RELEASE.md) · [R5](docs/AI_GEO_CHECK.md) · [R7](docs/AI_VERCEL_CHECK.md).
+> **Project status:** v2's agreed scope is complete and its execution plan is archived. [CI #42](https://github.com/LuismGil/movie-explorer/actions/runs/45248066979) passed for `55e1a24`, and Vercel reports deployment completed for the same commit. The `v2.0.0` tag retains its original tested candidate; `main` includes subsequent CI improvements.
 
-**Latest runtime evidence:** the third R7 attempt rendered 12 movie choices in the production browser. The two earlier inconclusive checks remain historical; the original local live test remains separate evidence with its own upstream/token measurements. The hosted sample does not independently certify tokens, billing, cold starts or error-free network teardown. Diagnostic retirement is published, while Vercel diagnostic-key/older-deployment cleanup remains unverified. [Local test](docs/AI_LIVE_CHECK.md) · [Hosted evidence](docs/AI_VERCEL_CHECK.md).
+> **Mobile performance:** the recorded controlled measurement in [CI #41](https://github.com/LuismGil/movie-explorer/actions/runs/45198722236) was a **2.40 s simulated median LCP** against a **<1.20 s target**. Missing that target is advisory; accessibility and layout-stability thresholds remain blocking. Green CI does not mean the LCP target was met. [Measurements](docs/LCP_RENDER_RESULTS.md)
+
+**AI demo:** enabled with region, adult self-declaration and shared-quota controls. One production browser check rendered **12 title choices in 3,014ms** after validated stream completion. This verifies that title-selection flow, not every intent or cold-start behavior. Self-declaration is not age verification. Diagnostic cleanup is operator-confirmed. [Release details](docs/AI_RELEASE.md) · [Hosted evidence](docs/AI_VERCEL_CHECK.md) · [Cleanup](docs/AI_RUNTIME_CHECK.md)
 
 ---
 
 ## 1. Project Overview
 
-Movie Explorer is a movie discovery application and an engineering case study in migrating a Vite SPA to Next.js App Router. Visitors can browse popular and trending movies, search by title, inspect details, and maintain a browser-local watchlist. The interface is localized in Brazilian Portuguese (`pt-BR`). An AI-native discovery layer is under development.
+Movie Explorer is a movie discovery application and an engineering case study in migrating a Vite SPA to Next.js App Router. Visitors can browse popular and trending movies, search by title, inspect details, and maintain a browser-local watchlist. The interface is localized in Brazilian Portuguese (`pt-BR`). The AI discovery demo combines a model-backed planner with deterministic search and quality validation.
 
 ---
 
 ## 2. Implemented State and Verification
 
-- **Server-rendered movie pages** using React Server Components, server-side data fetching, and a Suspense boundary for the home grid.
+- **Server-rendered movie pages** using Next.js App Router and server-side data fetching. Home document requests use an optimized HTML route; detail pages retain React Server Components.
 - **Secured API Keys Server-Side** by migrating all movie data access to server-rendered Next.js layouts and server-side actions, isolating `TMDB_API_KEY` from the client bundle.
 - **Accessibility baseline** with separate card links and watchlist buttons, keyboard focus styles, labels, semantic navigation state, and skip navigation.
 - **Build and CI infrastructure** with standalone Next.js output, Docker definitions, and separate application and MCP quality gates.
@@ -36,9 +39,9 @@ Movie Explorer is a movie discovery application and an engineering case study in
 - **Orchestrator (6.6)** validates requests/structured intent, compiles allowlisted tools, and sequences preparation→Planner→Search→Quality. The authorized production composition initializes/reuses MCP before Google, requires a server-trusted Free/no-payment assertion and exact-request token preflight, and retains bounded deadlines with no retries/fallback. One earlier authorized local live execution passed. [Contract](docs/ORCHESTRATOR.md).
 - **Validated streaming UI (6.7)** adds `/discover` and a bounded same-origin NDJSON entry point. Static ordered stage codes and Quality DTOs require clean-EOF validation before presentation. Source availability is enabled after operator approval, with mandatory region, adult self-declaration and quota gates. [Contract](docs/STREAMING_UI.md).
 
-Latest Phase 6 verification on **2026-10-29**: public AI remains disabled; one authorized real local AI test has passed. D4 separately verified isolated Upstash operations and a fixed authenticated movie search from Vercel. Earlier, a Render initialize-only handshake after a 16-minute quiet window took 13.889s. The init cap is 20s inside unchanged 30s global/35s route/UI and 10s per-tool limits. The latest checks had no confirmed idle window, so cold-start acceptance remains open. See [`docs/AI_LIVE_CHECK.md`](docs/AI_LIVE_CHECK.md) and [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
+**Runtime limits:** an earlier Render initialization after a quiet window took 13.889s. The initialization cap is 20s inside 30s global/35s route/UI and 10s per-tool limits. Demand-driven preparation is implemented, but the successful samples do not guarantee cold-start latency. See [`docs/AI_LIVE_CHECK.md`](docs/AI_LIVE_CHECK.md) and [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
-**Deployment checkpoint (2026-10-29):** [The Vercel app](https://movie-explorer-luis.vercel.app) and [Render MCP service](https://movie-explorer-ppc2.onrender.com/health) are deployed. Vercel dependency checks and one real local-handler Google pipeline passed; the diagnostic route is retired. Billing dashboards and full enabled Vercel/browser AI execution remain unverified. Evidence and next steps: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
+**Deployment:** the app runs on Vercel and the standalone MCP service on Render. Recorded checks cover the core catalog flows, isolated dependency access, one live local pipeline and the scoped hosted title-selection result. They do not certify all AI outcomes or billing settings. [`Deployment evidence`](docs/DEPLOYMENT.md)
 
 The historical local TestSprite report (2026-07-19) contains 13 failures out of 24 scenarios, including conflicting results for similar flows. These need reproduction before being classified as current application defects.
 
@@ -62,7 +65,7 @@ flowchart TD
   TMDBProxy --> TMDB
 ```
 
-Existing movie pages still call `src/server/actions/tmdb.ts` directly. `/discover` connects to a server-owned gated AI route; both public availability and Google activation remain disabled. Browsers never call the TMDB data API or MCP endpoint; poster images and embedded trailers still load from their external providers.
+Existing movie pages still call `src/server/actions/tmdb.ts` directly. `/discover` connects to the enabled server-owned AI route with region, adult self-declaration and quota gates. Browsers never call the TMDB data API or MCP endpoint; poster images and embedded trailers still load from their external providers.
 
 ### 3.2 Planned AI Flow
 
@@ -108,7 +111,7 @@ Execution tracking: [`.ai/PLAN.md`](.ai/PLAN.md). Architecture: [`.ai/ARCHITECTU
 - **MCP tools**: `search_movies`, `get_movie_details`, `get_recommendations`, `get_trending`, and `get_credits` in a separate server package.
 - **Search Agent foundation**: Deterministic execution of validated MCP tool plans, with aggregation, ID deduplication, schema validation, and partial-failure handling. It is not an LLM-powered search planner.
 - **Quality/Safety gate**: Exact structured-fact validation, movie-scoped metadata, source contradiction/status checks, bounded plain-text DTOs, and valid partial-result preservation. Arbitrary narrative is rejected, not semantically judged.
-- **Orchestrator foundation**: Request/intent validation, allowlisted planning, Search→Quality sequencing, deadline/cancellation and tool/token budgets. Google adapter defaults to disabled; no retries, automatic alternate-model fallback, or paid escalation.
+- **Orchestrator**: Request/intent validation, allowlisted planning, Search→Quality sequencing, deadline/cancellation and tool/token budgets. Google access is server-controlled; no automatic retries, alternate-model fallback, or paid escalation.
 - **Validated discovery UI (gated)**: Structured streaming over the implemented pipeline, with controlled progress, loading/error/empty/partial/cancellation and movie-selection flows. Provider access, Free Tier eligibility, privacy/abuse protection, security remediation, and real Next.js→MCP execution must be reviewed before activation. No conversation memory is implemented.
 
 ---
@@ -213,7 +216,7 @@ The root `.env.example` uses canonical `GOOGLE_GENERATIVE_AI_API_KEY`. Architect
 | `npm run lint` | Runs ESLint across all source files. |
 | `npm run typecheck` | Runs `tsc --noEmit` for type-only validation without emitting files. |
 | `npm run test` | Runs Vitest unit tests. |
-| `npm run test:a11y` | Runs accessibility audits on Home, Watchlist, and disabled Discover. |
+| `npm run test:a11y` | Runs accessibility audits on Home, Watchlist, and the initial Discover UI without submitting an AI request. |
 | `npm run test:ai:rate-limit` | Runs atomic admission/concurrency tests against an isolated local Docker Redis, without hosted keys or Google calls. |
 | `npm run mcp:dev` | Starts the independent MCP development server; environment variables must already be supplied. |
 | `npm run mcp:lint` / `mcp:typecheck` / `mcp:test` | Runs independent MCP quality checks. |
