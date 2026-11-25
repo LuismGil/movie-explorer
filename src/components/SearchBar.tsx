@@ -86,6 +86,7 @@ export function SearchBar() {
           <input
             type="text"
             id="movie-search"
+            maxLength={200}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={messages.home.searchPlaceholder}

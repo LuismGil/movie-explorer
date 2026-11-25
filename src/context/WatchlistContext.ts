@@ -5,6 +5,7 @@ import { type MovieListItem } from '@/types/movie';
 
 export type WatchlistContextValue = {
   watchlist: MovieListItem[];
+  isHydrated: boolean;
   isInWatchlist: (id: number) => boolean;
   toggleWatchlist: (movie: MovieListItem) => void;
 };

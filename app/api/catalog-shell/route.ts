@@ -5,6 +5,7 @@ import {
 } from '@/server/actions/tmdb';
 import type { MovieListItem, TmdbPaginatedResponse } from '@/types/movie';
 import { catalogShellFontCss } from '@/theme/catalog-shell-fonts';
+import { createCatalogState } from '../../../public/webmcp-catalog.js';
 import { gzipSync } from 'node:zlib';
 
 const WATCHLIST_KEY = 'movie-explorer:watchlist';
@@ -51,6 +52,7 @@ const styles = `
   .site-main{min-height:calc(100svh - 200px);padding-block:1.5rem 4rem}.catalog-page{display:grid;gap:3rem}.catalog-intro{display:grid;grid-template-columns:1.2fr 1fr;gap:3rem;align-items:end;padding-block:2.5rem 1rem}.cinema-eyebrow{display:flex;align-items:center;gap:.625rem;color:var(--muted);font-family:var(--font-mono);font-size:.625rem;font-weight:600;line-height:1.8;text-transform:uppercase;letter-spacing:.14em}.cinema-dash{width:1.5rem;height:2px;background:var(--accent)}
   .catalog-intro h1{margin:1rem 0 0;font-family:var(--font-display);font-size:clamp(2.75rem,5.7vw,5rem);font-weight:650;line-height:1.08;letter-spacing:-.065em}.catalog-intro h1 span{color:var(--accent)}.intro-aside{display:grid;gap:1.25rem;padding-bottom:.25rem}.intro-aside>p:first-child{max-width:30rem;margin:0;color:var(--muted);font-size:1.125rem;line-height:1.7}.cinema-actions{display:flex;align-items:center;flex-wrap:wrap;gap:.75rem 1.25rem}.cinema-button{display:inline-flex;align-items:center;justify-content:center;gap:1.25rem;min-height:48px;padding:.75rem 1.25rem;border:0;border-radius:999px;background:var(--accent);color:var(--on-accent);font-size:.875rem;font-weight:700;text-align:center}.cinema-text-link{display:inline-flex;align-items:center;justify-content:center;gap:.75rem;min-height:44px;color:var(--accent);font-size:.875rem;font-weight:650;text-underline-offset:.3em}.intro-fineprint{max-width:30rem;margin:0;color:var(--muted);font-size:.75rem;line-height:1.65}
   .catalog-section{display:grid;gap:1.5rem;padding-top:2rem;border-top:1px solid var(--rim);scroll-margin-top:2rem}.catalog-toolbar{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;min-width:0}.cinema-eyebrow{margin:0}.catalog-heading{margin:.4rem 0 0;font-family:var(--font-display);font-size:clamp(1.25rem,2.3vw,1.75rem);font-weight:550;letter-spacing:-.035em;overflow-wrap:anywhere}.catalog-search{display:flex;align-items:center;gap:.75rem;width:100%;max-width:26rem;min-width:0;min-height:52px;padding-inline:1rem .375rem;border:1px solid var(--rim);border-radius:999px;background:color-mix(in srgb,var(--raised) 85%,transparent)}.catalog-search:focus-within{border-color:var(--accent);box-shadow:0 0 0 2px rgba(245,197,24,.12)}.catalog-search svg{flex:none;color:var(--muted)}.catalog-search label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.catalog-search-input{width:100%;min-width:0;padding-block:.75rem;border:0;background:transparent;color:var(--text);font-size:.9375rem}.catalog-search-input::placeholder{color:var(--muted);opacity:.8}.catalog-search-input:focus-visible{outline:0}.clear-search{flex:none;width:44px;height:44px;border:0;border-radius:50%;background:transparent;color:var(--muted);font-size:1.5rem}
+  form:tool-form-active{outline:2px dashed var(--accent);outline-offset:4px}
   .catalog-filters,.filter-group{display:flex;flex-wrap:wrap;gap:1rem}.filter-group{gap:.25rem;padding:.25rem;border:1px solid var(--rim);border-radius:999px}.filter-group form{margin:0}.filter-button{min-height:44px;padding:.5rem 1.125rem;border:0;border-radius:999px;background:transparent;color:var(--muted);font-size:.8125rem}.filter-button[aria-pressed=true]{background:var(--accent);color:var(--on-accent);font-weight:700}.filter-secondary .filter-button[aria-pressed=true]{background:var(--raised);color:var(--text)}
   .movie-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.5rem}.movie-card{position:relative;min-width:0;overflow:hidden;border:1px solid var(--rim);border-radius:1rem;background:color-mix(in srgb,var(--raised) 85%,transparent);content-visibility:auto;contain-intrinsic-block-size:auto min(calc(37.5vw + 3rem),33rem)}.movie-card-link{display:block;height:100%}.movie-card-link:focus-visible{outline-offset:-3px;border-radius:1rem}.movie-poster{position:relative;width:100%;aspect-ratio:2/3;overflow:hidden;background:var(--raised)}.movie-poster>img{width:100%;height:100%;object-fit:cover}.movie-poster:after{position:absolute;inset:45% 0 0;background:linear-gradient(transparent,rgba(14,14,14,.45));content:"";pointer-events:none}.poster-missing{display:flex;height:100%;flex-direction:column;align-items:center;justify-content:center;gap:1rem;color:var(--muted);font-family:var(--font-mono);font-size:.6875rem}.poster-missing span:first-child{color:var(--rim);font-family:var(--font-display);font-size:3rem}.movie-rating{position:absolute;z-index:1;top:.75rem;left:.75rem;display:inline-flex;align-items:center;gap:.375rem;padding:.375rem .625rem;border:1px solid rgba(245,197,24,.25);border-radius:999px;background:rgba(14,14,14,.88);color:var(--accent);font-family:var(--font-mono);font-size:.6875rem}.movie-caption{min-height:105px;padding:1rem}.movie-caption h2{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2;margin:0;font-size:1rem;font-weight:650;line-height:1.45}.movie-meta{display:flex;justify-content:space-between;margin:0 0 .375rem;color:var(--muted);font-family:var(--font-mono);font-size:.625rem}.movie-meta span:last-child{color:var(--accent);font-size:.875rem}.watchlist-button{position:absolute;z-index:2;top:.5rem;right:.5rem;display:grid;width:44px;height:44px;place-items:center;border:1px solid rgba(255,255,255,.18);border-radius:50%;background:rgba(14,14,14,.85);color:var(--text);font-size:1.5rem}.watchlist-button[aria-pressed=true]{border-color:#c48aff;color:#c48aff}
   .cinema-pagination{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:1rem;padding-top:1rem}.pagination-button{min-height:44px;padding:.625rem 1rem;border:1px solid var(--rim);border-radius:999px;background:transparent;font-size:.8125rem}.pagination-button:disabled{opacity:.4;cursor:not-allowed}.pagination-info{color:var(--muted);font-family:var(--font-mono);font-size:.6875rem}.cinema-empty{display:flex;flex-direction:column;align-items:center;gap:1.25rem;padding:clamp(2rem,6vw,5rem) 1.5rem;border:1px solid var(--rim);border-radius:1.25rem;background:var(--surface);text-align:center}.cinema-empty h2{max-width:30rem;margin:0;font-family:var(--font-display);font-size:clamp(1.5rem,3vw,2.25rem);line-height:1.25;letter-spacing:-.04em}.cinema-empty>p{max-width:32rem;margin:0;color:var(--muted)}.cinema-error{margin-block:2rem}.site-footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;padding-block:1.75rem;border-top:1px solid var(--rim);color:var(--muted);font-size:.75rem}.site-footer>span{font-family:var(--font-display);font-weight:650}.site-footer>p{max-width:34rem;margin:0}
@@ -68,6 +70,16 @@ function escapeHtml(value: string | number): string {
     '>': '&gt;',
     '"': '&quot;',
     "'": '&#39;',
+  })[character]!);
+}
+
+function serializeScriptData(value: unknown): string {
+  return JSON.stringify(value).replace(/[<>&\u2028\u2029]/g, character => ({
+    '<': '\\u003c',
+    '>': '\\u003e',
+    '&': '\\u0026',
+    '\u2028': '\\u2028',
+    '\u2029': '\\u2029',
   })[character]!);
 }
 
@@ -130,7 +142,7 @@ function renderCatalog(
       ? `<div class="movie-grid">${moviesData.results.map((movie, index) => renderMovie(movie, index)).join('')}</div>${moviesData.total_pages > 1 ? `<nav class="cinema-pagination" aria-label="Paginação do catálogo">${pageForm(page - 1, query, view, window, 'Anterior', page <= 1)}<span class="pagination-info">Página ${moviesData.page} de ${moviesData.total_pages}</span>${pageForm(page + 1, query, view, window, 'Próxima', page >= moviesData.total_pages)}</nav>` : ''}`
       : '<div class="cinema-empty"><p class="cinema-eyebrow">Um título é um bom começo.</p><h2>Nenhum filme encontrado.</h2><p>Tente outro título ou explore os filmes populares. Sua próxima história pode estar por lá.</p><a class="cinema-button" href="/">Voltar ao catálogo</a></div>';
 
-  return `<section id="catalog" class="catalog-section" aria-label="No seu radar"><div class="catalog-toolbar"><div><p class="cinema-eyebrow">No seu radar</p><h2 class="catalog-heading">${title}</h2></div><form class="catalog-search" id="search-form" action="/" method="get"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="m16 16 5 5" stroke="currentColor" stroke-width="1.5"/></svg><label for="movie-search">Buscar filmes</label><input class="catalog-search-input" id="movie-search" name="query" type="search" value="${escapeHtml(query)}" placeholder="Buscar filmes..." autocomplete="off">${query ? '<button class="clear-search" id="clear-search" type="button" aria-label="Limpar busca">×</button>' : ''}</form></div>${query ? '' : renderFilters(view, window)}${results}</section>`;
+  return `<section id="catalog" class="catalog-section" aria-label="No seu radar"><div class="catalog-toolbar"><div><p class="cinema-eyebrow">No seu radar</p><h2 class="catalog-heading">${title}</h2></div><form class="catalog-search" id="search-form" action="/" method="get" toolname="search_movies_catalog" tooldescription="Search the catalog by movie title and navigate to the results. An empty query shows popular movies." toolautosubmit><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="m16 16 5 5" stroke="currentColor" stroke-width="1.5"/></svg><label for="movie-search">Buscar filmes</label><input class="catalog-search-input" id="movie-search" name="query" type="search" maxlength="200" toolparamdescription="Movie title or search terms." value="${escapeHtml(query)}" placeholder="Buscar filmes..." autocomplete="off">${query ? '<button class="clear-search" id="clear-search" type="button" aria-label="Limpar busca">×</button>' : ''}</form></div>${query ? '' : renderFilters(view, window)}${results}</section>`;
 }
 
 function renderDocument(content: string): string {
@@ -146,7 +158,21 @@ const clientScript = `
     buttons.forEach(button=>{sync(button);button.addEventListener('click',()=>{const movie={id:Number(button.dataset.movieId),title:button.dataset.movieTitle,poster_path:button.dataset.posterPath||null,vote_average:Number(button.dataset.voteAverage),release_date:button.dataset.releaseDate};saved=saved.some(item=>item.id===movie.id)?saved.filter(item=>item.id!==movie.id):[...saved,movie];try{localStorage.setItem(key,JSON.stringify(saved))}catch{}sync(button)})});
     const form=document.getElementById('search-form'),input=document.getElementById('movie-search');let timer;
     input?.addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(()=>{const current=new URL(location.href).searchParams.get('query')||'';if(input.value.trim()!==current.trim())form.requestSubmit()},500)});
+    form?.addEventListener('submit',event=>{
+      clearTimeout(timer);
+      if(event.agentInvoked&&input.value.length>200){
+        event.preventDefault();
+        if(typeof event.respondWith==='function')event.respondWith(Promise.resolve({content:[{type:'text',text:JSON.stringify({error:{code:'INVALID_ARGUMENTS',message:'Provide a movie title of up to 200 characters.'}})}],isError:true}));
+      }
+    });
     document.getElementById('clear-search')?.addEventListener('click',()=>{input.value='';input.dispatchEvent(new Event('input',{bubbles:true}));input.focus()});
+    if(document.modelContext&&typeof document.modelContext.registerTool==='function'){
+      import('/webmcp-catalog.js').then(({registerShellCatalogTools})=>{
+        const state=JSON.parse(document.getElementById('webmcp-catalog-data').textContent);
+        const controller=registerShellCatalogTools(document.modelContext,state,path=>location.assign(path));
+        window.addEventListener('pagehide',event=>{if(!event.persisted)controller.abort()});
+      }).catch(()=>console.warn('WebMCP catalog tools could not be loaded.'));
+    }
   })();
 `;
 
@@ -172,7 +198,14 @@ export async function GET(request: Request) {
     error = true;
   }
 
-  const html = renderDocument(renderCatalog(moviesData, error, query, view, window, page));
+  const catalogState = createCatalogState({
+    results: moviesData?.results ?? [],
+    page: moviesData?.page ?? page,
+    totalPages: moviesData?.total_pages ?? 1,
+    status: error ? 'error' : 'ok',
+  });
+  const catalogData = serializeScriptData(catalogState);
+  const html = renderDocument(`${renderCatalog(moviesData, error, query, view, window, page)}<script type="application/json" id="webmcp-catalog-data">${catalogData}</script>`);
   const acceptsGzip = request.headers.get('accept-encoding')?.includes('gzip') ?? false;
   const body = acceptsGzip ? gzipSync(html) : html;
   return new Response(body, {

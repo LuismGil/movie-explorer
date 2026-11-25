@@ -33,6 +33,7 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "server-only": "^0.0.1",
+    "use-webmcp-tool": "0.4.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {

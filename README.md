@@ -109,6 +109,7 @@ Execution tracking: [`.ai/PLAN.md`](.ai/PLAN.md). Architecture: [`.ai/ARCHITECTU
 - **Similar Movies**: Horizontally swipeable recommendations on every detail page.
 - **Skeleton Loaders**: Animated `MovieCardSkeleton` components during list fetching.
 - **MCP tools**: `search_movies`, `get_movie_details`, `get_recommendations`, `get_trending`, and `get_credits` in a separate server package.
+- **Experimental browser WebMCP**: page-scoped catalog navigation, movie details, and read-only local watchlist tools, plus [`/llms.txt`](public/llms.txt). [Scope, privacy, and testing](docs/WEBMCP.md).
 - **Search Agent foundation**: Deterministic execution of validated MCP tool plans, with aggregation, ID deduplication, schema validation, and partial-failure handling. It is not an LLM-powered search planner.
 - **Quality/Safety gate**: Exact structured-fact validation, movie-scoped metadata, source contradiction/status checks, bounded plain-text DTOs, and valid partial-result preservation. Arbitrary narrative is rejected, not semantically judged.
 - **Orchestrator**: Request/intent validation, allowlisted planning, Search→Quality sequencing, deadline/cancellation and tool/token budgets. Google access is server-controlled; no automatic retries, alternate-model fallback, or paid escalation.

@@ -49,7 +49,7 @@ export function WatchlistProvider({ children }: WatchlistProviderProps) {
   };
 
   return (
-    <WatchlistContext.Provider value={{ watchlist, isInWatchlist, toggleWatchlist }}>
+    <WatchlistContext.Provider value={{ watchlist, isHydrated, isInWatchlist, toggleWatchlist }}>
       {children}
     </WatchlistContext.Provider>
   );

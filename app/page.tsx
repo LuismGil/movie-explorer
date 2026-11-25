@@ -12,6 +12,8 @@ import {
 import { messages } from '@/i18n';
 import { CatalogIntro } from '@/components/CatalogIntro';
 import { QRDemo } from '@/components/QRDemo';
+import { CatalogTools } from '@/components/webmcp/CatalogTools';
+import { createCatalogState } from '../public/webmcp-catalog.js';
 
 interface PageProps {
   searchParams: Promise<{
@@ -76,16 +78,26 @@ async function MovieContent({
     errorMsg = err instanceof Error ? err.message : messages.error.fetchMovies;
   }
 
+  const catalogTools = (
+    <CatalogTools state={createCatalogState({
+      results: moviesData?.results ?? [],
+      page: moviesData?.page ?? page,
+      totalPages: moviesData?.total_pages ?? 1,
+      status: errorMsg ? 'error' : 'ok',
+    })} />
+  );
+
   if (errorMsg) {
-    return <ErrorState message={errorMsg} />;
+    return <>{catalogTools}<ErrorState message={errorMsg} /></>;
   }
 
   if (!moviesData) {
-    return <MovieGrid movies={[]} isLoading={false} />;
+    return <>{catalogTools}<MovieGrid movies={[]} isLoading={false} /></>;
   }
 
   return (
     <>
+      {catalogTools}
       <MovieGrid movies={moviesData.results} isLoading={false} />
       {moviesData.total_pages > 1 && (
         <PaginationBar page={moviesData.page} totalPages={moviesData.total_pages} />

@@ -74,6 +74,7 @@ export const catalogMessages = {
     description: 'As histórias que você escolheu guardar para depois.',
     emptyTitle: 'Sua próxima sessão começa com uma escolha.',
     localHint: 'Salvo apenas neste navegador.',
+    webMcpHint: 'Em navegadores compatíveis, agentes podem consultar esta lista enquanto esta página estiver aberta.',
   },
   qr: {
     eyebrow: 'Do catálogo para o celular',

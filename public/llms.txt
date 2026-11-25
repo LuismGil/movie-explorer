@@ -1,0 +1,15 @@
+# Movie Explorer
+
+> Aplicação de descoberta de filmes com dados do TMDB, catálogo pesquisável e uma watchlist salva no navegador.
+
+A interface está em português do Brasil. A watchlist pertence ao navegador e ao perfil atuais; não é uma lista pública nem é sincronizada entre dispositivos.
+
+Ferramentas WebMCP são experimentais e dependem de um navegador e cliente compatíveis. Quando disponíveis, permitem pesquisar o catálogo, consultar os resultados e a ficha aberta e ler a watchlist na própria página. A consulta pode compartilhar dados com o agente utilizado.
+
+A busca com IA é uma demonstração separada, sujeita à autodeclaração de maioridade, à disponibilidade regional e a uma cota compartilhada. As ferramentas WebMCP não iniciam essa busca.
+
+## Navegação
+
+- [Catálogo](https://movie-explorer-luis.vercel.app/): buscar filmes e explorar títulos populares ou em alta.
+- [Watchlist](https://movie-explorer-luis.vercel.app/watchlist): consultar os filmes salvos neste navegador.
+- [Busca com IA](https://movie-explorer-luis.vercel.app/discover): abrir a demonstração de descoberta com IA e suas condições de uso.

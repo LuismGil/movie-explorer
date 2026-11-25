@@ -4,17 +4,20 @@ import { MovieCard } from '@/components/MovieCard';
 import { useWatchlist } from '@/context/WatchlistContext';
 import { catalogMessages as messages } from '@/i18n/catalog';
 import { FilmMark } from '@/components/FilmMark';
+import { WatchlistTools } from '@/components/webmcp/WatchlistTools';
 
 export default function WatchlistPage() {
   const { watchlist } = useWatchlist();
 
   return (
     <div className="watchlist-page">
+      <WatchlistTools />
       <header className="collection-heading">
         <p className="cinema-eyebrow">{messages.watchlist.eyebrow}</p>
         <h1>{messages.watchlist.title}</h1>
         <p>{messages.watchlist.description}</p>
         <p className="collection-note">{messages.watchlist.localHint}</p>
+        <p className="collection-note">{messages.watchlist.webMcpHint}</p>
       </header>
 
       {watchlist.length === 0 ? (

@@ -19,6 +19,7 @@ import {
 import { messages } from '@/i18n';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Suspense } from 'react';
+import { MovieTools } from '@/components/webmcp/MovieTools';
 
 
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w780';
@@ -92,6 +93,16 @@ async function MovieDetailsContent({ params }: PageProps) {
 
   return (
     <div className="flex flex-col gap-10 py-6">
+      <MovieTools movie={{
+        id: data.id,
+        title: data.title.slice(0, 120),
+        director: director?.slice(0, 100) ?? null,
+        genres: data.genres.slice(0, 8).map(genre => genre.name.slice(0, 40)),
+        release_date: data.release_date.slice(0, 10),
+        vote_average: Number.isFinite(data.vote_average) ? data.vote_average : null,
+        runtime: data.runtime !== null && Number.isFinite(data.runtime) ? data.runtime : null,
+        overview: data.overview?.slice(0, 400) ?? null,
+      }} />
       <section className="relative overflow-hidden rounded-3xl border border-rim bg-surface shadow-2xl shadow-black/40">
         {backdropUrl ? (
           <div className="relative z-0 h-64 w-full overflow-hidden">
